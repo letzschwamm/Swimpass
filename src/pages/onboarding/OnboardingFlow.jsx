@@ -66,38 +66,27 @@ export default function OnboardingFlow() {
   return (
     <div className="ob-bg">
       <div className="ob-wave" />
-      <div className="ob-center">
-        <div className="ob-phone">
-          <div className="ob-notch">
-            <div className="ob-notch-time">9:41</div>
-            <div className="ob-notch-pill">
-              <div className="ob-notch-cam" />
-            </div>
-            <div className="ob-notch-signal">●●● 🔋</div>
+      <div className="ob-container">
+        {step > 1 && step < 5 && (
+          <div className="ob-dots">
+            {[1, 2, 3, 4].map(i => (
+              <div
+                key={i}
+                className={`ob-dot${step === i + 1 ? ' active' : i + 1 < step ? ' done' : ''}`}
+              />
+            ))}
           </div>
-
-          {step > 1 && step < 5 && (
-            <div className="ob-dots">
-              {[1, 2, 3, 4].map(i => (
-                <div
-                  key={i}
-                  className={`ob-dot${step === i + 1 ? ' active' : i + 1 < step ? ' done' : ''}`}
-                />
-              ))}
-            </div>
-          )}
-
-          <div className="ob-screen">
-            <StepComponent
-              data={data}
-              update={update}
-              next={next}
-              back={back}
-              onDone={() => navigate('/login')}
-              stripeCanceled={stripeCanceled}
-              onStripeRetry={() => setStripeCanceled(false)}
-            />
-          </div>
+        )}
+        <div className="ob-screen">
+          <StepComponent
+            data={data}
+            update={update}
+            next={next}
+            back={back}
+            onDone={() => navigate('/login')}
+            stripeCanceled={stripeCanceled}
+            onStripeRetry={() => setStripeCanceled(false)}
+          />
         </div>
       </div>
     </div>

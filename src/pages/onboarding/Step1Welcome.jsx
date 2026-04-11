@@ -40,23 +40,11 @@ export default function Step1Welcome({ next }) {
           <button
             key={label}
             onClick={action}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 14,
-              padding: '14px 16px', borderRadius: 14, border: 'none', cursor: 'pointer',
-              background: primary
-                ? 'linear-gradient(135deg, var(--mid), var(--aqua))'
-                : 'rgba(255,255,255,0.07)',
-              color: primary ? '#fff' : 'var(--text)',
-              textAlign: 'left', width: '100%',
-              boxShadow: primary ? '0 4px 20px rgba(0,180,216,.35)' : 'none',
-              transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = primary ? '0 8px 28px rgba(0,180,216,.45)' : '0 4px 16px rgba(0,0,0,.2)' }}
-            onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = primary ? '0 4px 20px rgba(0,180,216,.35)' : 'none' }}
+            className={`role-btn${primary ? ' role-btn-primary' : ''}`}
           >
             <span style={{ fontSize: 26, flexShrink: 0 }}>{icon}</span>
             <div>
-              <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, marginBottom: 2 }}>
+              <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: primary ? 15 : 14, marginBottom: 2 }}>
                 {label}
               </div>
               <div style={{ fontSize: 11, opacity: primary ? 0.85 : 0.6, lineHeight: 1.3 }}>
