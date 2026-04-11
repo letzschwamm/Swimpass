@@ -6,29 +6,8 @@ export default function Step1Welcome({ next }) {
   const ob = t.onboarding.welcome
   const navigate = useNavigate()
 
-  const roles = [
-    {
-      icon: '👨‍👩‍👧',
-      label: 'Ich bin Elternteil',
-      sub: 'Mein Kind nimmt an einem Schwimmkurs teil',
-      action: next,
-      primary: true,
-    },
-    {
-      icon: '🏅',
-      label: 'Ich mache einen Kurs',
-      sub: 'Ich mache selbst einen Lifesaver Kurs',
-      action: next,
-      primary: false,
-    },
-    {
-      icon: '🏊',
-      label: 'Ich bin Instruktor',
-      sub: 'Ich leite Schwimm- und Rettungskurse',
-      action: () => navigate('/onboarding/instructor'),
-      primary: false,
-    },
-  ]
+  const roleActions = [next, next, () => navigate('/onboarding/instructor')]
+  const roles = ob.roles.map((r, i) => ({ ...r, action: roleActions[i] }))
 
   return (
     <div className="ob-step" style={{ display: 'flex', flexDirection: 'column' }}>

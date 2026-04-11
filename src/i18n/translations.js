@@ -37,6 +37,11 @@ export const T = {
     onboarding: {
       welcome: {
         sub: 'Verfolgen Sie den Fortschritt Ihres Kindes — digital, einfach, in Echtzeit.',
+        roles: [
+          { icon: '👨‍👩‍👧', label: 'Ich bin Elternteil', sub: 'Mein Kind nimmt an einem Schwimmkurs teil', primary: true },
+          { icon: '🏅', label: 'Ich mache einen Kurs', sub: 'Ich mache selbst einen Lifesaver Kurs', primary: false },
+          { icon: '🏊', label: 'Ich bin Instruktor', sub: 'Ich leite Schwimm- und Rettungskurse', primary: false },
+        ],
         features: [
           { icon: '📊', title: 'Fortschritt in Echtzeit', sub: 'Sehen Sie genau welche FLNS-Kriterien Ihr Kind schon geschafft hat' },
           { icon: '📱', title: 'Automatische Benachrichtigungen', sub: 'Nach jeder Stunde erhalten Sie eine Nachricht vom Lehrer' },
@@ -129,6 +134,11 @@ export const T = {
     onboarding: {
       welcome: {
         sub: 'Suivez les progrès de votre enfant — digital, simple, en temps réel.',
+        roles: [
+          { icon: '👨‍👩‍👧', label: 'Je suis parent', sub: 'Mon enfant participe à un cours de natation', primary: true },
+          { icon: '🏅', label: 'Je fais un cours', sub: 'Je fais moi-même un cours Lifesaver', primary: false },
+          { icon: '🏊', label: 'Je suis instructeur', sub: "J'anime des cours de natation et de sauvetage", primary: false },
+        ],
         features: [
           { icon: '📊', title: 'Progression en temps réel', sub: 'Voyez exactement quels critères FLNS votre enfant a déjà réussis' },
           { icon: '📱', title: 'Notifications automatiques', sub: 'Après chaque séance, vous recevez un message du professeur' },
@@ -207,6 +217,11 @@ export const T = {
     onboarding: {
       welcome: {
         sub: 'Verfollegt de Fortschrëtt vun Ärem Kand — digital, einfach, a Real-Time.',
+        roles: [
+          { icon: '👨‍👩‍👧', label: 'Ech sinn Elterendeel', sub: 'Mee Kand huelt un engem Schwammcours deel', primary: true },
+          { icon: '🏅', label: 'Ech maachen e Cours', sub: 'Ech maachen selwer e Lifesaver Cours', primary: false },
+          { icon: '🏊', label: 'Ech sinn Instrukter', sub: 'Ech leeden Schwamm- a Rettungscoursen', primary: false },
+        ],
         features: [
           { icon: '📊', title: 'Fortschrëtt a Real-Time', sub: 'Gesitt genee wéi eng FLNS-Krittären Ät Kand schonn erreecht huet' },
           { icon: '📱', title: 'Automatesch Benofrichtigungen', sub: 'No all Stonn kritt Dir eng Noriicht vum Lehrer' },
@@ -285,6 +300,11 @@ export const T = {
     onboarding: {
       welcome: {
         sub: 'Track your child\'s swimming progress — digital, simple, in real time.',
+        roles: [
+          { icon: '👨‍👩‍👧', label: 'I am a parent', sub: 'My child is taking a swimming course', primary: true },
+          { icon: '🏅', label: 'I am taking a course', sub: 'I am taking a Lifesaver course myself', primary: false },
+          { icon: '🏊', label: 'I am an instructor', sub: 'I teach swimming and rescue courses', primary: false },
+        ],
         features: [
           { icon: '📊', title: 'Real-time progress', sub: 'See exactly which FLNS criteria your child has already achieved' },
           { icon: '📱', title: 'Automatic notifications', sub: 'After each lesson you receive a message from the teacher' },
