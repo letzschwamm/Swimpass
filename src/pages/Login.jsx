@@ -172,8 +172,11 @@ export default function Login() {
                 {loading ? <span className="spinner" /> : t.ui.login}
               </button>
             </form>
-            <div className="login-onboarding-link" style={{ marginTop: 20 }}>
-              Eltern? <button onClick={() => navigate('/onboarding')}>Hier registrieren →</button>
+            <div style={{ marginTop: 20, textAlign: 'center', fontSize: 13 }}>
+              <span style={{ color: 'var(--muted)' }}>{t.ui.noAccount} </span>
+              <button onClick={() => navigate('/onboarding')} style={{ background: 'none', border: 'none', color: 'var(--aqua)', fontSize: 13, cursor: 'pointer', fontWeight: 600, padding: 0 }}>
+                {t.ui.registerHere}
+              </button>
             </div>
           </>
         )}

@@ -33,7 +33,7 @@ export const T = {
       email: 'E-Mail', password: 'Passwort', login: 'Anmelden',
       emailPlaceholder: 'E-Mail eingeben',
       loginTitle: 'Willkommen zurück', loginSub: 'Melden Sie sich an',
-      noAccount: 'Noch kein Konto?', registerHere: 'Hier registrieren',
+      noAccount: 'Noch kein Konto?', registerHere: 'Registrieren',
     },
     onboarding: {
       welcome: {
@@ -131,7 +131,7 @@ export const T = {
       email: 'E-mail', password: 'Mot de passe', login: 'Se connecter',
       emailPlaceholder: 'Entrez votre e-mail',
       loginTitle: 'Bon retour', loginSub: 'Connectez-vous à votre compte',
-      noAccount: 'Pas encore de compte ?', registerHere: 'S\'inscrire ici',
+      noAccount: 'Pas encore de compte ?', registerHere: "S'inscrire",
     },
     onboarding: {
       welcome: {
@@ -215,7 +215,7 @@ export const T = {
       email: 'E-Mail', password: 'Passwuert', login: 'Aloggen',
       emailPlaceholder: 'E-Mail aginn',
       loginTitle: 'Wëllkommen zréck', loginSub: 'Loggt Iech an',
-      noAccount: 'Nach kee Konto?', registerHere: 'Hei registréieren',
+      noAccount: 'Nach kee Konto?', registerHere: 'Umellen',
     },
     onboarding: {
       welcome: {
@@ -299,7 +299,7 @@ export const T = {
       email: 'Email', password: 'Password', login: 'Sign in',
       emailPlaceholder: 'Enter your email',
       loginTitle: 'Welcome back', loginSub: 'Sign in to your account',
-      noAccount: 'No account yet?', registerHere: 'Register here',
+      noAccount: 'No account yet?', registerHere: 'Register',
     },
     onboarding: {
       welcome: {
