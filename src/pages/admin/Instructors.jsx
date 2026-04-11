@@ -58,6 +58,19 @@ export default function Instructors() {
     showToast('Code gelöscht')
   }
 
+  async function handleDeleteInstructor(inst) {
+    if (!window.confirm(`Instrukteur "${inst.name || inst.email}" wirklich löschen?\n\nDer Account wird unwiderruflich gelöscht.`)) return
+    const { data, error } = await supabase.functions.invoke('delete-instructor', {
+      body: { userId: inst.id },
+    })
+    if (error || data?.error) {
+      showToast(data?.error || 'Fehler beim Löschen', 'error')
+      return
+    }
+    showToast(`${inst.name || inst.email} wurde gelöscht`)
+    setInstructors(prev => prev.filter(i => i.id !== inst.id))
+  }
+
   function handleCopy(code) {
     const msg = `Letzschwamm Instrukteur-Registrierung:\nCode: ${code}\nRegistrieren: ${window.location.origin}/onboarding/instructor`
     navigator.clipboard.writeText(msg).then(() => {
@@ -94,6 +107,12 @@ export default function Instructors() {
               <Badge variant={inst.subscription_status === 'active' ? 'green' : inst.subscription_status === 'pending' ? 'gold' : 'muted'}>
                 {inst.subscription_status === 'active' ? 'Aktiv' : inst.subscription_status === 'pending' ? 'Zahlung ausstehend' : 'Inaktiv'}
               </Badge>
+              <button
+                className="btn btn-danger"
+                style={{ fontSize: 11, padding: '4px 8px', marginLeft: 6 }}
+                onClick={() => handleDeleteInstructor(inst)}
+                title="Instrukteur löschen"
+              >🗑</button>
             </div>
           ))}
         </div>

@@ -16,6 +16,7 @@ import Sauvetage from './pages/admin/Sauvetage'
 import SauvetageDetail from './pages/admin/SauvetageDetail'
 import Instructors from './pages/admin/Instructors'
 import InstructorOnboarding from './pages/onboarding/InstructorOnboarding'
+import InstructorPaymentWall from './pages/onboarding/InstructorPaymentWall'
 import ParticipantStatus from './pages/ParticipantStatus'
 import MyClasses from './pages/teacher/MyClasses'
 import AllChildren from './pages/teacher/AllChildren'
@@ -37,6 +38,10 @@ function ProtectedRoute({ children, roles }) {
 
   if (!session) return <Navigate to="/login" replace />
   if (roles && profile && !roles.includes(profile.role)) return <Navigate to="/" replace />
+  // Instructors without an active subscription hit the payment wall
+  if (profile?.role === 'instructor' && profile?.subscription_status !== 'active') {
+    return <Navigate to="/instructor/payment" replace />
+  }
   return children
 }
 
@@ -61,6 +66,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/onboarding" element={<OnboardingFlow />} />
       <Route path="/onboarding/instructor" element={<InstructorOnboarding />} />
+      <Route path="/instructor/payment" element={<InstructorPaymentWall />} />
       <Route path="/datenschutz" element={<Datenschutz />} />
       <Route path="/p/:token" element={<ParticipantStatus />} />
 

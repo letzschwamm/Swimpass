@@ -134,9 +134,6 @@ export default function InstructorOnboarding() {
             <a href={STRIPE_INSTRUCTOR_LINK} className="btn btn-primary btn-full btn-lg" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, textDecoration: 'none', marginBottom: 10 }}>
               💳 Jetzt bezahlen — 49€/Jahr
             </a>
-            <button className="btn btn-ghost btn-full" onClick={() => navigate('/instructor')}>
-              Später bezahlen (eingeschränkter Zugang)
-            </button>
             <div style={{ fontSize: 11, color: 'var(--muted)', textAlign: 'center', marginTop: 12 }}>
               🔒 Sichere Zahlung via Stripe
             </div>
