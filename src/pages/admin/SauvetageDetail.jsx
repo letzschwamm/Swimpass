@@ -8,7 +8,7 @@ import Modal from '../../components/Modal'
 import Badge from '../../components/Badge'
 import Avatar from '../../components/Avatar'
 
-const STRIPE_BADGE_LINK = 'https://buy.stripe.com/aFa9AT2gxeZUfOkbVF7kc01'
+const STRIPE_BADGE_LINK = import.meta.env.VITE_STRIPE_SAUVETAGE_LINK || 'https://buy.stripe.com/aFa9AT2gxeZUfOkbVF7kc01'
 
 const STATUS_LABEL   = { registered: 'Angemeldet', passed_junior: 'JL bestanden', passed_lifesaver: 'LF bestanden', failed: 'Nicht bestanden' }
 const STATUS_VARIANT = { registered: 'blue', passed_junior: 'green', passed_lifesaver: 'gold', failed: 'muted' }
@@ -242,9 +242,23 @@ export default function SauvetageDetail() {
                   </td>
                   <td>
                     {(p.status === 'passed_junior' || p.status === 'passed_lifesaver') && (
-                      <span style={{ fontSize: 11, color: p.payment_status === 'paid' ? 'var(--green)' : 'var(--muted)' }}>
-                        {p.payment_status === 'paid' ? '✓ Bezahlt' : '○ Offen'}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontSize: 11, color: p.payment_status === 'paid' ? 'var(--green)' : 'var(--muted)' }}>
+                          {p.payment_status === 'paid' ? '✓ Bezahlt' : '○ Offen'}
+                        </span>
+                        {p.payment_status !== 'paid' && (
+                          <a
+                            href={STRIPE_BADGE_LINK}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-primary"
+                            style={{ fontSize: 10, padding: '3px 8px', textDecoration: 'none' }}
+                            title="Abzeichen bezahlen"
+                          >
+                            Abzeichen bezahlen 🏅
+                          </a>
+                        )}
+                      </div>
                     )}
                   </td>
                   <td>

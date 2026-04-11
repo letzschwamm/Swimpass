@@ -7,6 +7,9 @@ import CriteriaList from '../../components/CriteriaList'
 import Badge from '../../components/Badge'
 import Avatar from '../../components/Avatar'
 
+const BADGE_LEVELS = ['bobby', 'seepferdchen', 'trixi', 'bronze', 'silber', 'gold']
+const STRIPE_BADGE_LINK = import.meta.env.VITE_STRIPE_BADGE_LINK || 'https://buy.stripe.com/9B6dR9dZf7xs7hO0cX7kc03'
+
 export default function MyChild() {
   const { profile } = useAuth()
   const { t } = useApp()
@@ -86,6 +89,23 @@ export default function MyChild() {
           </div>
           <div className="pass-bar"><div className="pass-bar-fill" style={{ width: `${pct}%` }} /></div>
         </div>
+        {pct === 100 && BADGE_LEVELS.includes(child.level) && (
+          <div style={{ marginTop: 14, padding: '12px 16px', background: 'linear-gradient(135deg, rgba(244,165,26,.12), rgba(244,165,26,.06))', border: '1px solid rgba(244,165,26,.3)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gold)' }}>🎉 Abzeichen erreicht!</div>
+              <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>Jetzt das physische Abzeichen bestellen — 30€</div>
+            </div>
+            <a
+              href={STRIPE_BADGE_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{ fontSize: 12, padding: '8px 14px', textDecoration: 'none', flexShrink: 0 }}
+            >
+              Abzeichen kaufen 🏅
+            </a>
+          </div>
+        )}
       </div>
 
       <div className="grid-2" style={{ alignItems: 'start' }}>
