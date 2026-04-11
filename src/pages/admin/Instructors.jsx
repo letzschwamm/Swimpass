@@ -24,6 +24,8 @@ export default function Instructors() {
   const [note, setNote]               = useState('')
   const [saving, setSaving]           = useState(false)
   const [copied, setCopied]           = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(null) // instructor to delete
+  const [deleting, setDeleting]           = useState(false)
 
   useEffect(() => { if (profile) load() }, [profile])
 
@@ -58,17 +60,23 @@ export default function Instructors() {
     showToast('Code gelöscht')
   }
 
-  async function handleDeleteInstructor(inst) {
-    if (!window.confirm(`Instrukteur "${inst.name || inst.email}" wirklich löschen?\n\nDer Account wird unwiderruflich gelöscht.`)) return
+  async function handleDeleteInstructor() {
+    if (!confirmDelete) return
+    setDeleting(true)
     const { data, error } = await supabase.functions.invoke('delete-instructor', {
-      body: { userId: inst.id },
+      body: { userId: confirmDelete.id },
     })
+    setDeleting(false)
     if (error || data?.error) {
-      showToast(data?.error || 'Fehler beim Löschen', 'error')
+      const msg = data?.error || error?.message || 'Fehler beim Löschen'
+      showToast(msg, 'error')
+      console.error('delete-instructor error:', error, data)
+      setConfirmDelete(null)
       return
     }
-    showToast(`${inst.name || inst.email} wurde gelöscht`)
-    setInstructors(prev => prev.filter(i => i.id !== inst.id))
+    showToast(`${confirmDelete.name || confirmDelete.email} wurde gelöscht`)
+    setInstructors(prev => prev.filter(i => i.id !== confirmDelete.id))
+    setConfirmDelete(null)
   }
 
   function handleCopy(code) {
@@ -110,7 +118,7 @@ export default function Instructors() {
               <button
                 className="btn btn-danger"
                 style={{ fontSize: 11, padding: '4px 8px', marginLeft: 6 }}
-                onClick={() => handleDeleteInstructor(inst)}
+                onClick={() => setConfirmDelete(inst)}
                 title="Instrukteur löschen"
               >🗑</button>
             </div>
@@ -191,6 +199,24 @@ export default function Instructors() {
         </div>
         <div style={{ fontSize: 12, color: 'var(--muted)', padding: '10px 12px', background: 'rgba(0,150,199,.08)', borderRadius: 10, marginTop: 4 }}>
           Der Code ist 49€/Jahr — der Instrukteur bezahlt bei der Registrierung.
+        </div>
+      </Modal>
+
+      {/* Confirm delete instructor */}
+      <Modal
+        open={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        title="Instrukteur löschen"
+        subtitle={`${confirmDelete?.name || confirmDelete?.email} unwiderruflich löschen?`}
+        actions={<>
+          <button className="btn btn-ghost" onClick={() => setConfirmDelete(null)}>Abbrechen</button>
+          <button className="btn btn-danger" onClick={handleDeleteInstructor} disabled={deleting}>
+            {deleting ? <span className="spinner" /> : 'Endgültig löschen'}
+          </button>
+        </>}
+      >
+        <div style={{ padding: '8px 0', fontSize: 13, color: 'var(--muted)' }}>
+          Der Auth-Account, das Profil und alle zugehörigen Daten werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.
         </div>
       </Modal>
 
