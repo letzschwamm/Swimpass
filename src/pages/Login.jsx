@@ -66,8 +66,8 @@ export default function Login() {
       <div className="login-card">
         {/* Logo */}
         <div className="login-logo">
-          <div className="login-logo-icon"><img src="/Icon_Only_Crown_25_solid.png" alt="Letzschwamm" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /></div>
-          <div className="login-logo-text">Letzschwamm</div>
+          <img src="/Icon_Only_Crown_25_solid.png" alt="SwimPass" style={{ width: 80, height: 80, objectFit: 'contain', display: 'block', margin: '0 auto 14px' }} />
+          <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 28, textAlign: 'center', background: 'linear-gradient(135deg, #fff, var(--aqua))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SwimPass</div>
         </div>
 
         {/* Language */}
