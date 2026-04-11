@@ -37,7 +37,7 @@ export const T = {
     },
     onboarding: {
       welcome: {
-        sub: 'Verfolgen Sie den Fortschritt Ihres Kindes — digital, einfach, in Echtzeit.',
+        sub: 'Fortschritt verfolgen, Abzeichen erreichen und essenzielle Rettungsfähigkeiten aufbauen.',
         roles: [
           { icon: '👨‍👩‍👧', label: 'Ich bin Elternteil', sub: 'Mein Kind nimmt an einem Schwimmkurs teil', primary: true },
           { icon: '🏅', label: 'Ich mache einen Kurs', sub: 'Ich mache selbst einen Lifesaver Kurs', primary: false },
@@ -135,7 +135,7 @@ export const T = {
     },
     onboarding: {
       welcome: {
-        sub: 'Suivez les progrès de votre enfant — digital, simple, en temps réel.',
+        sub: 'Suivez la progression, obtenez des badges et développez des compétences essentielles en sauvetage.',
         roles: [
           { icon: '👨‍👩‍👧', label: 'Je suis parent', sub: 'Mon enfant participe à un cours de natation', primary: true },
           { icon: '🏅', label: 'Je fais un cours', sub: 'Je fais moi-même un cours Lifesaver', primary: false },
@@ -219,7 +219,7 @@ export const T = {
     },
     onboarding: {
       welcome: {
-        sub: 'Verfollegt de Fortschrëtt vun Ärem Kand — digital, einfach, a Real-Time.',
+        sub: 'Fortschrëtt verfollegen, Ofzeechen erreechen an essentiel Rettungsfäegkeeten opbauen.',
         roles: [
           { icon: '👨‍👩‍👧', label: 'Ech sinn Elterendeel', sub: 'Mee Kand huelt un engem Schwammcours deel', primary: true },
           { icon: '🏅', label: 'Ech maachen e Cours', sub: 'Ech maachen selwer e Lifesaver Cours', primary: false },
@@ -303,7 +303,7 @@ export const T = {
     },
     onboarding: {
       welcome: {
-        sub: 'Track your child\'s swimming progress — digital, simple, in real time.',
+        sub: 'Track progress, earn badges and build essential lifesaving skills.',
         roles: [
           { icon: '👨‍👩‍👧', label: 'I am a parent', sub: 'My child is taking a swimming course', primary: true },
           { icon: '🏅', label: 'I am taking a course', sub: 'I am taking a Lifesaver course myself', primary: false },
