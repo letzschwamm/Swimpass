@@ -67,7 +67,7 @@ export default function Login() {
         {/* Logo */}
         <div className="login-logo">
           <div style={{ width: 80, height: 80, borderRadius: 20, overflow: 'hidden', margin: '0 auto 14px', boxShadow: '0 4px 20px rgba(0,0,0,.35)' }}>
-            <img src="/logo.png" alt="SwimPass" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img src="/swimpass_icon_final.png" alt="SwimPass" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
           <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 28, textAlign: 'center', background: 'linear-gradient(135deg, #fff, var(--aqua))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SwimPass</div>
           <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>by Letzschwamm</div>
