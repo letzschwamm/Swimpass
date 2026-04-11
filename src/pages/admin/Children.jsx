@@ -144,7 +144,7 @@ export default function Children() {
         {filtered.length === 0
           ? (
             <div style={{ padding: 40, textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>
-              <div style={{ marginBottom: 12 }}><img src="/logo.png" alt="" style={{ width: 48, height: 48, objectFit: 'contain', opacity: 0.4 }} /></div>
+              <div style={{ marginBottom: 12 }}><img src="/logo.png" alt="" style={{ width: 48, height: 48, objectFit: 'contain', opacity: 0.4, borderRadius: 12, background: 'transparent' }} /></div>
               {ui.noChildren}
             </div>
           ) : (

@@ -52,7 +52,7 @@ export default function ParticipantStatus() {
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <img src="/logo.png" alt="" style={{ width: 48, height: 48, objectFit: 'contain', marginBottom: 8 }} />
+          <img src="/logo.png" alt="" style={{ width: 48, height: 48, objectFit: 'contain', marginBottom: 8, borderRadius: 12, background: 'transparent' }} />
           <div style={{ fontFamily: 'Syne, sans-serif', fontSize: 18, fontWeight: 800, background: 'linear-gradient(135deg,#fff,#48CAE4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             Letzschwamm
           </div>

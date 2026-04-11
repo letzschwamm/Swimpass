@@ -12,7 +12,7 @@ export default function Step1Welcome({ next }) {
   return (
     <div className="ob-step" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="welcome-hero">
-        <img src="/logo.png" alt="SwimPass" style={{ width: 80, height: 80, objectFit: 'contain', display: 'block', margin: '0 auto 12px' }} />
+        <img src="/logo.png" alt="SwimPass" style={{ width: 80, height: 80, objectFit: 'contain', display: 'block', margin: '0 auto 12px', borderRadius: 20, background: 'transparent' }} />
         <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 28, textAlign: 'center', background: 'linear-gradient(135deg, #fff, var(--aqua))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: 4 }}>SwimPass</div>
         <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)', marginBottom: 10 }}>by Letzschwamm</div>
         <div className="welcome-sub">{ob.sub}</div>
