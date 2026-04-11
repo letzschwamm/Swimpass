@@ -4,12 +4,11 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useApp } from '../../context/AppContext'
 import { getProgress } from '../../lib/criteria'
-import { DEMO_CHILDREN, DEMO_CLASSES } from '../../lib/demo'
 import ProgressBar from '../../components/ProgressBar'
 import Badge from '../../components/Badge'
 
 export default function MyClasses() {
-  const { profile, isDemo } = useAuth()
+  const { profile } = useAuth()
   const { t } = useApp()
   const navigate = useNavigate()
   const ui = t.ui
@@ -23,15 +22,6 @@ export default function MyClasses() {
 
   async function load() {
     setLoading(true)
-    if (isDemo) {
-      const myCls = DEMO_CLASSES.filter(c => c.teacher_id === profile.id)
-      setClasses(myCls.length ? myCls : DEMO_CLASSES)
-      setChildren(DEMO_CHILDREN)
-      if (myCls.length) setSelectedClass(myCls[0].id)
-      else setSelectedClass(DEMO_CLASSES[0]?.id)
-      setLoading(false)
-      return
-    }
     const [{ data: cls }, { data: kids }] = await Promise.all([
       supabase.from('classes').select('*').eq('teacher_id', profile.id),
       supabase.from('children').select('*, progress(criteria_key)').eq('school_id', profile.school_id),

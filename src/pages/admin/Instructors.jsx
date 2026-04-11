@@ -14,7 +14,7 @@ function generateCode() {
 }
 
 export default function Instructors() {
-  const { profile, isDemo } = useAuth()
+  const { profile } = useAuth()
   const { showToast } = useApp()
 
   const [instructors, setInstructors] = useState([])
@@ -30,7 +30,6 @@ export default function Instructors() {
   useEffect(() => { if (profile) load() }, [profile])
 
   async function load() {
-    if (isDemo) return
     const [{ data: inst }, { data: inv }] = await Promise.all([
       supabase.from('profiles').select('*').eq('school_id', profile.school_id).eq('role', 'instructor').order('name'),
       supabase.from('instructor_invites').select('*, profiles!used_by(name, email)').eq('school_id', profile.school_id).order('created_at', { ascending: false }),
@@ -63,14 +62,14 @@ export default function Instructors() {
   async function handleDeleteInstructor() {
     if (!confirmDelete) return
     setDeleting(true)
-    const { data, error } = await supabase.functions.invoke('delete-instructor', {
+    const { data, error } = await supabase.functions.invoke('delete-user', {
       body: { userId: confirmDelete.id },
     })
     setDeleting(false)
     if (error || data?.error) {
       const msg = data?.error || error?.message || 'Fehler beim Löschen'
       showToast(msg, 'error')
-      console.error('delete-instructor error:', error, data)
+      console.error('delete-user error:', error, data)
       setConfirmDelete(null)
       return
     }

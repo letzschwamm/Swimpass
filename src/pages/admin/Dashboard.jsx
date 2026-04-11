@@ -4,13 +4,12 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useApp } from '../../context/AppContext'
 import { getProgress } from '../../lib/criteria'
-import { DEMO_CHILDREN, DEMO_CLASSES, DEMO_ACTIVITIES } from '../../lib/demo'
 import ProgressBar from '../../components/ProgressBar'
 import Badge from '../../components/Badge'
 import Avatar from '../../components/Avatar'
 
 export default function Dashboard() {
-  const { profile, isDemo } = useAuth()
+  const { profile } = useAuth()
   const { t } = useApp()
   const navigate = useNavigate()
   const ui = t.ui
@@ -24,13 +23,6 @@ export default function Dashboard() {
 
   async function load() {
     setLoading(true)
-    if (isDemo) {
-      setChildren(DEMO_CHILDREN)
-      setClasses(DEMO_CLASSES)
-      setActivities(DEMO_ACTIVITIES)
-      setLoading(false)
-      return
-    }
     const schoolId = profile.school_id
     const [{ data: kids }, { data: cls }, { data: acts }] = await Promise.all([
       supabase.from('children').select('*, progress(criteria_key)').eq('school_id', schoolId),
@@ -58,12 +50,6 @@ export default function Dashboard() {
 
   return (
     <div className="page-content">
-      {isDemo && (
-        <div style={{ background: 'rgba(244,165,26,.08)', border: '1px solid rgba(244,165,26,.2)', borderRadius: 10, padding: '8px 14px', fontSize: 12, color: 'var(--gold)', marginBottom: 16 }}>
-          🚀 Demo-Modus — Daten werden nur lokal angezeigt, nichts wird gespeichert
-        </div>
-      )}
-
       <div className="topbar" style={{ padding: 0, marginBottom: 18 }}>
         <div>
           <div className="page-title">{ui.dashboard}</div>

@@ -4,7 +4,6 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useApp } from '../../context/AppContext'
 import { getProgress } from '../../lib/criteria'
-import { getAllDemoChildren, DEMO_CLASSES, DEMO_NOTES, DEMO_PROGRESS } from '../../lib/demo'
 import CriteriaList from '../../components/CriteriaList'
 import ProgressBar from '../../components/ProgressBar'
 import Badge from '../../components/Badge'
@@ -14,7 +13,7 @@ import { BADGE_META } from '../../lib/criteria'
 
 export default function ChildDetail() {
   const { id } = useParams()
-  const { profile, isDemo } = useAuth()
+  const { profile } = useAuth()
   const { t, showToast } = useApp()
   const navigate = useNavigate()
   const ui = t.ui
@@ -33,15 +32,6 @@ export default function ChildDetail() {
 
   async function load() {
     setLoading(true)
-    if (isDemo) {
-      const kid = getAllDemoChildren().find(c => c.id === id)
-      setChild(kid || null)
-      setClasses(DEMO_CLASSES)
-      setDoneKeys(DEMO_PROGRESS[id] || [])
-      setNotes(DEMO_NOTES[id] || [])
-      setLoading(false)
-      return
-    }
     const [{ data: kid }, { data: cls }, { data: prog }, { data: nts }] = await Promise.all([
       supabase.from('children').select('*').eq('id', id).maybeSingle(),
       supabase.from('classes').select('*').eq('school_id', profile.school_id),
@@ -56,10 +46,6 @@ export default function ChildDetail() {
   }
 
   async function handleToggle(key, checked) {
-    if (isDemo) {
-      setDoneKeys(prev => checked ? [...prev, key] : prev.filter(k => k !== key))
-      return
-    }
     if (checked) {
       await supabase.from('progress').upsert({ child_id: id, criteria_key: key, teacher_id: profile.id, passed_at: new Date().toISOString() }, { onConflict: 'child_id,criteria_key' })
       setDoneKeys(prev => [...prev, key])
@@ -71,13 +57,6 @@ export default function ChildDetail() {
 
   async function handleSaveNote() {
     if (!noteText.trim()) return
-    if (isDemo) {
-      const newNote = { id: `n-${Date.now()}`, child_id: id, content: noteText, created_at: new Date().toISOString(), profiles: { name: profile.name } }
-      setNotes(prev => [newNote, ...prev])
-      showToast(t.toast.noteSaved)
-      setNoteText('')
-      return
-    }
     await supabase.from('notes').insert({ child_id: id, teacher_id: profile.id, content: noteText })
     showToast(t.toast.noteSaved)
     setNoteText('')
@@ -88,11 +67,9 @@ export default function ChildDetail() {
     if (!child) return
     setNotifying(true)
     const pct = getProgress(doneKeys, child.level)
-    if (!isDemo) {
-      await supabase.functions.invoke('send-email', {
-        body: { childId: id, schoolId: profile.school_id, teacherName: profile.name, childName: `${child.first_name} ${child.last_name}`, progress: pct, note: notes[0]?.content || '—' }
-      })
-    }
+    await supabase.functions.invoke('send-email', {
+      body: { childId: id, schoolId: profile.school_id, teacherName: profile.name, childName: `${child.first_name} ${child.last_name}`, progress: pct, note: notes[0]?.content || '—' }
+    })
     setNotifying(false)
     showToast(t.toast.notified(`${child.first_name} ${child.last_name}`, pct))
   }

@@ -4,14 +4,13 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useApp } from '../../context/AppContext'
 import { CRITERIA, BADGE_META, ALL_LEVELS, LEGACY_LEVELS, getProgress } from '../../lib/criteria'
-import { getAllDemoChildren, DEMO_PROGRESS } from '../../lib/demo'
 import Avatar from '../../components/Avatar'
 
 const ORDERED_LEVELS = [...ALL_LEVELS, ...LEGACY_LEVELS]
 
 export default function ChildPass() {
   const { id } = useParams()
-  const { profile, isDemo } = useAuth()
+  const { profile } = useAuth()
   const { t } = useApp()
   const navigate = useNavigate()
   const printRef = useRef()
@@ -24,13 +23,6 @@ export default function ChildPass() {
 
   async function load() {
     setLoading(true)
-    if (isDemo) {
-      const kid = getAllDemoChildren().find(c => c.id === id)
-      setChild(kid || null)
-      setDoneKeys(DEMO_PROGRESS[id] || [])
-      setLoading(false)
-      return
-    }
     const [{ data: kid }, { data: prog }] = await Promise.all([
       supabase.from('children').select('*').eq('id', id).maybeSingle(),
       supabase.from('progress').select('criteria_key').eq('child_id', id),

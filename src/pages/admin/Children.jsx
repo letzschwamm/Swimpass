@@ -4,7 +4,6 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useApp } from '../../context/AppContext'
 import { getProgress } from '../../lib/criteria'
-import { getAllDemoChildren, addDemoPerson, DEMO_CLASSES } from '../../lib/demo'
 import ProgressBar from '../../components/ProgressBar'
 import Badge from '../../components/Badge'
 import Modal from '../../components/Modal'
@@ -17,7 +16,7 @@ const EMPTY_FORM = {
 }
 
 export default function Children() {
-  const { profile, isDemo } = useAuth()
+  const { profile } = useAuth()
   const { t, showToast } = useApp()
   const navigate = useNavigate()
   const ui = t.ui
@@ -33,7 +32,6 @@ export default function Children() {
   useEffect(() => { if (profile) load() }, [profile])
 
   async function load() {
-    if (isDemo) { setPersons(getAllDemoChildren()); setClasses(DEMO_CLASSES); return }
     const schoolId = profile.school_id
     const [{ data: kids }, { data: cls }] = await Promise.all([
       supabase.from('children').select('*, progress(criteria_key)').eq('school_id', schoolId).order('first_name'),
@@ -60,13 +58,9 @@ export default function Children() {
   async function handleDelete() {
     if (!confirmDelete) return
     setDeleting(true)
-    if (!isDemo) {
-      await supabase.from('progress').delete().eq('child_id', confirmDelete.id)
-      await supabase.from('notes').delete().eq('child_id', confirmDelete.id)
-      await supabase.from('children').delete().eq('id', confirmDelete.id)
-    } else {
-      // demo: remove from local state
-    }
+    await supabase.from('progress').delete().eq('child_id', confirmDelete.id)
+    await supabase.from('notes').delete().eq('child_id', confirmDelete.id)
+    await supabase.from('children').delete().eq('id', confirmDelete.id)
     setPersons(prev => prev.filter(p => p.id !== confirmDelete.id))
     showToast(`${confirmDelete.name} wurde gelöscht`)
     setConfirmDelete(null)
@@ -84,17 +78,6 @@ export default function Children() {
       class_id: form.personType === 'child' ? (form.classId || null) : null,
       person_type: form.personType,
       contact_email: form.personType === 'adult' ? (form.contactEmail || null) : null,
-    }
-
-    if (isDemo) {
-      const demo = { ...newPerson, id: `person-${Date.now()}`, parent_id: null, progress: [] }
-      addDemoPerson(demo)
-      setPersons(getAllDemoChildren())
-      showToast(t.toast.childAdded(`${form.firstName} ${form.lastName}`))
-      setShowModal(false)
-      setForm(EMPTY_FORM)
-      setSaving(false)
-      return
     }
 
     const { error } = await supabase.from('children').insert(newPerson)

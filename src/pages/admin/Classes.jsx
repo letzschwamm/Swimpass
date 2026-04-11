@@ -3,7 +3,6 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useApp } from '../../context/AppContext'
 import { getProgress } from '../../lib/criteria'
-import { DEMO_CLASSES, DEMO_CHILDREN } from '../../lib/demo'
 import ProgressBar from '../../components/ProgressBar'
 import Badge from '../../components/Badge'
 import Modal from '../../components/Modal'
@@ -15,7 +14,7 @@ function generateParentCode() {
 }
 
 export default function Classes() {
-  const { profile, isDemo } = useAuth()
+  const { profile } = useAuth()
   const { t, showToast } = useApp()
   const ui = t.ui
 
@@ -32,7 +31,6 @@ export default function Classes() {
   useEffect(() => { if (profile) load() }, [profile])
 
   async function load() {
-    if (isDemo) { setClasses(DEMO_CLASSES); setChildren(DEMO_CHILDREN); return }
     const schoolId = profile.school_id
     const [{ data: cls }, { data: kids }] = await Promise.all([
       supabase.from('classes').select('*, profiles(id, name)').eq('school_id', schoolId),
@@ -55,16 +53,6 @@ export default function Classes() {
     if (!form.name) return
     setSaving(true)
     const parentCode = generateParentCode()
-
-    if (isDemo) {
-      const newClass = { id: `cls-${Date.now()}`, school_id: profile.school_id, teacher_id: profile.id, name: form.name, day: form.day, time: form.time, level: form.level, parent_code: parentCode, profiles: { name: profile.name } }
-      setClasses(prev => [...prev, newClass])
-      setShowModal(false)
-      setForm({ name: '', day: 'Wednesday', time: '17:00', level: 'bobby' })
-      setSaving(false)
-      setCodeModal({ name: form.name, code: parentCode })
-      return
-    }
 
     const { error } = await supabase.from('classes').insert({
       school_id: profile.school_id,
@@ -90,11 +78,8 @@ export default function Classes() {
   async function handleDeleteClass() {
     if (!confirmDelete) return
     setDeleting(true)
-    if (!isDemo) {
-      // Unassign children from class, then delete class
-      await supabase.from('children').update({ class_id: null }).eq('class_id', confirmDelete.id)
-      await supabase.from('classes').delete().eq('id', confirmDelete.id)
-    }
+    await supabase.from('children').update({ class_id: null }).eq('class_id', confirmDelete.id)
+    await supabase.from('classes').delete().eq('id', confirmDelete.id)
     setClasses(prev => prev.filter(c => c.id !== confirmDelete.id))
     showToast(`Kurs "${confirmDelete.name}" wurde gelöscht`)
     setConfirmDelete(null)

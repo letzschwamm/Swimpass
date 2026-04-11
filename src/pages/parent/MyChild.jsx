@@ -3,13 +3,12 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useApp } from '../../context/AppContext'
 import { getProgress } from '../../lib/criteria'
-import { DEMO_CHILDREN, DEMO_CLASSES, DEMO_NOTES, DEMO_PROGRESS } from '../../lib/demo'
 import CriteriaList from '../../components/CriteriaList'
 import Badge from '../../components/Badge'
 import Avatar from '../../components/Avatar'
 
 export default function MyChild() {
-  const { profile, isDemo } = useAuth()
+  const { profile } = useAuth()
   const { t } = useApp()
   const ui = t.ui
 
@@ -23,15 +22,6 @@ export default function MyChild() {
 
   async function load() {
     setLoading(true)
-    if (isDemo) {
-      const kid = DEMO_CHILDREN.find(c => c.parent_id === 'demo-parent') || DEMO_CHILDREN[0]
-      setChild(kid)
-      setCls(DEMO_CLASSES.find(c => c.id === kid.class_id))
-      setDoneKeys(DEMO_PROGRESS[kid.id] || [])
-      setNotes(DEMO_NOTES[kid.id] || [])
-      setLoading(false)
-      return
-    }
     const { data: kids } = await supabase.from('children').select('*').eq('parent_id', profile.id).limit(1)
     if (!kids?.length) { setLoading(false); return }
     const kid = kids[0]
