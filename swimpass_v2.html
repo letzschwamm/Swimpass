@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwimPass · FLNS Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep: #001829;
+  --navy: #002D4E;
+  --blue: #0077B6;
+  --mid: #0096C7;
+  --light: #00B4D8;
+  --aqua: #48CAE4;
+  --foam: #ADE8F4;
+  --gold: #F4A51A;
+  --red: #EF4444;
+  --green: #22C55E;
+  --text: #E2F0F8;
+  --muted: #6EA8C8;
+  --card: rgba(255,255,255,0.06);
+  --border: rgba(144,220,240,0.14);
+  --r: 16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--deep);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── LAYOUT ── */
+.shell{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:220px;flex-shrink:0;background:var(--navy);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:0;}
+.main{flex:1;overflow-y:auto;background:linear-gradient(160deg,#001829 0%,#002540 60%,#003050 100%);}
+
+/* ── SIDEBAR ── */
+.sb-logo{padding:22px 20px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--light),var(--aqua));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 14px rgba(0,180,216,.4);}
+.sb-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;background:linear-gradient(135deg,#fff,var(--aqua));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+.sb-role{margin:14px 12px 8px;display:flex;gap:4px;background:rgba(0,0,0,.2);border-radius:10px;padding:3px;}
+.role-btn{flex:1;padding:5px 0;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border-radius:7px;transition:.2s;}
+.role-btn.active{background:var(--blue);color:#fff;}
+
+.sb-nav{flex:1;padding:8px 10px;display:flex;flex-direction:column;gap:2px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:.2s;color:var(--muted);font-size:13px;font-weight:500;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
+.sb-item.active{background:rgba(0,180,216,.15);color:var(--aqua);font-weight:600;}
+.sb-item .icon{font-size:16px;width:20px;text-align:center;}
+
+.sb-lang{padding:12px;border-top:1px solid var(--border);}
+.sb-lang-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.lang-pills{display:flex;gap:4px;}
+.lang-pill{flex:1;padding:5px 0;text-align:center;border:1px solid var(--border);border-radius:7px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s;}
+.lang-pill.active{background:var(--light);color:var(--deep);border-color:var(--light);}
+
+.sb-user{padding:12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--light));display:flex;align-items:center;justify-content:center;font-size:14px;}
+.sb-user-info{flex:1;}
+.sb-user-name{font-size:12px;font-weight:600;}
+.sb-user-role{font-size:10px;color:var(--muted);}
+
+/* ── TOPBAR ── */
+.topbar{padding:18px 28px 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+.page-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.topbar-actions{display:flex;gap:8px;}
+.btn{padding:8px 16px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px;}
+.btn-primary{background:linear-gradient(135deg,var(--mid),var(--light));color:var(--deep);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,180,216,.35);}
+.btn-ghost{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{background:rgba(255,255,255,.12);}
+.btn-danger{background:rgba(239,68,68,.15);color:#EF4444;border:1px solid rgba(239,68,68,.25);}
+.btn-success{background:rgba(34,197,94,.15);color:#22C55E;border:1px solid rgba(34,197,94,.25);}
+
+/* ── PAGES ── */
+.page{display:none;padding:16px 28px 40px;animation:fadeIn .25s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;backdrop-filter:blur(10px);}
+.stat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:2px;}
+.stat-label{font-size:11px;color:var(--muted);font-weight:500;}
+.stat-card.accent{background:linear-gradient(135deg,rgba(0,150,199,.2),rgba(0,180,216,.1));border-color:rgba(0,180,216,.3);}
+.stat-val.blue{color:var(--aqua);}
+.stat-val.gold{color:var(--gold);}
+.stat-val.green{color:var(--green);}
+
+/* ── SECTION HEADER ── */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.sec-link{font-size:12px;color:var(--light);cursor:pointer;}
+
+/* ── TABLE ── */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;backdrop-filter:blur(10px);}
+table{width:100%;border-collapse:collapse;}
+thead tr{border-bottom:1px solid var(--border);}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.03);}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-blue{background:rgba(0,180,216,.15);color:var(--aqua);border:1px solid rgba(0,180,216,.25);}
+.badge-gold{background:rgba(244,165,26,.15);color:var(--gold);border:1px solid rgba(244,165,26,.25);}
+.badge-green{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.25);}
+.badge-muted{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{display:flex;align-items:center;gap:8px;}
+.prog-bar{flex:1;height:6px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--light),var(--aqua));border-radius:99px;}
+.prog-pct{font-size:11px;color:var(--muted);width:28px;text-align:right;}
+
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;backdrop-filter:blur(10px);}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;}
+
+/* ── CLASS CARDS ── */
+.class-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:.2s;}
+.class-card:hover{border-color:var(--light);background:rgba(0,180,216,.08);transform:translateY(-2px);}
+.class-card.selected{border-color:var(--light);background:rgba(0,180,216,.12);}
+.cc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cc-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.cc-meta{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.cc-stat{display:flex;gap:10px;}
+.cc-stat-item{font-size:11px;color:var(--muted);}
+.cc-stat-item span{color:var(--text);font-weight:600;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:linear-gradient(160deg,#002540,#001829);border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:440px;box-shadow:0 24px 60px rgba(0,0,0,.5);animation:fadeIn .2s ease;}
+.modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:22px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.form-group.half{margin-bottom:0;}
+label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;}
+input,select{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:.2s;}
+input:focus,select:focus{border-color:var(--light);background:rgba(0,180,216,.08);}
+select option{background:#002540;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+
+/* ── CHILD DETAIL ── */
+.child-detail-header{display:flex;align-items:center;gap:16px;margin-bottom:22px;}
+.child-big-avatar{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--blue),var(--light));display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 6px 20px rgba(0,120,180,.3);}
+.child-detail-info{flex:1;}
+.child-detail-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+.child-detail-meta{font-size:12px;color:var(--muted);margin-top:3px;}
+
+.criteria-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.ctab{padding:7px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;}
+.ctab.active{background:rgba(0,180,216,.18);border-color:var(--light);color:var(--aqua);}
+
+.crit-list{display:flex;flex-direction:column;gap:8px;}
+.crit-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:.2s;}
+.crit-item:hover{background:rgba(255,255,255,.09);}
+.crit-item.done{border-color:rgba(0,180,216,.35);background:rgba(0,180,216,.08);}
+.crit-check{width:24px;height:24px;border-radius:7px;border:2px solid rgba(144,220,240,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:.2s;}
+.crit-item.done .crit-check{background:linear-gradient(135deg,var(--light),var(--aqua));border-color:transparent;box-shadow:0 0 10px rgba(0,180,216,.4);}
+.crit-text{flex:1;}
+.crit-title{font-size:13px;font-weight:600;}
+.crit-item.done .crit-title{color:var(--aqua);}
+.crit-detail{font-size:11px;color:var(--muted);margin-top:2px;}
+.crit-tag{font-size:10px;font-weight:700;color:var(--light);background:rgba(0,180,216,.12);border:1px solid rgba(0,180,216,.2);padding:2px 7px;border-radius:5px;flex-shrink:0;}
+
+/* ── ACTIVITY FEED ── */
+.activity-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.activity-item:last-child{border-bottom:none;}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.act-dot.blue{background:var(--light);}
+.act-dot.gold{background:var(--gold);}
+.act-dot.green{background:var(--green);}
+.act-text{font-size:12px;line-height:1.4;}
+.act-time{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* ── NOTIFICATION PREVIEW ── */
+.notif-preview{background:rgba(244,165,26,.08);border:1px solid rgba(244,165,26,.2);border-radius:12px;padding:14px;margin-top:14px;}
+.notif-preview-title{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.notif-preview-text{font-size:12px;color:var(--text);line-height:1.5;}
+
+/* ── SEARCH ── */
+.search-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:8px 14px;margin-bottom:16px;}
+.search-bar input{background:transparent;border:none;flex:1;font-size:13px;color:var(--text);}
+.search-bar input::placeholder{color:var(--muted);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,var(--light),var(--aqua));color:var(--deep);padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,180,216,.4);transform:translateY(60px);opacity:0;transition:.3s;z-index:999;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── MOBILE ── */
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">🌊</div>
+    <div class="sb-logo-text">SwimPass</div>
+  </div>
+
+  <div class="sb-role">
+    <button class="role-btn active" onclick="setRole('admin')" id="role-admin">Admin</button>
+    <button class="role-btn" onclick="setRole('teacher')" id="role-teacher">Lehrer</button>
+    <button class="role-btn" onclick="setRole('parent')" id="role-parent">Eltern</button>
+  </div>
+
+  <nav class="sb-nav" id="sb-nav"></nav>
+
+  <div class="sb-lang">
+    <div class="sb-lang-label">Sprache</div>
+    <div class="lang-pills">
+      <div class="lang-pill active" onclick="setLang('de')">DE</div>
+      <div class="lang-pill" onclick="setLang('fr')">FR</div>
+      <div class="lang-pill" onclick="setLang('lu')">LU</div>
+      <div class="lang-pill" onclick="setLang('en')">EN</div>
+    </div>
+  </div>
+
+  <div class="sb-user">
+    <div class="sb-avatar">🏊</div>
+    <div class="sb-user-info">
+      <div class="sb-user-name">Andy</div>
+      <div class="sb-user-role" id="sb-role-label">Administrator</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="main">
+
+  <!-- ── ADMIN: DASHBOARD ── -->
+  <div class="page active" id="page-dashboard">
+    <div class="topbar">
+      <div><div class="page-title" id="ttl-dashboard">Übersicht</div><div class="page-sub" id="sub-dashboard">Willkommen zurück, Andy 👋</div></div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="openModal('modal-add-child')">+ <span id="btn-add-child-lbl">Kind hinzufügen</span></button>
+      </div>
+    </div>
+
+    <div class="stats-row" style="margin-top:18px;">
+      <div class="stat-card accent"><div class="stat-val blue" id="stat-children">0</div><div class="stat-label" id="sl-children">Kinder</div></div>
+      <div class="stat-card"><div class="stat-val gold" id="stat-classes">3</div><div class="stat-label" id="sl-classes">Klassen</div></div>
+      <div class="stat-card"><div class="stat-val green" id="stat-teachers">2</div><div class="stat-label" id="sl-teachers">Lehrer</div></div>
+      <div class="stat-card"><div class="stat-val" id="stat-avg">—</div><div class="stat-label" id="sl-avg">Ø Fortschritt</div></div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div>
+        <div class="sec-header"><div class="sec-title" id="sec-recent">Zuletzt aktiv</div></div>
+        <div class="card">
+          <div class="activity-item"><div class="act-dot blue"></div><div><div class="act-text">Emma K. hat <b>Tieftauchen</b> bestanden ✅</div><div class="act-time">vor 12 Min</div></div></div>
+          <div class="activity-item"><div class="act-dot gold"></div><div><div class="act-text">Luca M. — Notiz von Andy: "Braucht Hilfe beim Schleppen"</div><div class="act-time">vor 1 Std</div></div></div>
+          <div class="activity-item"><div class="act-dot green"></div><div><div class="act-text">Noah B. — Eltern wurden benachrichtigt 📱</div><div class="act-time">gestern</div></div></div>
+          <div class="activity-item"><div class="act-dot blue"></div><div><div class="act-text">Neues Kind hinzugefügt: <b>Sara L.</b></div><div class="act-time">gestern</div></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sec-header"><div class="sec-title" id="sec-classes-ov">Klassen</div></div>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="class-overview-list"></div>
+      </div>
+    </div>
+
+    <div class="sec-header"><div class="sec-title" id="sec-all-children">Alle Kinder</div><div class="sec-link" onclick="showPage('children')" id="sec-link-all">Alle anzeigen →</div></div>
+    <div class="table-wrap" id="dash-child-table"></div>
+  </div>
+
+  <!-- ── ADMIN: CHILDREN ── -->
+  <div class="page" id="page-children">
+    <div class="topbar">
+      <div><div class="page-title" id="ttl-children">Kinder</div><div class="page-sub" id="sub-children">Alle eingeschriebenen Kinder</div></div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="openModal('modal-add-child')">+ <span id="btn-add-child-lbl2">Kind hinzufügen</span></button>
+      </div>
+    </div>
+    <div class="search-bar" style="margin-top:16px;"><span style="font-size:14px;">🔍</span><input type="text" id="child-search" placeholder="Kind suchen..." oninput="renderChildTable()"></div>
+    <div class="table-wrap" id="child-table"></div>
+  </div>
+
+  <!-- ── ADMIN/TEACHER: CHILD DETAIL ── -->
+  <div class="page" id="page-child-detail">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn btn-ghost" onclick="showPage('children')" style="padding:6px 10px;">← </button>
+        <div><div class="page-title" id="ttl-child-detail">Kind</div><div class="page-sub" id="sub-child-detail">Schwimmpass</div></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-success" onclick="notifyParents()" id="btn-notify">📱 Eltern benachrichtigen</button>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;" id="child-detail-content"></div>
+  </div>
+
+  <!-- ── ADMIN: CLASSES ── -->
+  <div class="page" id="page-classes">
+    <div class="topbar">
+      <div><div class="page-title" id="ttl-classes">Klassen</div><div class="page-sub" id="sub-classes">Kurse verwalten</div></div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="openModal('modal-add-class')">+ <span id="btn-add-class-lbl">Klasse erstellen</span></button>
+      </div>
+    </div>
+    <div class="grid-3" style="margin-top:18px;" id="classes-grid"></div>
+  </div>
+
+  <!-- ── TEACHER VIEW ── -->
+  <div class="page" id="page-teacher">
+    <div class="topbar">
+      <div><div class="page-title" id="ttl-teacher">Meine Klassen</div><div class="page-sub" id="sub-teacher">Lehrer: Andy</div></div>
+    </div>
+    <div style="margin-top:18px;">
+      <div class="sec-title" style="margin-bottom:12px;" id="sec-today">Heute · Mittwoch 17:00 — Junior Lifesaver A</div>
+      <div class="table-wrap" id="teacher-table"></div>
+    </div>
+  </div>
+
+  <!-- ── PARENT VIEW ── -->
+  <div class="page" id="page-parent">
+    <div class="topbar">
+      <div><div class="page-title" id="ttl-parent">Mein Kind</div><div class="page-sub" id="sub-parent">Digitaler Schwimmpass</div></div>
+    </div>
+    <div style="margin-top:18px;" id="parent-content"></div>
+  </div>
+
+</main>
+</div>
+
+<!-- ═══════ MODAL: ADD CHILD ═══════ -->
+<div class="modal-overlay" id="modal-add-child">
+  <div class="modal">
+    <div class="modal-title" id="modal-add-child-title">Kind hinzufügen</div>
+    <div class="modal-sub" id="modal-add-child-sub">Neues Kind in das System eintragen</div>
+    <div class="form-row">
+      <div class="form-group half"><label id="lbl-firstname">Vorname</label><input id="inp-firstname" placeholder="Emma"></div>
+      <div class="form-group half"><label id="lbl-lastname">Nachname</label><input id="inp-lastname" placeholder="Müller"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group half"><label id="lbl-birthdate">Geburtsdatum</label><input id="inp-birthdate" type="date"></div>
+      <div class="form-group half"><label id="lbl-level">Stufe</label>
+        <select id="inp-level">
+          <option value="junior">Junior Lifesaver</option>
+          <option value="lifesaver">Lifesaver</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label id="lbl-class">Klasse</label>
+      <select id="inp-class">
+        <option value="mi17">Mittwoch 17:00</option>
+        <option value="fr16">Freitag 16:00</option>
+        <option value="sa10">Samstag 10:00</option>
+      </select>
+    </div>
+    <div class="form-group"><label id="lbl-parent-email">E-Mail der Eltern</label><input id="inp-parent-email" type="email" placeholder="eltern@email.com"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-child')" id="btn-cancel">Abbrechen</button>
+      <button class="btn btn-primary" onclick="addChild()" id="btn-save">Speichern ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL: ADD CLASS ═══════ -->
+<div class="modal-overlay" id="modal-add-class">
+  <div class="modal">
+    <div class="modal-title">Klasse erstellen</div>
+    <div class="modal-sub">Neuen Kurs anlegen</div>
+    <div class="form-group"><label>Kursname</label><input id="inp-classname" placeholder="Junior Lifesaver A"></div>
+    <div class="form-row">
+      <div class="form-group half"><label>Wochentag</label>
+        <select id="inp-day">
+          <option>Montag</option><option>Dienstag</option><option selected>Mittwoch</option>
+          <option>Donnerstag</option><option>Freitag</option><option>Samstag</option>
+        </select>
+      </div>
+      <div class="form-group half"><label>Uhrzeit</label><input id="inp-time" type="time" value="17:00"></div>
+    </div>
+    <div class="form-group"><label>Lehrer</label>
+      <select id="inp-teacher-sel">
+        <option>Andy</option><option>Ana</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-class')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="addClass()">Erstellen ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+let lang = 'de';
+let role = 'admin';
+let currentPage = 'dashboard';
+let detailChildId = null;
+let detailTab = 'swim';
+
+const T = {
+  de: {
+    nav: {
+      admin: [
+        {id:'dashboard',icon:'📊',label:'Übersicht'},
+        {id:'children',icon:'👦',label:'Kinder'},
+        {id:'classes',icon:'🏊',label:'Klassen'},
+      ],
+      teacher: [
+        {id:'teacher',icon:'🏊',label:'Meine Klassen'},
+        {id:'children',icon:'👦',label:'Alle Kinder'},
+      ],
+      parent: [
+        {id:'parent',icon:'🌊',label:'Mein Kind'},
+      ]
+    },
+    roleLabels: {admin:'Administrator',teacher:'Schwimmlehrer',parent:'Elternteil'},
+    tabs: {swim:'Schwimmen',rescue:'Rettung',theory:'Theorie'},
+    criteria: {
+      junior: {
+        swim:[
+          {title:'200m Schwimmen',detail:'Max. 10 Min · 100m Bauch + 100m Rücken (Grätsch)',tag:'Ausdauer'},
+          {title:'Startsprung',detail:'Sprung aus ~1m · Schritt, Fuß oder Kopfsprung',tag:'Technik'},
+          {title:'15m Streckentauchen',detail:'Start im Becken · Mindesttiefe ~1m',tag:'Tauchen'},
+          {title:'Tieftauchen 2×',detail:'Kopf & Fuß in 3 Min · 5kg Gegenstand · 2-3m Tiefe',tag:'Tauchen'},
+        ],
+        rescue:[
+          {title:'Befreiungsgriffe',detail:'Aus Umklammerungen & Würgegriffen (Land + Wasser)',tag:'Rettung'},
+          {title:'50m Schleppen',detail:'Kopf-/Achselgriff + Fesselschleppgriff',tag:'Rettung'},
+          {title:'100m in Kleidern',detail:'Max. 4 Min · Entkleiden im Wasser',tag:'Ausdauer'},
+          {title:'Kombinierte Übung',detail:'20m Anschwimmen → Retten → 20m Schleppen → Seitenlage',tag:'Komplex'},
+        ],
+        theory:[
+          {title:'Wiederbelebung 2 Min',detail:'Korrekte Durchführung der Maßnahmen',tag:'Erste Hilfe'},
+        ]
+      },
+      lifesaver: {
+        swim:[
+          {title:'400m Schwimmen',detail:'Max. 15 Min · 100m Kraul + 150m Brust + 150m Rücken',tag:'Ausdauer'},
+          {title:'Sprung aus 3m',detail:'Oder 3 verschiedene Sprünge aus 1m Höhe',tag:'Technik'},
+          {title:'25m Streckentauchen',detail:'Start im Becken · Mindesttiefe ~1m',tag:'Tauchen'},
+          {title:'Tieftauchen 2×',detail:'Kopf & Fuß in 2 Min · 5kg · 3,5-5m Tiefe · 3s halten',tag:'Tauchen'},
+        ],
+        rescue:[
+          {title:'6 Befreiungstechniken',detail:'Demonstration + Erklärung an Land & im Wasser',tag:'Rettung'},
+          {title:'50m Transportschwimmen',detail:'Schieben oder Ziehen in max. 1:30 Min (Übungspuppe)',tag:'Rettung'},
+          {title:'300m in Kleidern',detail:'Max. 12 Min · Entkleiden im Wasser',tag:'Ausdauer'},
+          {title:'50m Schleppen bekleidet',detail:'Max. 4 Min · beide Partner in Kleidung',tag:'Rettung'},
+          {title:'Kombinierte Übung',detail:'Anschwimmen → Retten aus 3,5-5m → Befreiung → Schleppen → WB',tag:'Komplex'},
+        ],
+        theory:[
+          {title:'Wiederbelebung 3 Min',detail:'Korrekte Durchführung der Maßnahmen',tag:'Erste Hilfe'},
+          {title:'Theoretische Prüfung',detail:'Fragebogen schriftlich',tag:'Theorie'},
+        ]
+      }
+    },
+    notifyMsg: (name, pct) => `📱 Eltern von ${name} wurden benachrichtigt! (Fortschritt: ${pct}%)`,
+    childAdded: (name) => `✓ ${name} wurde hinzugefügt!`,
+    classAdded: (name) => `✓ Klasse "${name}" erstellt!`,
+    ui: { name:'Name', level:'Stufe', class:'Klasse', progress:'Fortschritt', open:'Öffnen →', children:'Kinder', teacher:'Lehrer', action:'Aktion', enterProgress:'Fortschritt eintragen →', overallProgress:'Gesamtfortschritt', noteLabel:'📝 Notiz hinterlassen', notePlaceholder:'Notiz für die Eltern...', notifPreview:'📱 Vorschau Eltern-Nachricht', teacherMsg:(teacher,child,note,pct)=>`Hallo, eine Nachricht von Lehrer ${teacher} über ${child}: "${note}" — Fortschritt: ${pct}%`, swimPassLabel:'Schwimmpass', lastMsg:'Letzte Nachricht vom Lehrer', hoursAgo:'vor 2 Stunden', kidCount:'Kinder', teacherLbl:'Lehrer' },
+  },
+  fr: {
+    nav: {
+      admin: [
+        {id:'dashboard',icon:'📊',label:'Tableau de bord'},
+        {id:'children',icon:'👦',label:'Enfants'},
+        {id:'classes',icon:'🏊',label:'Classes'},
+      ],
+      teacher: [
+        {id:'teacher',icon:'🏊',label:'Mes classes'},
+        {id:'children',icon:'👦',label:'Tous les enfants'},
+      ],
+      parent: [
+        {id:'parent',icon:'🌊',label:'Mon enfant'},
+      ]
+    },
+    roleLabels: {admin:'Administrateur',teacher:'Maître nageur',parent:'Parent'},
+    tabs: {swim:'Natation',rescue:'Sauvetage',theory:'Théorie'},
+    criteria: {
+      junior: {
+        swim:[
+          {title:'200m de natation',detail:'Max. 10 min · 100m ventre + 100m dos (brasse)',tag:'Endurance'},
+          {title:'Saut de départ',detail:'Depuis ~1m · plongeon, pied ou tête',tag:'Technique'},
+          {title:'15m en apnée',detail:'Départ dans le bassin · profondeur min. ~1m',tag:'Plongée'},
+          {title:'Plongée profonde 2×',detail:'Tête & pieds en 3 min · objet 5kg · 2-3m',tag:'Plongée'},
+        ],
+        rescue:[
+          {title:'Dégagements',detail:'Étreintes & prises (terre + eau)',tag:'Sauvetage'},
+          {title:'50m remorquage',detail:'Prise tête/aisselle + entrave',tag:'Sauvetage'},
+          {title:'100m en vêtements',detail:'Max. 4 min · déshabillage dans l\'eau',tag:'Endurance'},
+          {title:'Exercice combiné',detail:'20m nage → sauvetage → 20m remorquage → PLS',tag:'Complexe'},
+        ],
+        theory:[
+          {title:'RCP 2 minutes',detail:'Réanimation cardio-pulmonaire correcte',tag:'Premiers secours'},
+        ]
+      },
+      lifesaver: {
+        swim:[
+          {title:'400m de natation',detail:'Max. 15 min · 100m crawl + 150m brasse + 150m dos',tag:'Endurance'},
+          {title:'Saut depuis 3m',detail:'Ou 3 sauts différents depuis 1m',tag:'Technique'},
+          {title:'25m en apnée',detail:'Départ dans le bassin · profondeur min. ~1m',tag:'Plongée'},
+          {title:'Plongée profonde 2×',detail:'En 2 min · 5kg · 3,5-5m · tenir 3s',tag:'Plongée'},
+        ],
+        rescue:[
+          {title:'6 techniques de dégagement',detail:'Démonstration + explication terre & eau',tag:'Sauvetage'},
+          {title:'50m transport',detail:'Pousser ou tirer en max. 1:30 min (mannequin)',tag:'Sauvetage'},
+          {title:'300m en vêtements',detail:'Max. 12 min · déshabillage dans l\'eau',tag:'Endurance'},
+          {title:'50m remorquage habillé',detail:'Max. 4 min · les deux habillés',tag:'Sauvetage'},
+          {title:'Exercice combiné',detail:'Nage → sauvetage → dégagement → remorquage → RCP',tag:'Complexe'},
+        ],
+        theory:[
+          {title:'RCP 3 minutes',detail:'Réanimation cardio-pulmonaire correcte',tag:'Premiers secours'},
+          {title:'Examen théorique',detail:'Questionnaire écrit',tag:'Théorie'},
+        ]
+      }
+    },
+    notifyMsg: (name, pct) => `📱 Parents de ${name} notifiés ! (Progression : ${pct}%)`,
+    childAdded: (name) => `✓ ${name} a été ajouté(e) !`,
+    classAdded: (name) => `✓ Classe "${name}" créée !`,
+    ui: { name:'Nom', level:'Niveau', class:'Classe', progress:'Progression', open:'Ouvrir →', children:'Enfants', teacher:'Professeur', action:'Action', enterProgress:'Saisir la progression →', overallProgress:'Progression globale', noteLabel:'📝 Laisser une note', notePlaceholder:'Note pour les parents...', notifPreview:'📱 Aperçu message parents', teacherMsg:(teacher,child,note,pct)=>`Bonjour, un message du prof ${teacher} sur ${child} : "${note}" — Progression : ${pct}%`, swimPassLabel:'Passeport natation', lastMsg:'Dernier message du professeur', hoursAgo:'il y a 2 heures', kidCount:'Enfants', teacherLbl:'Professeur' },
+  },
+  lu: {
+    nav: {
+      admin: [
+        {id:'dashboard',icon:'📊',label:'Iwwersiicht'},
+        {id:'children',icon:'👦',label:'Kanner'},
+        {id:'classes',icon:'🏊',label:'Klassen'},
+      ],
+      teacher: [
+        {id:'teacher',icon:'🏊',label:'Meng Klassen'},
+        {id:'children',icon:'👦',label:'All Kanner'},
+      ],
+      parent: [
+        {id:'parent',icon:'🌊',label:'Mee Kand'},
+      ]
+    },
+    roleLabels: {admin:'Administrateur',teacher:'Schwammlehrer',parent:'Elterendeel'},
+    tabs: {swim:'Schwammen',rescue:'Rettung',theory:'Theorie'},
+    criteria: {
+      junior: {
+        swim:[
+          {title:'200m schwammen',detail:'Max. 10 Min · 100m Bauch + 100m Réck (Grätschen)',tag:'Ausdauer'},
+          {title:'Startsprong',detail:'Vun ~1m · Schrëtt, Fouss oder Kapp',tag:'Technik'},
+          {title:'15m Streckentauchen',detail:'Start am Becken · Mindesttieft ~1m',tag:'Tauchen'},
+          {title:'Déifstauchen 2×',detail:'Kapp & Fouss a 3 Min · 5kg · 2-3m',tag:'Tauchen'},
+        ],
+        rescue:[
+          {title:'Befreiungsgriffer',detail:'Ëmklammerongen & Würgegriffer (Land + Waasser)',tag:'Rettung'},
+          {title:'50m Schleppen',detail:'Kapp-/Achselgrëff + Fesselschleppgrëff',tag:'Rettung'},
+          {title:'100m a Kleeder',detail:'Max. 4 Min · Kleeder am Waasser auszzéien',tag:'Ausdauer'},
+          {title:'Kombinéiert Übung',detail:'20m Anschwammen → Rettung → 20m Schleppen → Saitlag',tag:'Komplex'},
+        ],
+        theory:[
+          {title:'Wiederbelebung 2 Min',detail:'Korrekt Duerchféierung',tag:'Éischt Hëllef'},
+        ]
+      },
+      lifesaver: {
+        swim:[
+          {title:'400m schwammen',detail:'Max. 15 Min · 100m Kraul + 150m Brust + 150m Réck',tag:'Ausdauer'},
+          {title:'Sprong vun 3m',detail:'Oder 3 verschidde Sprong vun 1m',tag:'Technik'},
+          {title:'25m Streckentauchen',detail:'Start am Becken · Mindesttieft ~1m',tag:'Tauchen'},
+          {title:'Déifstauchen 2×',detail:'A 2 Min · 5kg · 3,5-5m · 3s halen',tag:'Tauchen'},
+        ],
+        rescue:[
+          {title:'6 Befreiungstechniken',detail:'Demonstratioun + Erklärung Land & Waasser',tag:'Rettung'},
+          {title:'50m Transportschwammen',detail:'Schieben oder Zéien max. 1:30 Min',tag:'Rettung'},
+          {title:'300m a Kleeder',detail:'Max. 12 Min · Kleeder am Waasser',tag:'Ausdauer'},
+          {title:'50m Schleppen a Kleeder',detail:'Max. 4 Min · béid Partner a Kleeder',tag:'Rettung'},
+          {title:'Kombinéiert Übung',detail:'Schwammen → Rettung → Befreiung → Schleppen → WB',tag:'Komplex'},
+        ],
+        theory:[
+          {title:'Wiederbelebung 3 Min',detail:'Korrekt Duerchféierung',tag:'Éischt Hëllef'},
+          {title:'Theoretesch Prüfung',detail:'Schriftleche Fragebou',tag:'Theorie'},
+        ]
+      }
+    },
+    notifyMsg: (name, pct) => `📱 Elteren vun ${name} goufen informéiert! (Fortschrëtt: ${pct}%)`,
+    childAdded: (name) => `✓ ${name} gouf derbäigesat!`,
+    classAdded: (name) => `✓ Klass "${name}" erstallt!`,
+    ui: { name:'Numm', level:'Niveau', class:'Klass', progress:'Fortschrëtt', open:'Opmaachen →', children:'Kanner', teacher:'Lehrer', action:'Aktioun', enterProgress:'Fortschrëtt astellen →', overallProgress:'Gesamtfortschrëtt', noteLabel:'📝 Notiz hannerloossen', notePlaceholder:'Notiz fir d\'Elteren...', notifPreview:'📱 Virschau Elteren-Noriicht', teacherMsg:(teacher,child,note,pct)=>`Bonjour, eng Noriicht vum Lehrer ${teacher} iwwer ${child}: "${note}" — Fortschrëtt: ${pct}%`, swimPassLabel:'Schwammpass', lastMsg:'Lescht Noriicht vum Lehrer', hoursAgo:'viru 2 Stonnen', kidCount:'Kanner', teacherLbl:'Lehrer' },
+  },
+  en: {
+    nav: {
+      admin: [
+        {id:'dashboard',icon:'📊',label:'Dashboard'},
+        {id:'children',icon:'👦',label:'Children'},
+        {id:'classes',icon:'🏊',label:'Classes'},
+      ],
+      teacher: [
+        {id:'teacher',icon:'🏊',label:'My classes'},
+        {id:'children',icon:'👦',label:'All children'},
+      ],
+      parent: [
+        {id:'parent',icon:'🌊',label:'My child'},
+      ]
+    },
+    roleLabels: {admin:'Administrator',teacher:'Swimming teacher',parent:'Parent'},
+    tabs: {swim:'Swimming',rescue:'Rescue',theory:'Theory'},
+    criteria: {
+      junior: {
+        swim:[
+          {title:'200m swimming',detail:'Max. 10 min · 100m front + 100m back (breaststroke kick)',tag:'Endurance'},
+          {title:'Starting jump',detail:'Jump from ~1m · step, foot or head dive',tag:'Technique'},
+          {title:'15m underwater swim',detail:'Start in pool · minimum depth ~1m',tag:'Diving'},
+          {title:'Deep dive 2×',detail:'Head & feet in 3 min · 5kg object · 2-3m depth',tag:'Diving'},
+        ],
+        rescue:[
+          {title:'Release grips',detail:'Release from holds & chokes (land + water)',tag:'Rescue'},
+          {title:'50m tow',detail:'Head/armpit grip + restraint tow grip',tag:'Rescue'},
+          {title:'100m in clothes',detail:'Max. 4 min · undress in water',tag:'Endurance'},
+          {title:'Combined exercise',detail:'20m swim → rescue → 20m tow → recovery position',tag:'Complex'},
+        ],
+        theory:[
+          {title:'Resuscitation 2 min',detail:'Correct CPR execution',tag:'First aid'},
+        ]
+      },
+      lifesaver: {
+        swim:[
+          {title:'400m swimming',detail:'Max. 15 min · 100m crawl + 150m breast + 150m back',tag:'Endurance'},
+          {title:'Jump from 3m',detail:'Or 3 different jumps from 1m height',tag:'Technique'},
+          {title:'25m underwater swim',detail:'Start in pool · minimum depth ~1m',tag:'Diving'},
+          {title:'Deep dive 2×',detail:'In 2 min · 5kg · 3.5-5m · hold 3s',tag:'Diving'},
+        ],
+        rescue:[
+          {title:'6 release techniques',detail:'Demonstration + explanation on land & in water',tag:'Rescue'},
+          {title:'50m transport swim',detail:'Push or pull max. 1:30 min (training dummy)',tag:'Rescue'},
+          {title:'300m in clothes',detail:'Max. 12 min · undress in water',tag:'Endurance'},
+          {title:'50m tow in clothes',detail:'Max. 4 min · both partners in clothes',tag:'Rescue'},
+          {title:'Combined exercise',detail:'Swim → rescue → release → tow → CPR',tag:'Complex'},
+        ],
+        theory:[
+          {title:'Resuscitation 3 min',detail:'Correct CPR execution',tag:'First aid'},
+          {title:'Theory exam',detail:'Written questionnaire',tag:'Theory'},
+        ]
+      }
+    },
+    notifyMsg: (name, pct) => `📱 Parents of ${name} notified! (Progress: ${pct}%)`,
+    childAdded: (name) => `✓ ${name} has been added!`,
+    classAdded: (name) => `✓ Class "${name}" created!`,
+    ui: { name:'Name', level:'Level', class:'Class', progress:'Progress', open:'Open →', children:'Children', teacher:'Teacher', action:'Action', enterProgress:'Enter progress →', overallProgress:'Overall progress', noteLabel:'📝 Leave a note', notePlaceholder:'Note for parents...', notifPreview:'📱 Parent message preview', teacherMsg:(teacher,child,note,pct)=>`Hello, a message from teacher ${teacher} about ${child}: "${note}" — Progress: ${pct}%`, swimPassLabel:'Swim pass', lastMsg:'Last message from teacher', hoursAgo:'2 hours ago', kidCount:'Children', teacherLbl:'Teacher' },
+  }
+};
+
+let children = [
+  {id:1,first:'Luca',last:'M.',birth:'2013-04-12',level:'junior',classId:'mi17',email:'luca.eltern@email.com',emoji:'👦',checked:{swim:new Set([0]),rescue:new Set(),theory:new Set()}},
+  {id:2,first:'Emma',last:'K.',birth:'2012-09-03',level:'lifesaver',classId:'fr16',email:'emma.eltern@email.com',emoji:'👧',checked:{swim:new Set([0,1,2]),rescue:new Set([0]),theory:new Set()}},
+  {id:3,first:'Noah',last:'B.',birth:'2013-11-22',level:'junior',classId:'sa10',email:'noah.eltern@email.com',emoji:'🧒',checked:{swim:new Set([0,1]),rescue:new Set([0,1]),theory:new Set([0])}},
+  {id:4,first:'Sara',last:'L.',birth:'2014-02-15',level:'junior',classId:'mi17',email:'sara.eltern@email.com',emoji:'👧',checked:{swim:new Set(),rescue:new Set(),theory:new Set()}},
+];
+
+let classes = [
+  {id:'mi17',name:'Junior Lifesaver A',day:'Mittwoch',time:'17:00',teacher:'Andy',level:'junior'},
+  {id:'fr16',name:'Lifesaver Pro',day:'Freitag',time:'16:00',teacher:'Andy',level:'lifesaver'},
+  {id:'sa10',name:'Junior Lifesaver B',day:'Samstag',time:'10:00',teacher:'Ana',level:'junior'},
+];
+
+// ═══════════════════════════════════════
+// ROLE & LANG
+// ═══════════════════════════════════════
+function setRole(r) {
+  role = r;
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`role-${r}`).classList.add('active');
+  document.getElementById('sb-role-label').textContent = T[lang].roleLabels[r];
+  renderNav();
+  const firstPage = T[lang].nav[r][0].id;
+  showPage(firstPage);
+}
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-pill').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.lang-pill[onclick="setLang('${l}')"]`).classList.add('active');
+  document.getElementById('sb-role-label').textContent = T[lang].roleLabels[role];
+  renderNav();
+  renderAll();
+}
+
+// ═══════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════
+function renderNav() {
+  const nav = document.getElementById('sb-nav');
+  nav.innerHTML = '';
+  T[lang].nav[role].forEach(item => {
+    const el = document.createElement('div');
+    el.className = `sb-item${currentPage===item.id?' active':''}`;
+    el.innerHTML = `<span class="icon">${item.icon}</span>${item.label}`;
+    el.onclick = () => showPage(item.id);
+    nav.appendChild(el);
+  });
+}
+
+function showPage(id) {
+  currentPage = id;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg = document.getElementById(`page-${id}`);
+  if(pg) pg.classList.add('active');
+  renderNav();
+  renderAll();
+}
+
+// ═══════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════
+function renderAll() {
+  renderStats();
+  renderClassOverview();
+  renderDashTable();
+  renderChildTable();
+  renderClassesGrid();
+  renderTeacherTable();
+  renderParent();
+  if(detailChildId) renderChildDetail(detailChildId);
+}
+
+// ─── STATS ───
+function getProgress(child) {
+  const t = T[lang].criteria[child.level];
+  const total = Object.values(t).reduce((s,a)=>s+a.length,0);
+  const done = Object.values(child.checked).reduce((s,set)=>s+set.size,0);
+  return total>0?Math.round(done/total*100):0;
+}
+
+function renderStats() {
+  document.getElementById('stat-children').textContent = children.length;
+  const avg = children.length? Math.round(children.reduce((s,c)=>s+getProgress(c),0)/children.length) : 0;
+  document.getElementById('stat-avg').textContent = avg+'%';
+}
+
+// ─── CLASS OVERVIEW ───
+function renderClassOverview() {
+  const el = document.getElementById('class-overview-list');
+  if(!el) return;
+  el.innerHTML = classes.map(c=>{
+    const kids = children.filter(ch=>ch.classId===c.id);
+    const avg = kids.length? Math.round(kids.reduce((s,ch)=>s+getProgress(ch),0)/kids.length):0;
+    return `<div class="card" style="padding:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:13px;font-weight:600;">${c.name}</div>
+        <div class="badge badge-muted">${c.day} ${c.time}</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${kids.length} ${T[lang].ui.kidCount} · ${c.teacher}</div>
+      <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:${avg}%"></div></div><div class="prog-pct">${avg}%</div></div>
+    </div>`;
+  }).join('');
+}
+
+// ─── TABLES ───
+function childRow(c, showDetail=true) {
+  const pct = getProgress(c);
+  const ui = T[lang].ui;
+  return `<tr>
+    <td><div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--light));display:flex;align-items:center;justify-content:center;font-size:15px;">${c.emoji}</div>
+      <div><div style="font-size:13px;font-weight:600;">${c.first} ${c.last}</div><div style="font-size:10px;color:var(--muted);">${c.email}</div></div>
+    </div></td>
+    <td><div class="badge ${c.level==='lifesaver'?'badge-gold':'badge-blue'}">Lifesaver${c.level==='junior'?' Junior':''}</div></td>
+    <td><div style="font-size:12px;color:var(--muted);">${classes.find(cl=>cl.id===c.classId)?.name||'—'}</div></td>
+    <td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><div class="prog-pct">${pct}%</div></div></td>
+    ${showDetail?`<td><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="openChildDetail(${c.id})">${ui.open}</button></td>`:''}
+  </tr>`;
+}
+
+function renderDashTable() {
+  const el = document.getElementById('dash-child-table');
+  if(!el) return;
+  const ui = T[lang].ui;
+  const shown = children.slice(0,4);
+  el.innerHTML = `<table><thead><tr><th>${ui.name}</th><th>${ui.level}</th><th>${ui.class}</th><th>${ui.progress}</th><th></th></tr></thead><tbody>${shown.map(c=>childRow(c)).join('')}</tbody></table>`;
+}
+
+function renderChildTable() {
+  const el = document.getElementById('child-table');
+  if(!el) return;
+  const ui = T[lang].ui;
+  const q = (document.getElementById('child-search')?.value||'').toLowerCase();
+  const filtered = children.filter(c=>`${c.first} ${c.last}`.toLowerCase().includes(q));
+  el.innerHTML = `<table><thead><tr><th>${ui.name}</th><th>${ui.level}</th><th>${ui.class}</th><th>${ui.progress}</th><th></th></tr></thead><tbody>${filtered.map(c=>childRow(c)).join('')}</tbody></table>`;
+}
+
+// ─── CLASSES GRID ───
+function renderClassesGrid() {
+  const el = document.getElementById('classes-grid');
+  if(!el) return;
+  el.innerHTML = classes.map(c=>{
+    const kids = children.filter(ch=>ch.classId===c.id);
+    const avg = kids.length? Math.round(kids.reduce((s,ch)=>s+getProgress(ch),0)/kids.length):0;
+    return `<div class="class-card">
+      <div class="cc-header">
+        <div class="cc-name">${c.name}</div>
+        <div class="badge ${c.level==='lifesaver'?'badge-gold':'badge-blue'}">${c.level==='lifesaver'?'LS':'JLS'}</div>
+      </div>
+      <div class="cc-meta">${c.day} · ${c.time} · ${c.teacher}</div>
+      <div class="prog-wrap" style="margin-bottom:10px;"><div class="prog-bar"><div class="prog-fill" style="width:${avg}%"></div></div><div class="prog-pct">${avg}%</div></div>
+      <div class="cc-stat">
+        <div class="cc-stat-item">${T[lang].ui.kidCount}: <span>${kids.length}</span></div>
+        <div class="cc-stat-item">${T[lang].ui.teacherLbl}: <span>${c.teacher}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── TEACHER TABLE ───
+function renderTeacherTable() {
+  const el = document.getElementById('teacher-table');
+  if(!el) return;
+  const ui = T[lang].ui;
+  const myKids = children.filter(c=>c.classId==='mi17');
+  el.innerHTML = `<table><thead><tr><th>${ui.name}</th><th>${ui.level}</th><th>${ui.progress}</th><th>${ui.action}</th></tr></thead><tbody>${myKids.map(c=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:8px;"><div style="font-size:18px;">${c.emoji}</div><div style="font-size:13px;font-weight:600;">${c.first} ${c.last}</div></div></td>
+    <td><div class="badge badge-blue">Junior Lifesaver</div></td>
+    <td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:${getProgress(c)}%"></div></div><div class="prog-pct">${getProgress(c)}%</div></div></td>
+    <td><button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="openChildDetail(${c.id})">${ui.enterProgress}</button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+// ─── PARENT VIEW ───
+function renderParent() {
+  const el = document.getElementById('parent-content');
+  if(!el) return;
+  const child = children[0];
+  const pct = getProgress(child);
+  const t = T[lang];
+  el.innerHTML = `
+    <div class="child-detail-header">
+      <div class="child-big-avatar">${child.emoji}</div>
+      <div class="child-detail-info">
+        <div class="child-detail-name">${child.first} ${child.last}</div>
+        <div class="child-detail-meta">Junior Lifesaver · Mittwoch 17:00</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--aqua);">${pct}%</div>
+        <div style="font-size:11px;color:var(--muted);">${t.ui.progress}</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="font-size:22px;">📢</div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--gold);">${t.ui.lastMsg}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${t.ui.hoursAgo}</div></div>
+      </div>
+      <div style="font-size:13px;line-height:1.6;background:rgba(244,165,26,.07);border:1px solid rgba(244,165,26,.15);border-radius:10px;padding:12px;">
+        ${child.first} macht tolle Fortschritte! Das Streckentauchen klappt bereits sehr gut. Als nächstes üben wir das Tieftauchen. Bitte übt zuhause das Tauchen wenn möglich. 🏊
+      </div>
+    </div>
+    ${renderCriteriaReadOnly(child)}
+  `;
+}
+
+function renderCriteriaReadOnly(child) {
+  const t = T[lang].criteria[child.level];
+  const ui = T[lang].ui;
+  return `<div class="card">
+    <div class="card-title">${ui.swimPassLabel} · ${child.level==='junior'?'Junior Lifesaver':'Lifesaver'}</div>
+    <div class="criteria-tabs">${['swim','rescue','theory'].map(tab=>`<button class="ctab${detailTab===tab?' active':''}" onclick="setParentTab('${tab}')">${T[lang].tabs[tab]}</button>`).join('')}</div>
+    <div class="crit-list">${(t[detailTab]||[]).map((c,i)=>{
+      const done = child.checked[detailTab]?.has(i);
+      return `<div class="crit-item${done?' done':''}">
+        <div class="crit-check">${done?'✓':''}</div>
+        <div class="crit-text"><div class="crit-title">${c.title}</div><div class="crit-detail">${c.detail}</div></div>
+        <div class="crit-tag">${c.tag}</div>
+      </div>`;
+    }).join('')}</div>
+  </div>`;
+}
+
+function setParentTab(tab) {
+  detailTab = tab;
+  renderParent();
+}
+
+// ─── CHILD DETAIL ───
+function openChildDetail(id) {
+  detailChildId = id;
+  detailTab = 'swim';
+  showPage('child-detail');
+}
+
+function renderChildDetail(id) {
+  const child = children.find(c=>c.id===id);
+  if(!child) return;
+  const el = document.getElementById('child-detail-content');
+  const pct = getProgress(child);
+  const t = T[lang].criteria[child.level];
+  document.getElementById('ttl-child-detail').textContent = `${child.first} ${child.last}`;
+
+  el.innerHTML = `
+    <div class="grid-2" style="margin-bottom:18px;">
+      <div>
+        <div class="child-detail-header" style="margin-bottom:16px;">
+          <div class="child-big-avatar">${child.emoji}</div>
+          <div class="child-detail-info">
+            <div class="child-detail-name">${child.first} ${child.last}</div>
+            <div class="child-detail-meta">${child.level==='junior'?'Junior Lifesaver':'Lifesaver'} · ${classes.find(c=>c.id===child.classId)?.name||''}</div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:12px;color:var(--muted);">${T[lang].ui.overallProgress}</div>
+            <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--aqua);">${pct}%</div>
+          </div>
+          <div class="prog-bar" style="height:10px;"><div class="prog-fill" style="width:${pct}%;"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">${T[lang].ui.noteLabel}</div>
+          <textarea id="teacher-note" placeholder="${T[lang].ui.notePlaceholder}" style="width:100%;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;resize:none;height:80px;outline:none;margin-bottom:10px;"></textarea>
+          <div id="notif-prev" class="notif-preview" style="display:none;">
+            <div class="notif-preview-title">${T[lang].ui.notifPreview}</div>
+            <div class="notif-preview-text" id="notif-prev-text"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="criteria-tabs">${['swim','rescue','theory'].map(tab=>`<button class="ctab${detailTab===tab?' active':''}" onclick="setDetailTab('${tab}',${id})">${T[lang].tabs[tab]}</button>`).join('')}</div>
+        <div class="crit-list" id="detail-crit-list">
+          ${(t[detailTab]||[]).map((c,i)=>{
+            const done = child.checked[detailTab]?.has(i);
+            return `<div class="crit-item${done?' done':''}" onclick="toggleCrit(${id},'${detailTab}',${i})">
+              <div class="crit-check">${done?'✓':''}</div>
+              <div class="crit-text"><div class="crit-title">${c.title}</div><div class="crit-detail">${c.detail}</div></div>
+              <div class="crit-tag">${c.tag}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Note preview
+  setTimeout(()=>{
+    const ta = document.getElementById('teacher-note');
+    if(ta) ta.oninput = () => {
+      const prev = document.getElementById('notif-prev');
+      const prevText = document.getElementById('notif-prev-text');
+      if(ta.value.trim()) {
+        prev.style.display='block';
+        prevText.textContent = T[lang].ui.teacherMsg('Andy', child.first, ta.value.trim(), pct);
+      } else { prev.style.display='none'; }
+    };
+  },50);
+}
+
+function setDetailTab(tab, id) {
+  detailTab = tab;
+  renderChildDetail(id);
+}
+
+function toggleCrit(childId, tab, idx) {
+  const child = children.find(c=>c.id===childId);
+  if(!child) return;
+  if(child.checked[tab].has(idx)) child.checked[tab].delete(idx);
+  else child.checked[tab].add(idx);
+  renderChildDetail(childId);
+  renderStats();
+}
+
+function notifyParents() {
+  if(!detailChildId) return;
+  const child = children.find(c=>c.id===detailChildId);
+  const pct = getProgress(child);
+  showToast(T[lang].notifyMsg(child.first, pct));
+}
+
+// ═══════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
+});
+
+function addChild() {
+  const first = document.getElementById('inp-firstname').value.trim();
+  const last = document.getElementById('inp-lastname').value.trim();
+  const level = document.getElementById('inp-level').value;
+  const classId = document.getElementById('inp-class').value;
+  const email = document.getElementById('inp-parent-email').value.trim();
+  if(!first||!last) return;
+  const emojis = ['👦','👧','🧒','👶'];
+  const newChild = {
+    id: Date.now(), first, last,
+    birth: document.getElementById('inp-birthdate').value,
+    level, classId, email,
+    emoji: emojis[Math.floor(Math.random()*emojis.length)],
+    checked: {swim:new Set(),rescue:new Set(),theory:new Set()}
+  };
+  children.push(newChild);
+  closeModal('modal-add-child');
+  document.getElementById('inp-firstname').value='';
+  document.getElementById('inp-lastname').value='';
+  document.getElementById('inp-parent-email').value='';
+  renderAll();
+  showToast(T[lang].childAdded(`${first} ${last}`));
+}
+
+function addClass() {
+  const name = document.getElementById('inp-classname').value.trim();
+  const day = document.getElementById('inp-day').value;
+  const time = document.getElementById('inp-time').value;
+  const teacher = document.getElementById('inp-teacher-sel').value;
+  if(!name) return;
+  const id = name.toLowerCase().replace(/\s/g,'') + Date.now();
+  classes.push({id, name, day, time, teacher, level:'junior'});
+  closeModal('modal-add-class');
+  document.getElementById('inp-classname').value='';
+  renderAll();
+  showToast(T[lang].classAdded(name));
+}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+renderNav();
+renderAll();
+</script>
+</body>
+</html>

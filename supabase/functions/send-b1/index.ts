@@ -1,0 +1,143 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+
+  try {
+    const { courseId } = await req.json()
+    if (!courseId) return json({ error: 'courseId fehlt' }, 400)
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    )
+
+    const { data: course } = await supabase
+      .from('sauvetage_courses')
+      .select('*')
+      .eq('id', courseId)
+      .single()
+
+    if (!course) return json({ error: 'Kurs nicht gefunden' }, 404)
+
+    const { data: participants } = await supabase
+      .from('sauvetage_participants')
+      .select('*')
+      .eq('course_id', courseId)
+      .order('last_name')
+
+    const levelLabel = course.level === 'lifesaver' ? 'Lifesaver' : course.level === 'both' ? 'Junior Lifesaver & Lifesaver' : 'Junior Lifesaver'
+    const examDate = course.exam_date ? new Date(course.exam_date).toLocaleDateString('fr-LU') : '—'
+
+    const participantRows = (participants || []).map((p, i) => `
+      <tr style="border-bottom:1px solid #ddd;">
+        <td style="padding:8px;text-align:center;">${i + 1}</td>
+        <td style="padding:8px;">${p.last_name}</td>
+        <td style="padding:8px;">${p.first_name}</td>
+        <td style="padding:8px;">${p.birth_date ? new Date(p.birth_date).toLocaleDateString('fr-LU') : '—'}</td>
+        <td style="padding:8px;">${p.email || '—'}</td>
+      </tr>
+    `).join('')
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:700px;margin:0 auto;color:#111;padding:24px;">
+        <div style="background:#003366;color:white;padding:20px 24px;border-radius:8px 8px 0 0;margin-bottom:0;">
+          <div style="font-size:11px;letter-spacing:2px;opacity:.7;margin-bottom:4px;">FÉDÉRATION LUXEMBOURGEOISE DE NATATION ET DE SAUVETAGE</div>
+          <div style="font-size:22px;font-weight:700;">Formulaire B1 — Anmeldung Examen</div>
+          <div style="font-size:13px;opacity:.8;margin-top:4px;">${course.name} · ${levelLabel}</div>
+        </div>
+
+        <div style="background:#f5f5f5;border:1px solid #ddd;border-top:none;padding:20px 24px;margin-bottom:20px;border-radius:0 0 8px 8px;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:6px 0;width:200px;color:#666;font-size:13px;">Instrukteur — Nom:</td>
+              <td style="padding:6px 0;font-weight:600;">${course.instructor_name || '—'}</td>
+              <td style="padding:6px 0;width:200px;color:#666;font-size:13px;">Prénom:</td>
+              <td style="padding:6px 0;font-weight:600;">${course.instructor_firstname || '—'}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;color:#666;font-size:13px;">École:</td>
+              <td style="padding:6px 0;font-weight:600;">Letzschwamm Schwimmschule</td>
+              <td style="padding:6px 0;color:#666;font-size:13px;">Adresse:</td>
+              <td style="padding:6px 0;font-weight:600;">${course.instructor_address || '—'}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;color:#666;font-size:13px;">Tél.:</td>
+              <td style="padding:6px 0;font-weight:600;">${course.instructor_phone || '—'}</td>
+              <td style="padding:6px 0;color:#666;font-size:13px;">E-Mail:</td>
+              <td style="padding:6px 0;font-weight:600;">${course.instructor_email || '—'}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;color:#666;font-size:13px;">Date prévue examen:</td>
+              <td style="padding:6px 0;font-weight:700;color:#003366;font-size:15px;">${examDate}</td>
+              <td style="padding:6px 0;color:#666;font-size:13px;">Niveau:</td>
+              <td style="padding:6px 0;font-weight:600;">${levelLabel}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="font-weight:700;font-size:15px;margin-bottom:12px;">
+          Participants (${(participants || []).length})
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#003366;color:white;">
+              <th style="padding:10px;text-align:center;width:40px;">N°</th>
+              <th style="padding:10px;text-align:left;">Nom</th>
+              <th style="padding:10px;text-align:left;">Prénom</th>
+              <th style="padding:10px;text-align:left;">Date de naissance</th>
+              <th style="padding:10px;text-align:left;">Adresse e-mail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${participantRows || '<tr><td colspan="5" style="padding:12px;text-align:center;color:#666;">Keine Teilnehmer</td></tr>'}
+          </tbody>
+        </table>
+
+        <div style="margin-top:24px;padding:16px;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;font-size:13px;">
+          <strong>Hinweis:</strong> Diese E-Mail wurde automatisch über die Letzschwamm-Plattform generiert und entspricht dem offiziellen FLNS Formulaire B1. Das originale Formular steht unter <a href="${Deno.env.get('APP_URL') || 'https://letzschwamm.vercel.app'}/Sauvetage_Formulaire_B1.xlsx">diesem Link</a> zum Download bereit.
+        </div>
+
+        <div style="margin-top:20px;font-size:11px;color:#999;border-top:1px solid #eee;padding-top:16px;">
+          Letzschwamm Schwimmschule Luxemburg · Gesendet via Letzschwamm-Plattform
+        </div>
+      </div>
+    `
+
+    const resendRes = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Letzschwamm <sauvetage@letzschwamm.lu>',
+        to: 'info@letzschwamm.com',
+        cc: 'info@letzschwamm.com',
+        subject: `FLNS Formulaire B1 — ${course.name} — Examen ${examDate}`,
+        html,
+      }),
+    })
+
+    if (!resendRes.ok) {
+      const err = await resendRes.text()
+      throw new Error(`Resend error: ${err}`)
+    }
+
+    // Mark B1 as sent
+    await supabase.from('sauvetage_courses').update({ b1_sent_at: new Date().toISOString() }).eq('id', courseId)
+
+    return json({ success: true })
+  } catch (err) {
+    return json({ error: err?.message ?? String(err) }, 500)
+  }
+})

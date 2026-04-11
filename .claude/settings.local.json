@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(sudo chown:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(pkill -f \"vite\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Bash(pbcopy)",
+      "Bash(pkill -f vite)",
+      "Bash(curl:*)",
+      "Bash(ipconfig getifaddr:*)",
+      "Bash(npx supabase:*)",
+      "Bash(supabase functions:*)",
+      "Read(//Users/andyschouller/.supabase/bin/**)",
+      "Bash(brew list:*)",
+      "Bash(brew install:*)",
+      "Bash(sh)",
+      "Bash(tar -xzf /tmp/supabase.tar.gz -C /tmp)",
+      "Bash(/tmp/supabase version:*)",
+      "Read(//private/tmp/**)",
+      "Bash(/tmp/supabase --version)",
+      "Bash(tar -tzf /tmp/supabase.tar.gz)",
+      "Bash(/tmp/supabase login:*)",
+      "Bash(/tmp/supabase functions:*)",
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_7b33ea70cfe7564c2c3422da1decc02d61f0afe0 /tmp/supabase functions logs register-parent --project-ref oltmevbiphpeezwbklrk)",
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_7b33ea70cfe7564c2c3422da1decc02d61f0afe0 /tmp/supabase --help)",
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_7b33ea70cfe7564c2c3422da1decc02d61f0afe0 /tmp/supabase functions deploy register-parent --project-ref oltmevbiphpeezwbklrk)",
+      "Bash(python3 -m json.tool)",
+      "Bash(node -e \"console.log\\('build check'\\)\")",
+      "Bash(python3 -c \"import pdfminer\")",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"PID: $!\")",
+      "Bash(python3 -c ':*)",
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_7b33ea70cfe7564c2c3422da1decc02d61f0afe0 /tmp/supabase functions:*)",
+      "Bash(node:*)",
+      "Bash(ls /tmp/supabase*)",
+      "Read(//usr/local/bin/**)"
+    ]
+  }
+}

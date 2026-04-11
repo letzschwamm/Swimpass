@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwimPass · Registrierung</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep: #001525;
+  --navy: #002540;
+  --blue: #0077B6;
+  --mid: #0096C7;
+  --light: #00B4D8;
+  --aqua: #48CAE4;
+  --foam: #ADE8F4;
+  --gold: #F4A51A;
+  --green: #22C55E;
+  --red: #EF4444;
+  --text: #E8F4FD;
+  --muted: #6EA8C8;
+  --border: rgba(144,220,240,0.15);
+  --card: rgba(255,255,255,0.06);
+  --r: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--deep);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* WATER BG */
+.bg {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse at 15% 85%, rgba(0,150,199,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 15%, rgba(0,119,182,0.15) 0%, transparent 55%),
+    linear-gradient(160deg, #001525 0%, #002540 50%, #003560 100%);
+}
+
+.wave {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 0;
+  height: 180px; opacity: 0.12;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 180'%3E%3Cpath fill='%2300B4D8' d='M0,96L48,101.3C96,107,192,117,288,112C384,107,480,85,576,90.7C672,96,768,128,864,133.3C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,320L0,320Z'/%3E%3C/svg%3E") no-repeat bottom/cover;
+  animation: waveAnim 6s ease-in-out infinite alternate;
+}
+@keyframes waveAnim { from{transform:translateX(-20px)} to{transform:translateX(20px)} }
+
+/* PHONE FRAME */
+.phone {
+  position: relative; z-index: 1;
+  width: 390px;
+  height: 780px;
+  background: var(--navy);
+  border-radius: 44px;
+  border: 1.5px solid var(--border);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 6px rgba(0,40,70,0.8), inset 0 1px 0 rgba(255,255,255,0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* NOTCH */
+.notch {
+  height: 34px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.notch-pill {
+  width: 100px; height: 28px;
+  background: #000;
+  border-radius: 0 0 20px 20px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.notch-cam { width: 10px; height: 10px; background: #1a1a1a; border-radius: 50%; border: 1.5px solid #333; }
+.notch-time { font-size: 11px; font-weight: 600; color: var(--text); position: absolute; left: 24px; top: 8px; }
+.notch-signal { position: absolute; right: 24px; top: 10px; font-size: 11px; }
+
+/* SCREEN */
+.screen {
+  flex: 1; overflow: hidden; position: relative;
+}
+
+.step {
+  position: absolute; inset: 0;
+  overflow-y: auto;
+  padding: 0 0 20px;
+  display: none;
+  flex-direction: column;
+  scrollbar-width: none;
+  animation: slideIn .35s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+.step::-webkit-scrollbar { display: none; }
+.step.active { display: flex; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideBack {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.step.back { animation: slideBack .35s cubic-bezier(0.34,1.2,0.64,1) both; }
+
+/* ── STEP 1: WELCOME ── */
+.welcome-hero {
+  padding: 32px 28px 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.welcome-logo {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, var(--light), var(--aqua));
+  border-radius: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 18px;
+  box-shadow: 0 8px 30px rgba(0,180,216,0.45);
+}
+.welcome-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 30px; font-weight: 800;
+  background: linear-gradient(135deg, #fff, var(--aqua));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+.welcome-sub {
+  font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 24px;
+}
+
+.feature-list {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 0 28px; margin-bottom: 24px;
+}
+.feature-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 14px;
+}
+.feature-icon { font-size: 20px; flex-shrink: 0; }
+.feature-text { font-size: 12px; line-height: 1.4; }
+.feature-text strong { display: block; font-weight: 600; margin-bottom: 1px; }
+
+.lang-row {
+  display: flex; gap: 5px; justify-content: center; margin: 0 28px 20px;
+}
+.lang-chip {
+  flex: 1; padding: 7px 4px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--muted); font-size: 11px; font-weight: 700;
+  cursor: pointer; text-align: center; transition: .2s;
+}
+.lang-chip.active { background: var(--light); color: var(--deep); border-color: var(--light); }
+
+/* ── STEP 2: CODE ── */
+.step-header {
+  padding: 20px 28px 16px;
+}
+.step-back {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--muted); font-size: 12px; cursor: pointer;
+  margin-bottom: 16px; width: fit-content;
+  transition: .2s;
+}
+.step-back:hover { color: var(--text); }
+
+.step-num {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--light); margin-bottom: 6px;
+}
+.step-title {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 4px;
+}
+.step-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.step-body { padding: 0 28px; flex: 1; }
+
+.code-input-wrap {
+  margin: 20px 0;
+  position: relative;
+}
+.code-input {
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 50px 16px 18px;
+  font-family: 'Syne', sans-serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1px;
+  outline: none;
+  transition: .2s;
+  text-transform: uppercase;
+}
+.code-input:focus { border-color: var(--light); background: rgba(0,180,216,0.08); }
+.code-input::placeholder { color: var(--muted); font-size: 14px; letter-spacing: 0; font-weight: 400; font-family: 'DM Sans', sans-serif; }
+.code-check { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 20px; }
+
+.code-hint {
+  background: rgba(244,165,26,0.08);
+  border: 1px solid rgba(244,165,26,0.2);
+  border-radius: 12px; padding: 12px 14px;
+  font-size: 12px; color: var(--text); line-height: 1.5;
+}
+.code-hint strong { color: var(--gold); }
+
+.code-found {
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.3);
+  border-radius: 12px; padding: 14px;
+  margin-top: 12px; display: none;
+}
+.code-found.show { display: block; animation: fadeIn .3s ease; }
+.cf-title { font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+.cf-detail { font-size: 12px; color: var(--text); }
+.cf-detail span { color: var(--aqua); font-weight: 600; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── STEP 3: REGISTER ── */
+.form-group { margin-bottom: 14px; }
+label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 5px; }
+input[type=text], input[type=email], input[type=date], input[type=password] {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 12px 14px;
+  color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+  outline: none; transition: .2s;
+}
+input:focus { border-color: var(--light); background: rgba(0,180,216,0.07); }
+input::placeholder { color: var(--muted); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.avatar-row {
+  display: flex; gap: 8px; margin-bottom: 14px;
+}
+.avatar-opt {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(255,255,255,0.07); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; cursor: pointer; transition: .2s;
+}
+.avatar-opt.selected { border-color: var(--light); background: rgba(0,180,216,0.15); box-shadow: 0 0 12px rgba(0,180,216,0.3); }
+
+/* ── STEP 4: PAYMENT ── */
+.plan-card {
+  background: linear-gradient(135deg, rgba(0,150,199,0.2), rgba(0,180,216,0.1));
+  border: 1.5px solid rgba(0,180,216,0.35);
+  border-radius: 16px; padding: 18px; margin-bottom: 16px;
+  text-align: center;
+}
+.plan-name { font-size: 11px; font-weight: 700; color: var(--light); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.plan-price { font-family: 'Syne', sans-serif; font-size: 38px; font-weight: 800; margin-bottom: 2px; }
+.plan-price span { font-size: 16px; font-weight: 400; color: var(--muted); }
+.plan-period { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+.plan-features { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.plan-feat { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.plan-feat::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+.stripe-badge {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 11px; color: var(--muted); margin-bottom: 14px;
+}
+.stripe-badge img { height: 16px; opacity: .7; }
+
+.card-input-wrap {
+  background: rgba(255,255,255,0.07); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 14px; margin-bottom: 10px;
+}
+.card-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.card-icons { display: flex; gap: 4px; }
+.card-icon {
+  width: 32px; height: 20px; background: rgba(255,255,255,.1);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--muted); font-weight: 700;
+}
+.card-num { flex: 1; background: transparent; border: none; color: var(--text); font-size: 13px; outline: none; font-family: 'DM Sans', sans-serif; }
+.card-num::placeholder { color: var(--muted); }
+.card-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.card-field { background: transparent; border: none; color: var(--text); font-size: 12px; outline: none; font-family: 'DM Sans', sans-serif; }
+.card-field::placeholder { color: var(--muted); }
+
+/* ── STEP 5: SUCCESS ── */
+.success-screen {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 28px; text-align: center;
+}
+.success-anim {
+  width: 90px; height: 90px;
+  background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.1));
+  border: 2px solid rgba(34,197,94,0.4);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 40px; margin-bottom: 22px;
+  animation: popIn .5s cubic-bezier(0.34,1.56,0.64,1) .2s both;
+  box-shadow: 0 0 30px rgba(34,197,94,0.25);
+}
+@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+.success-title {
+  font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 8px;
+}
+.success-sub { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+.success-child-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px; width: 100%; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.success-avatar { font-size: 32px; }
+.success-child-info { flex: 1; text-align: left; }
+.success-child-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+.success-child-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.success-badge { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: var(--green); }
+
+.admin-notif {
+  background: rgba(0,180,216,0.08); border: 1px solid rgba(0,180,216,0.2);
+  border-radius: 12px; padding: 12px 14px; width: 100%;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+}
+.admin-notif-icon { font-size: 18px; }
+.admin-notif-text { font-size: 11px; color: var(--text); line-height: 1.4; }
+.admin-notif-text strong { color: var(--aqua); }
+
+/* ── BOTTOM BUTTON ── */
+.bottom-btn {
+  padding: 0 28px 8px; flex-shrink: 0;
+  margin-top: auto;
+}
+.btn {
+  width: 100%; padding: 15px;
+  border-radius: 14px; border: none;
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: .25s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--mid), var(--light));
+  color: var(--deep);
+  box-shadow: 0 6px 20px rgba(0,180,216,0.35);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,180,216,0.45); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: .4; pointer-events: none; }
+.btn-ghost {
+  background: rgba(255,255,255,0.07); color: var(--text);
+  border: 1px solid var(--border);
+}
+
+/* PROGRESS DOTS */
+.progress-dots {
+  display: flex; justify-content: center; gap: 6px;
+  padding: 10px 0 6px; flex-shrink: 0;
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); transition: .3s;
+}
+.dot.active { background: var(--light); width: 18px; border-radius: 3px; }
+.dot.done { background: rgba(0,180,216,0.4); }
+
+/* LOADING */
+.loading-spinner {
+  width: 20px; height: 20px; border: 2px solid rgba(0,30,50,0.3);
+  border-top-color: var(--deep); border-radius: 50%;
+  animation: spin .6s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="wave"></div>
+
+<div class="phone">
+  <div class="notch">
+    <div class="notch-time">9:41</div>
+    <div class="notch-pill">
+      <div class="notch-cam"></div>
+    </div>
+    <div class="notch-signal">●●● 🔋</div>
+  </div>
+
+  <div class="screen">
+
+    <!-- ═══ STEP 1: WELCOME ═══ -->
+    <div class="step active" id="step-1">
+      <div class="welcome-hero">
+        <div class="welcome-logo">🌊</div>
+        <div class="welcome-title">SwimPass</div>
+        <div class="welcome-sub" id="ws-sub">Verfolgen Sie den Fortschritt Ihres Kindes beim Schwimmen — digital, einfach, in Echtzeit.</div>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <div class="feature-text"><strong id="f1t">Fortschritt in Echtzeit</strong><span id="f1s">Sehen Sie genau welche FLNS-Kriterien Ihr Kind schon geschafft hat</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📱</div>
+          <div class="feature-text"><strong id="f2t">Automatische Benachrichtigungen</strong><span id="f2s">Nach jeder Stunde erhalten Sie eine Nachricht vom Lehrer</span></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🏅</div>
+          <div class="feature-text"><strong id="f3t">Digitaler Schwimmpass</strong><span id="f3s">Junior Lifesaver & Lifesaver — offiziell nach FLNS-Standard</span></div>
+        </div>
+      </div>
+
+      <div class="lang-row">
+        <div class="lang-chip active" onclick="setLang('de',this)">🇩🇪 DE</div>
+        <div class="lang-chip" onclick="setLang('fr',this)">🇫🇷 FR</div>
+        <div class="lang-chip" onclick="setLang('lu',this)">🇱🇺 LU</div>
+        <div class="lang-chip" onclick="setLang('en',this)">🇬🇧 EN</div>
+      </div>
+
+      <div class="bottom-btn">
+        <button class="btn btn-primary" onclick="goStep(2)" id="btn-start">Jetzt starten →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 2: KURSCODE ═══ -->
+    <div class="step" id="step-2">
+      <div class="step-header">
+        <div class="step-back" onclick="goStep(1)">← <span id="back-lbl">Zurück</span></div>
+        <div class="step-num" id="sn2">Schritt 1 von 3</div>
+        <div class="step-title" id="st2">Kurscode eingeben</div>
+        <div class="step-sub" id="ss2">Sie haben einen Code von der Schwimmschule erhalten. Geben Sie ihn hier ein.</div>
+      </div>
+
+      <div class="step-body">
+        <div class="code-input-wrap">
+          <input class="code-input" id="code-input" placeholder="z.B. LETZSCHWAMM000001" oninput="checkCode(this.value)" maxlength="20">
+          <div class="code-check" id="code-check"></div>
+        </div>
+
+        <div class="code-hint">
+          <strong id="ch-title">💡 Wo finde ich den Code?</strong><br>
+          <span id="ch-text">Der Code wurde von Ihrer Schwimmschule per WhatsApp oder E-Mail verschickt. Er beginnt mit <strong>LETZSCHWAMM</strong>.</span>
+        </div>
+
+        <div class="code-found" id="code-found">
+          <div class="cf-title" id="cf-title">✅ Kurs gefunden!</div>
+          <div class="cf-detail">
+            <span id="cf-classname">Junior Lifesaver A</span> ·
+            <span id="cf-day">Mittwoch</span> <span id="cf-time">17:00</span><br>
+            <span id="cf-teacher-lbl">Lehrer:</span> <span id="cf-teacher">Andy</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-btn" style="margin-top:auto;">
+        <button class="btn btn-primary" id="btn-code-next" onclick="goStep(3)" disabled>Weiter →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 3: KIND REGISTRIEREN ═══ -->
+    <div class="step" id="step-3">
+      <div class="step-header">
+        <div class="step-back" onclick="goStep(2)">← <span id="back-lbl2">Zurück</span></div>
+        <div class="step-num" id="sn3">Schritt 2 von 3</div>
+        <div class="step-title" id="st3">Kind registrieren</div>
+        <div class="step-sub" id="ss3">Geben Sie die Daten Ihres Kindes ein.</div>
+      </div>
+
+      <div class="step-body">
+        <div style="margin-bottom:10px;">
+          <label id="lbl-avatar">Avatar wählen</label>
+          <div class="avatar-row">
+            <div class="avatar-opt selected" onclick="selectAvatar(this,'👦')">👦</div>
+            <div class="avatar-opt" onclick="selectAvatar(this,'👧')">👧</div>
+            <div class="avatar-opt" onclick="selectAvatar(this,'🧒')">🧒</div>
+            <div class="avatar-opt" onclick="selectAvatar(this,'🏊')">🏊</div>
+            <div class="avatar-opt" onclick="selectAvatar(this,'⭐')">⭐</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label id="lbl-fn">Vorname</label>
+            <input type="text" id="inp-fn" placeholder="Emma" oninput="checkStep3()">
+          </div>
+          <div class="form-group">
+            <label id="lbl-ln">Nachname</label>
+            <input type="text" id="inp-ln" placeholder="Müller" oninput="checkStep3()">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label id="lbl-bd">Geburtsdatum</label>
+          <input type="date" id="inp-bd" oninput="checkStep3()">
+        </div>
+
+        <div class="form-group">
+          <label id="lbl-email">Ihre E-Mail-Adresse</label>
+          <input type="email" id="inp-email" placeholder="eltern@email.com" oninput="checkStep3()">
+        </div>
+
+        <div class="form-group">
+          <label id="lbl-pw">Passwort erstellen</label>
+          <input type="password" id="inp-pw" placeholder="Mindestens 8 Zeichen" oninput="checkStep3()">
+        </div>
+      </div>
+
+      <div class="bottom-btn">
+        <button class="btn btn-primary" id="btn-reg-next" onclick="goStep(4)" disabled>Weiter zur Bezahlung →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 4: BEZAHLUNG ═══ -->
+    <div class="step" id="step-4">
+      <div class="step-header">
+        <div class="step-back" onclick="goStep(3)">← <span>Zurück</span></div>
+        <div class="step-num" id="sn4">Schritt 3 von 3</div>
+        <div class="step-title" id="st4">Jahresabo</div>
+        <div class="step-sub" id="ss4">Einmaliger Betrag pro Kind, pro Jahr.</div>
+      </div>
+
+      <div class="step-body">
+        <div class="plan-card">
+          <div class="plan-name" id="pn-lbl">SwimPass Jahresabo</div>
+          <div class="plan-price">35 <span>€</span></div>
+          <div class="plan-period" id="pp-lbl">pro Kind · pro Jahr</div>
+          <div class="plan-features">
+            <div class="plan-feat" id="pf1">Digitaler FLNS-Schwimmpass</div>
+            <div class="plan-feat" id="pf2">Fortschritt in Echtzeit</div>
+            <div class="plan-feat" id="pf3">Automatische Lehrer-Benachrichtigungen</div>
+            <div class="plan-feat" id="pf4">Junior Lifesaver & Lifesaver</div>
+          </div>
+        </div>
+
+        <div class="stripe-badge">
+          🔒 <span id="stripe-lbl">Sichere Zahlung via Stripe</span>
+        </div>
+
+        <div class="card-input-wrap">
+          <div class="card-row">
+            <div style="font-size:11px;color:var(--muted);flex-shrink:0;" id="card-num-lbl">Kartennummer</div>
+            <div style="flex:1;"></div>
+            <div class="card-icons">
+              <div class="card-icon">VISA</div>
+              <div class="card-icon">MC</div>
+              <div class="card-icon">AMX</div>
+            </div>
+          </div>
+          <input class="card-num" type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+          <div style="height:1px;background:var(--border);margin:10px 0;"></div>
+          <div class="card-bottom-row">
+            <input class="card-field" type="text" id="inp-expiry" placeholder="MM / JJ" maxlength="7" oninput="formatExpiry(this)">
+            <input class="card-field" type="text" placeholder="CVC" maxlength="3">
+          </div>
+        </div>
+
+        <div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:4px;" id="terms-lbl">
+          Mit der Zahlung stimmen Sie den AGB zu. Kündigung jederzeit möglich.
+        </div>
+      </div>
+
+      <div class="bottom-btn">
+        <button class="btn btn-primary" onclick="pay()" id="btn-pay">
+          <span id="btn-pay-lbl">35 € jetzt bezahlen 🔒</span>
+          <div class="loading-spinner" id="pay-spinner"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 5: SUCCESS ═══ -->
+    <div class="step" id="step-5">
+      <div class="success-screen">
+        <div class="success-anim">🎉</div>
+        <div class="success-title" id="succ-title">Alles bereit!</div>
+        <div class="success-sub" id="succ-sub">Ihr Kind wurde erfolgreich registriert. Der Lehrer kann den Fortschritt ab sofort eintragen.</div>
+
+        <div class="success-child-card">
+          <div class="success-avatar" id="succ-avatar">👦</div>
+          <div class="success-child-info">
+            <div class="success-child-name" id="succ-name">Emma M.</div>
+            <div class="success-child-meta" id="succ-meta">Junior Lifesaver A · Mittwoch 17:00</div>
+          </div>
+          <div class="success-badge" id="succ-badge">Aktiv ✓</div>
+        </div>
+
+        <div class="admin-notif">
+          <div class="admin-notif-icon">🔔</div>
+          <div class="admin-notif-text" id="admin-notif-text">
+            <strong>Andy wurde benachrichtigt!</strong><br>
+            Ihr Kind erscheint jetzt automatisch im Admin-Portal der Schwimmschule.
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="goStep(1);resetAll()">
+          <span id="btn-done">Zur App →</span>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /screen -->
+
+  <!-- PROGRESS DOTS -->
+  <div class="progress-dots" id="progress-dots">
+    <div class="dot active" id="dot-1"></div>
+    <div class="dot" id="dot-2"></div>
+    <div class="dot" id="dot-3"></div>
+    <div class="dot" id="dot-4"></div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+// ══════════════════════════
+// STATE
+// ══════════════════════════
+let currentStep = 1;
+let selectedAvatar = '👦';
+let lang = 'de';
+const validCodes = {
+  'LETZSCHWAMM000001': { className: 'Junior Lifesaver A', day: 'Mittwoch', time: '17:00', teacher: 'Andy' },
+  'LETZSCHWAMM000002': { className: 'Lifesaver Pro', day: 'Freitag', time: '16:00', teacher: 'Andy' },
+  'LETZSCHWAMM000003': { className: 'Junior Lifesaver B', day: 'Samstag', time: '10:00', teacher: 'Ana' },
+};
+
+// ══════════════════════════
+// TRANSLATIONS
+// ══════════════════════════
+const T = {
+  de: {
+    wsSub: 'Verfolgen Sie den Fortschritt Ihres Kindes beim Schwimmen — digital, einfach, in Echtzeit.',
+    f1t:'Fortschritt in Echtzeit', f1s:'Sehen Sie genau welche FLNS-Kriterien Ihr Kind schon geschafft hat',
+    f2t:'Automatische Benachrichtigungen', f2s:'Nach jeder Stunde erhalten Sie eine Nachricht vom Lehrer',
+    f3t:'Digitaler Schwimmpass', f3s:'Junior Lifesaver & Lifesaver — offiziell nach FLNS-Standard',
+    btnStart:'Jetzt starten →',
+    back:'← Zurück',
+    sn2:'Schritt 1 von 3', st2:'Kurscode eingeben', ss2:'Sie haben einen Code von der Schwimmschule erhalten.',
+    chTitle:'💡 Wo finde ich den Code?', chText:'Der Code wurde per WhatsApp verschickt. Er beginnt mit LETZSCHWAMM.',
+    cfTitle:'✅ Kurs gefunden!', cfTeacherLbl:'Lehrer:',
+    btnCodeNext:'Weiter →',
+    sn3:'Schritt 2 von 3', st3:'Kind registrieren', ss3:'Geben Sie die Daten Ihres Kindes ein.',
+    lblAvatar:'Avatar wählen', lblFn:'Vorname', lblLn:'Nachname', lblBd:'Geburtsdatum',
+    lblEmail:'Ihre E-Mail-Adresse', lblPw:'Passwort erstellen',
+    btnRegNext:'Weiter zur Bezahlung →',
+    sn4:'Schritt 3 von 3', st4:'Jahresabo', ss4:'Einmaliger Betrag pro Kind, pro Jahr.',
+    pnLbl:'SwimPass Jahresabo', ppLbl:'pro Kind · pro Jahr',
+    pf1:'Digitaler FLNS-Schwimmpass', pf2:'Fortschritt in Echtzeit',
+    pf3:'Automatische Lehrer-Benachrichtigungen', pf4:'Junior Lifesaver & Lifesaver',
+    stripeLbl:'Sichere Zahlung via Stripe', cardNumLbl:'Kartennummer',
+    termsLbl:'Mit der Zahlung stimmen Sie den AGB zu.',
+    btnPay:'35 € jetzt bezahlen 🔒',
+    succTitle:'Alles bereit!',
+    succSub:'Ihr Kind wurde erfolgreich registriert. Der Lehrer kann den Fortschritt ab sofort eintragen.',
+    succBadge:'Aktiv ✓',
+    adminNotif:'<strong>Andy wurde benachrichtigt!</strong><br>Ihr Kind erscheint jetzt automatisch im Admin-Portal.',
+    btnDone:'Zur App →',
+  },
+  fr: {
+    wsSub:'Suivez la progression de votre enfant en natation — numérique, simple, en temps réel.',
+    f1t:'Progression en temps réel', f1s:'Voyez exactement quels critères FLNS votre enfant a validés',
+    f2t:'Notifications automatiques', f2s:'Après chaque cours, vous recevez un message du professeur',
+    f3t:'Passeport numérique', f3s:'Junior Lifesaver & Lifesaver — selon le standard FLNS officiel',
+    btnStart:'Commencer →',
+    back:'← Retour',
+    sn2:'Étape 1 sur 3', st2:'Entrer le code du cours', ss2:'Vous avez reçu un code de l\'école de natation.',
+    chTitle:'💡 Où trouver le code ?', chText:'Le code a été envoyé par WhatsApp. Il commence par LETZSCHWAMM.',
+    cfTitle:'✅ Cours trouvé !', cfTeacherLbl:'Professeur :',
+    btnCodeNext:'Continuer →',
+    sn3:'Étape 2 sur 3', st3:'Inscrire l\'enfant', ss3:'Entrez les données de votre enfant.',
+    lblAvatar:'Choisir un avatar', lblFn:'Prénom', lblLn:'Nom', lblBd:'Date de naissance',
+    lblEmail:'Votre adresse e-mail', lblPw:'Créer un mot de passe',
+    btnRegNext:'Continuer vers le paiement →',
+    sn4:'Étape 3 sur 3', st4:'Abonnement annuel', ss4:'Montant unique par enfant, par an.',
+    pnLbl:'SwimPass Abonnement annuel', ppLbl:'par enfant · par an',
+    pf1:'Passeport FLNS numérique', pf2:'Progression en temps réel',
+    pf3:'Notifications automatiques du professeur', pf4:'Junior Lifesaver & Lifesaver',
+    stripeLbl:'Paiement sécurisé via Stripe', cardNumLbl:'Numéro de carte',
+    termsLbl:'En payant, vous acceptez les CGU.',
+    btnPay:'Payer 35 € maintenant 🔒',
+    succTitle:'Tout est prêt !',
+    succSub:'Votre enfant a été inscrit avec succès. Le professeur peut noter la progression dès maintenant.',
+    succBadge:'Actif ✓',
+    adminNotif:'<strong>Andy a été notifié !</strong><br>Votre enfant apparaît maintenant dans le portail admin.',
+    btnDone:'Vers l\'app →',
+  },
+  lu: {
+    wsSub:'Suivéiert de Fortschrëtt vun Ärem Kand beim Schwammen — digital, einfach, a Realzäit.',
+    f1t:'Fortschrëtt a Realzäit', f1s:'Gesitt genau wéi eng FLNS-Krittären Äert Kand schonn erreecht huet',
+    f2t:'Automatesch Notifikatiounen', f2s:'No all Stonn kritt Dir eng Noriicht vum Lehrer',
+    f3t:'Digitale Schwammpass', f3s:'Junior Lifesaver & Lifesaver — offiziell no FLNS-Standard',
+    btnStart:'Elo ufänken →',
+    back:'← Zréck',
+    sn2:'Schrëtt 1 vun 3', st2:'Kurscode aginn', ss2:'Dir hutt e Code vun der Schwammschoul kritt.',
+    chTitle:'💡 Wou fannen ech de Code?', chText:'De Code gouf per WhatsApp geschéckt. Hie fänkt mat LETZSCHWAMM un.',
+    cfTitle:'✅ Kurs fonnt!', cfTeacherLbl:'Lehrer:',
+    btnCodeNext:'Weider →',
+    sn3:'Schrëtt 2 vun 3', st3:'Kand umellen', ss3:'Gitt d\'Daten vun Ärem Kand an.',
+    lblAvatar:'Avatar wielen', lblFn:'Virnumm', lblLn:'Familljenumm', lblBd:'Gebuertsdag',
+    lblEmail:'Är E-Mail-Adress', lblPw:'Passwuert erstellen',
+    btnRegNext:'Weider zur Bezuelung →',
+    sn4:'Schrëtt 3 vun 3', st4:'Joresabo', ss4:'Eemolege Betrag pro Kand, pro Joer.',
+    pnLbl:'SwimPass Joresabo', ppLbl:'pro Kand · pro Joer',
+    pf1:'Digitale FLNS-Schwammpass', pf2:'Fortschrëtt a Realzäit',
+    pf3:'Automatesch Lehrer-Notifikatiounen', pf4:'Junior Lifesaver & Lifesaver',
+    stripeLbl:'Séchere Bezuelung via Stripe', cardNumLbl:'Kaartennummer',
+    termsLbl:'Mat der Bezuelung stëmmt Dir den AGB zou.',
+    btnPay:'35 € elo bezuelen 🔒',
+    succTitle:'Alles prett!',
+    succSub:'Äert Kand gouf erfollegräich umgemellt. De Lehrer kann de Fortschrëtt elo astellen.',
+    succBadge:'Aktiv ✓',
+    adminNotif:'<strong>Andy gouf notifizéiert!</strong><br>Äert Kand erschéngt elo automatesch am Admin-Portal.',
+    btnDone:'Zur App →',
+  },
+  en: {
+    wsSub:'Track your child\'s swimming progress — digital, simple, in real time.',
+    f1t:'Real-time progress', f1s:'See exactly which FLNS criteria your child has already achieved',
+    f2t:'Automatic notifications', f2s:'After every lesson you receive a message from the teacher',
+    f3t:'Digital swim pass', f3s:'Junior Lifesaver & Lifesaver — officially following FLNS standards',
+    btnStart:'Get started →',
+    back:'← Back',
+    sn2:'Step 1 of 3', st2:'Enter course code', ss2:'You received a code from the swimming school.',
+    chTitle:'💡 Where do I find the code?', chText:'The code was sent via WhatsApp. It starts with LETZSCHWAMM.',
+    cfTitle:'✅ Course found!', cfTeacherLbl:'Teacher:',
+    btnCodeNext:'Continue →',
+    sn3:'Step 2 of 3', st3:'Register child', ss3:'Enter your child\'s details.',
+    lblAvatar:'Choose avatar', lblFn:'First name', lblLn:'Last name', lblBd:'Date of birth',
+    lblEmail:'Your email address', lblPw:'Create password',
+    btnRegNext:'Continue to payment →',
+    sn4:'Step 3 of 3', st4:'Annual subscription', ss4:'One-time fee per child, per year.',
+    pnLbl:'SwimPass Annual subscription', ppLbl:'per child · per year',
+    pf1:'Digital FLNS swim pass', pf2:'Real-time progress tracking',
+    pf3:'Automatic teacher notifications', pf4:'Junior Lifesaver & Lifesaver',
+    stripeLbl:'Secure payment via Stripe', cardNumLbl:'Card number',
+    termsLbl:'By paying you agree to the terms and conditions.',
+    btnPay:'Pay €35 now 🔒',
+    succTitle:'All set!',
+    succSub:'Your child has been successfully registered. The teacher can now start tracking progress.',
+    succBadge:'Active ✓',
+    adminNotif:'<strong>Andy has been notified!</strong><br>Your child now appears automatically in the admin portal.',
+    btnDone:'Go to app →',
+  }
+};
+
+// ══════════════════════════
+// LANG
+// ══════════════════════════
+function setLang(l, el) {
+  lang = l;
+  document.querySelectorAll('.lang-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  applyLang();
+}
+
+function applyLang() {
+  const t = T[lang];
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.innerHTML=val; };
+  set('ws-sub', t.wsSub);
+  set('f1t', t.f1t); set('f1s', t.f1s);
+  set('f2t', t.f2t); set('f2s', t.f2s);
+  set('f3t', t.f3t); set('f3s', t.f3s);
+  set('btn-start', t.btnStart);
+  set('sn2', t.sn2); set('st2', t.st2); set('ss2', t.ss2);
+  set('ch-title', t.chTitle); set('ch-text', t.chText);
+  set('cf-title', t.cfTitle); set('cf-teacher-lbl', t.cfTeacherLbl);
+  set('btn-code-next', t.btnCodeNext);
+  set('sn3', t.sn3); set('st3', t.st3); set('ss3', t.ss3);
+  set('lbl-avatar', t.lblAvatar); set('lbl-fn', t.lblFn); set('lbl-ln', t.lblLn);
+  set('lbl-bd', t.lblBd); set('lbl-email', t.lblEmail); set('lbl-pw', t.lblPw);
+  set('btn-reg-next', t.btnRegNext);
+  set('sn4', t.sn4); set('st4', t.st4); set('ss4', t.ss4);
+  set('pn-lbl', t.pnLbl); set('pp-lbl', t.ppLbl);
+  set('pf1', t.pf1); set('pf2', t.pf2); set('pf3', t.pf3); set('pf4', t.pf4);
+  set('stripe-lbl', t.stripeLbl); set('card-num-lbl', t.cardNumLbl);
+  set('terms-lbl', t.termsLbl); set('btn-pay-lbl', t.btnPay);
+  set('succ-title', t.succTitle); set('succ-sub', t.succSub);
+  set('succ-badge', t.succBadge);
+  set('admin-notif-text', t.adminNotif);
+  set('btn-done', t.btnDone);
+  ['back-lbl','back-lbl2'].forEach(id=>set(id, t.back.replace(/^←\s*/,'')));
+}
+
+// ══════════════════════════
+// NAVIGATION
+// ══════════════════════════
+function goStep(n) {
+  const prev = currentStep;
+  document.getElementById(`step-${prev}`).classList.remove('active','back');
+  currentStep = n;
+  const next = document.getElementById(`step-${n}`);
+  next.classList.remove('back');
+  if(n < prev) next.classList.add('back');
+  next.classList.add('active');
+  updateDots(n);
+}
+
+function updateDots(n) {
+  for(let i=1;i<=4;i++) {
+    const d = document.getElementById(`dot-${i}`);
+    if(!d) continue;
+    d.classList.remove('active','done');
+    if(i===n) d.classList.add('active');
+    else if(i<n) d.classList.add('done');
+  }
+  document.getElementById('progress-dots').style.display = n===5?'none':'flex';
+}
+
+// ══════════════════════════
+// CODE CHECK
+// ══════════════════════════
+function checkCode(val) {
+  const clean = val.trim().toUpperCase();
+  const found = validCodes[clean];
+  const checkEl = document.getElementById('code-check');
+  const foundEl = document.getElementById('code-found');
+  const btn = document.getElementById('btn-code-next');
+
+  if(found) {
+    checkEl.textContent = '✅';
+    document.getElementById('cf-classname').textContent = found.className;
+    document.getElementById('cf-day').textContent = found.day;
+    document.getElementById('cf-time').textContent = found.time;
+    document.getElementById('cf-teacher').textContent = found.teacher;
+    foundEl.classList.add('show');
+    btn.disabled = false;
+  } else {
+    checkEl.textContent = clean.length>5?'❌':'';
+    foundEl.classList.remove('show');
+    btn.disabled = true;
+  }
+}
+
+// ══════════════════════════
+// AVATAR
+// ══════════════════════════
+function selectAvatar(el, emoji) {
+  document.querySelectorAll('.avatar-opt').forEach(a=>a.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedAvatar = emoji;
+}
+
+// ══════════════════════════
+// STEP 3 VALIDATION
+// ══════════════════════════
+function checkStep3() {
+  const fn = document.getElementById('inp-fn').value.trim();
+  const ln = document.getElementById('inp-ln').value.trim();
+  const bd = document.getElementById('inp-bd').value;
+  const em = document.getElementById('inp-email').value.trim();
+  const pw = document.getElementById('inp-pw').value;
+  const btn = document.getElementById('btn-reg-next');
+  btn.disabled = !(fn && ln && bd && em.includes('@') && pw.length>=8);
+}
+
+// ══════════════════════════
+// CARD FORMATTING
+// ══════════════════════════
+function formatCard(input) {
+  let v = input.value.replace(/\D/g,'').substring(0,16);
+  input.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExpiry(input) {
+  let v = input.value.replace(/\D/g,'').substring(0,4);
+  if(v.length>2) v = v.substring(0,2)+' / '+v.substring(2);
+  input.value = v;
+}
+
+// ══════════════════════════
+// PAYMENT SIMULATION
+// ══════════════════════════
+function pay() {
+  const cardInput = document.querySelector('.card-num');
+  if(!cardInput || cardInput.value.replace(/\s/g,'').length < 16) {
+    cardInput.style.borderBottom = '2px solid var(--red)';
+    setTimeout(()=>cardInput.style.borderBottom='',1500);
+    return;
+  }
+  const btn = document.getElementById('btn-pay');
+  const lbl = document.getElementById('btn-pay-lbl');
+  const spinner = document.getElementById('pay-spinner');
+  btn.disabled = true;
+  lbl.style.display = 'none';
+  spinner.style.display = 'block';
+
+  // Fill success screen
+  const fn = document.getElementById('inp-fn').value.trim();
+  const ln = document.getElementById('inp-ln').value.trim();
+  const code = document.getElementById('code-input').value.trim().toUpperCase();
+  const course = validCodes[code];
+
+  document.getElementById('succ-avatar').textContent = selectedAvatar;
+  document.getElementById('succ-name').textContent = `${fn} ${ln}`;
+  if(course) document.getElementById('succ-meta').textContent = `${course.className} · ${course.day} ${course.time}`;
+
+  setTimeout(()=>{
+    btn.disabled = false;
+    lbl.style.display = 'block';
+    spinner.style.display = 'none';
+    goStep(5);
+  }, 2200);
+}
+
+// ══════════════════════════
+// RESET
+// ══════════════════════════
+function resetAll() {
+  document.getElementById('code-input').value='';
+  document.getElementById('code-found').classList.remove('show');
+  document.getElementById('code-check').textContent='';
+  document.getElementById('btn-code-next').disabled=true;
+  ['inp-fn','inp-ln','inp-bd','inp-email','inp-pw'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('btn-reg-next').disabled=true;
+  updateDots(1);
+}
+
+// INIT
+applyLang();
+</script>
+</body>
+</html>
