@@ -137,7 +137,7 @@ export default function Login() {
                   value={email}
                   onChange={e => { setEmail(e.target.value); setError('') }}
                   onBlur={e => setEmail(e.target.value)}
-                  placeholder="admin@swimpass.lu"
+                  placeholder={t.ui.emailPlaceholder}
                   autoComplete="email"
                   autoFocus
                   inputMode="email"
