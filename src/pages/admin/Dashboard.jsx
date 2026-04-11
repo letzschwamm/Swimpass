@@ -14,24 +14,27 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const ui = t.ui
 
-  const [children, setChildren]   = useState([])
-  const [classes, setClasses]     = useState([])
+  const [children, setChildren]     = useState([])
+  const [classes, setClasses]       = useState([])
   const [activities, setActivities] = useState([])
-  const [loading, setLoading]     = useState(true)
+  const [instructorCount, setInstructorCount] = useState(0)
+  const [loading, setLoading]       = useState(true)
 
   useEffect(() => { if (profile) load() }, [profile])
 
   async function load() {
     setLoading(true)
     const schoolId = profile.school_id
-    const [{ data: kids }, { data: cls }, { data: acts }] = await Promise.all([
+    const [{ data: kids }, { data: cls }, { data: acts }, { count }] = await Promise.all([
       supabase.from('children').select('*, progress(criteria_key)').eq('school_id', schoolId),
       supabase.from('classes').select('*, profiles(name)').eq('school_id', schoolId),
       supabase.from('activities').select('*').eq('school_id', schoolId).order('created_at', { ascending: false }).limit(6),
+      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('school_id', schoolId).eq('role', 'instructor'),
     ])
     setChildren(kids || [])
     setClasses(cls || [])
     setActivities(acts || [])
+    setInstructorCount(count ?? 0)
     setLoading(false)
   }
 
@@ -44,7 +47,6 @@ export default function Dashboard() {
     ? Math.round(children.reduce((s, c) => s + childProgress(c), 0) / children.length)
     : 0
 
-  const teachers = [...new Set(classes.map(c => c.profiles?.name).filter(Boolean))]
 
   if (loading) return <div className="page-content"><div style={{ color: 'var(--muted)' }}>Laden...</div></div>
 
@@ -72,7 +74,7 @@ export default function Dashboard() {
           <div className="stat-label">{ui.allClasses}</div>
         </div>
         <div className="stat-card">
-          <div className="stat-val green">{teachers.length}</div>
+          <div className="stat-val green">{instructorCount}</div>
           <div className="stat-label">{ui.teachers}</div>
         </div>
         <div className="stat-card">
