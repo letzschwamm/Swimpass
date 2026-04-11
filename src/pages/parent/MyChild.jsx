@@ -43,7 +43,7 @@ export default function MyChild() {
     <div className="page-content">
       <div className="topbar" style={{ padding: 0, marginBottom: 18 }}><div className="page-title">{ui.myChild}</div></div>
       <div className="card" style={{ textAlign: 'center', padding: 48 }}>
-        <div style={{ marginBottom: 16 }}><img src="/Icon_Only_Crown_25_solid.png" alt="" style={{ width: 56, height: 56, objectFit: 'contain', opacity: 0.5 }} /></div>
+        <div style={{ marginBottom: 16 }}><img src="/logo.png" alt="" style={{ width: 56, height: 56, objectFit: 'contain', opacity: 0.5 }} /></div>
         <div style={{ fontFamily: 'Syne, sans-serif', fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Noch kein Kind registriert</div>
         <div style={{ fontSize: 13, color: 'var(--muted)' }}>Registrieren Sie Ihr Kind über den Link Ihrer Schwimmschule.</div>
       </div>

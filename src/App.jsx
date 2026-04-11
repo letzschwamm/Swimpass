@@ -29,7 +29,7 @@ function ProtectedRoute({ children, roles }) {
     <div className="loading-overlay">
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>
-          <img src="/Icon_Only_Crown_25_solid.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain' }} />
+          <img src="/logo.png" alt="" style={{ width: 64, height: 64, objectFit: 'contain' }} />
         </div>
         <div className="spinner" style={{ margin: '0 auto', width: 32, height: 32, borderWidth: 3 }} />
       </div>
