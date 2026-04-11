@@ -57,14 +57,10 @@ body {
 .sb-logo { padding: 22px 20px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
 .sb-logo-icon {
   width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--light), var(--aqua));
   border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 4px 14px rgba(0,180,216,.4);
   flex-shrink: 0;
   overflow: hidden;
-  padding: 5px;
+  box-shadow: 0 4px 14px rgba(0,180,216,.4);
 }
 .sb-logo-text {
   font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;

@@ -42,7 +42,7 @@ export default function Sidebar({ role, isOpen, onClose }) {
   return (
     <aside className={`sidebar${isOpen ? ' open' : ''}`}>
       <div className="sb-logo">
-        <div className="sb-logo-icon"><img src="/logo.png" alt="SwimPass" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 12, background: 'transparent' }} /></div>
+        <div className="sb-logo-icon"><img src="/logo.png" alt="SwimPass" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /></div>
         <div className="sb-logo-text">SwimPass</div>
         {onClose && (
           <button onClick={onClose} className="sb-close" aria-label="Schließen">✕</button>
