@@ -39,15 +39,23 @@ export function AuthProvider({ children }) {
       if (error) {
         console.error('Profile fetch error:', error)
         setProfileError(error.message)
-        // Fallback: use basic profile from auth metadata
+        // Fallback: use role from auth metadata — NEVER default to 'admin'
+        const metaRole = user.user_metadata?.role
+        if (!metaRole) {
+          // Unknown role → sign out to prevent privilege escalation
+          await supabase.auth.signOut()
+          setSession(null)
+          setLoading(false)
+          return
+        }
         setProfile({
           id: user.id,
           email: user.email,
-          role: user.user_metadata?.role || 'admin',
+          role: metaRole,
           name: user.user_metadata?.name || user.email.split('@')[0],
           avatar: '🏊',
-          school_id: user.user_metadata?.school_id || '00000000-0000-0000-0000-000000000001',
-          schools: { id: '00000000-0000-0000-0000-000000000001', name: 'Letzschwamm Schwimmschule', code: 'LETZSCHWAMM000001' },
+          school_id: user.user_metadata?.school_id || null,
+          // No subscription_status in fallback → instructors still hit payment wall
         })
         setLoading(false)
         return
@@ -55,18 +63,19 @@ export function AuthProvider({ children }) {
 
       if (!prof) {
         // Profile row missing — create it automatically
+        const metaRole = user.user_metadata?.role || 'parent'
         const { data: newProf } = await supabase.from('profiles').insert({
           id: user.id,
           email: user.email,
           name: user.user_metadata?.name || user.email.split('@')[0],
-          role: user.user_metadata?.role || 'admin',
+          role: metaRole,
           school_id: user.user_metadata?.school_id || '00000000-0000-0000-0000-000000000001',
           avatar: '🏊',
         }).select().single()
         setProfile(newProf || {
-          id: user.id, email: user.email, role: 'admin',
+          id: user.id, email: user.email, role: metaRole,
           name: user.email.split('@')[0], avatar: '🏊',
-          school_id: '00000000-0000-0000-0000-000000000001',
+          school_id: user.user_metadata?.school_id || '00000000-0000-0000-0000-000000000001',
         })
         setLoading(false)
         return
@@ -86,11 +95,18 @@ export function AuthProvider({ children }) {
       setProfile({ ...prof, schools: school })
     } catch (err) {
       console.error('fetchProfile exception:', err)
-      setProfile({
-        id: user.id, email: user.email, role: 'admin',
-        name: user.email.split('@')[0], avatar: '🏊',
-        school_id: '00000000-0000-0000-0000-000000000001',
-      })
+      const metaRole = user.user_metadata?.role
+      if (metaRole) {
+        setProfile({
+          id: user.id, email: user.email, role: metaRole,
+          name: user.user_metadata?.name || user.email.split('@')[0], avatar: '🏊',
+          school_id: user.user_metadata?.school_id || null,
+        })
+      } else {
+        // Can't determine role safely → sign out
+        await supabase.auth.signOut()
+        setSession(null)
+      }
     }
     setLoading(false)
   }

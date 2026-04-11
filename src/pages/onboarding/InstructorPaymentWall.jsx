@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
-const STRIPE_LINK = import.meta.env.VITE_STRIPE_INSTRUCTOR_LINK || '#'
+const STRIPE_LINK = import.meta.env.VITE_STRIPE_INSTRUCTOR_LINK || 'https://buy.stripe.com/28E9AT6wN5pk31y4td7kc02'
 
 export default function InstructorPaymentWall() {
   const { signOut } = useAuth()
