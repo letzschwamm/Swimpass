@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js'
 import { supabase } from '../../lib/supabase'
@@ -39,8 +39,12 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
   const [step, setStep]       = useState('')
   const [error, setError]     = useState('')
 
-  // Log state on every render to catch if data changes unexpectedly
-  console.log('[Step4 render] data.school:', data.school?.id, '| data.email:', data.email, '| data.firstName:', data.firstName)
+  // Auto-create account and skip Stripe immediately when in test mode
+  useEffect(() => {
+    if (data.isTest) {
+      handlePay()
+    }
+  }, [])
 
   async function handlePay() {
     setLoading(true)
