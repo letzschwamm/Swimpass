@@ -57,8 +57,12 @@ export default function InstructorOnboarding() {
     }
     // Sign in immediately
     await supabase.auth.signInWithPassword({ email, password })
-    // Test mode: skip payment step
-    setStep(isTestMode ? STEPS.success : STEPS.payment)
+    // Test mode: skip payment, navigate directly to dashboard
+    if (isTestMode) {
+      navigate('/instructor')
+    } else {
+      setStep(STEPS.payment)
+    }
   }
 
   return (

@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
           name: user.user_metadata?.name || user.email.split('@')[0],
           avatar: '🏊',
           school_id: user.user_metadata?.school_id || null,
-          // No subscription_status in fallback → instructors still hit payment wall
+          subscription_status: user.user_metadata?.subscription_status || null,
         })
         setLoading(false)
         return
@@ -101,6 +101,7 @@ export function AuthProvider({ children }) {
           id: user.id, email: user.email, role: metaRole,
           name: user.user_metadata?.name || user.email.split('@')[0], avatar: '🏊',
           school_id: user.user_metadata?.school_id || null,
+          subscription_status: user.user_metadata?.subscription_status || null,
         })
       } else {
         // Can't determine role safely → sign out

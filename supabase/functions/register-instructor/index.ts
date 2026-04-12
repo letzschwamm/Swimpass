@@ -38,7 +38,7 @@ serve(async (req) => {
 
       const { data: createData, error: createError } = await supabase.auth.admin.createUser({
         email, password, email_confirm: true,
-        user_metadata: { name, role: 'instructor', school_id: testCode.school_id },
+        user_metadata: { name, role: 'instructor', school_id: testCode.school_id, subscription_status: 'active' },
       })
       if (createError) return json({ error: `Konto-Erstellung fehlgeschlagen: ${createError.message}` })
 
