@@ -106,6 +106,7 @@ function AppRoutes() {
         </ProtectedRoute>
       }>
         <Route index element={<Sauvetage />} />
+        <Route path="sauvetage" element={<Sauvetage />} />
         <Route path="sauvetage/:id" element={<SauvetageDetail />} />
       </Route>
 

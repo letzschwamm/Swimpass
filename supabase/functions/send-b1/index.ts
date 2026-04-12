@@ -15,7 +15,7 @@ serve(async (req) => {
 
   try {
     const { courseId } = await req.json()
-    if (!courseId) return json({ error: 'courseId fehlt' }, 400)
+    if (!courseId) return json({ error: 'courseId fehlt' })
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -28,7 +28,7 @@ serve(async (req) => {
       .eq('id', courseId)
       .single()
 
-    if (!course) return json({ error: 'Kurs nicht gefunden' }, 404)
+    if (!course) return json({ error: 'Kurs nicht gefunden' })
 
     const { data: participants } = await supabase
       .from('sauvetage_participants')
@@ -74,8 +74,11 @@ serve(async (req) => {
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, 'Formulaire B1')
 
-    const xlsxBuf: ArrayBuffer = XLSX.write(wb, { type: 'array', bookType: 'xlsx' })
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(xlsxBuf)))
+    const xlsxBuf: Uint8Array = XLSX.write(wb, { type: 'array', bookType: 'xlsx' })
+    const bytes = new Uint8Array(xlsxBuf)
+    let binary = ''
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
+    const base64 = btoa(binary)
 
     const safeName = course.name.replace(/[^a-z0-9_\-]/gi, '_')
     const filename = `B1_${safeName}_${examDate.replace(/\//g, '-')}.xlsx`
@@ -186,6 +189,6 @@ serve(async (req) => {
 
     return json({ success: true })
   } catch (err) {
-    return json({ error: err?.message ?? String(err) }, 500)
+    return json({ error: err?.message ?? String(err) })
   }
 })
