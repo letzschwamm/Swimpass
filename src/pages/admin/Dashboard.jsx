@@ -20,7 +20,7 @@ export default function Dashboard() {
   const [instructorCount, setInstructorCount] = useState(0)
   const [loading, setLoading]       = useState(true)
   const [testCodes, setTestCodes]   = useState([])
-  const [generatingCode, setGeneratingCode] = useState(false)
+  const [generatingType, setGeneratingType] = useState(null) // 'parent' | 'instructor' | 'participant'
 
   useEffect(() => { if (profile) load() }, [profile])
 
@@ -42,8 +42,8 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  async function generateTestCode() {
-    setGeneratingCode(true)
+  async function generateTestCode(type) {
+    setGeneratingType(type)
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
     const rand = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
     const code = `TEST-${rand}`
@@ -53,11 +53,12 @@ export default function Dashboard() {
       school_id: schoolId,
       school_name: school?.name || 'Schwimmschule',
       code,
+      type,
       created_by: profile.id,
     })
-    setGeneratingCode(false)
+    setGeneratingType(null)
     if (!error) {
-      setTestCodes(prev => [{ code, school_id: schoolId, active: true, created_at: new Date().toISOString() }, ...prev])
+      setTestCodes(prev => [{ code, type, school_id: schoolId, active: true, created_at: new Date().toISOString() }, ...prev])
     }
   }
 
@@ -160,32 +161,50 @@ export default function Dashboard() {
       {/* Test Codes */}
       <div className="sec-header" style={{ marginTop: 28 }}>
         <div className="sec-title">🧪 Test-Codes</div>
-        <button className="btn btn-ghost" style={{ fontSize: 12, padding: '5px 12px' }} onClick={generateTestCode} disabled={generatingCode}>
-          {generatingCode ? '...' : '+ Neuer Code'}
-        </button>
+      </div>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
+        {[
+          { type: 'parent',      icon: '👨‍👩‍👧', label: 'Eltern-Code' },
+          { type: 'instructor',  icon: '🏊', label: 'Instrukteur-Code' },
+          { type: 'participant', icon: '🏅', label: 'Kursteilnehmer-Code' },
+        ].map(({ type, icon, label }) => (
+          <button
+            key={type}
+            className="btn btn-ghost"
+            style={{ fontSize: 12, padding: '6px 12px' }}
+            onClick={() => generateTestCode(type)}
+            disabled={generatingType !== null}
+          >
+            {generatingType === type ? '...' : `+ ${icon} ${label}`}
+          </button>
+        ))}
       </div>
       <div className="card" style={{ marginBottom: 24 }}>
         {testCodes.length === 0 ? (
           <div style={{ fontSize: 13, color: 'var(--muted)', textAlign: 'center', padding: '12px 0' }}>
-            Keine aktiven Test-Codes. Erstelle einen um die App ohne Stripe-Zahlung zu testen.
+            Keine aktiven Test-Codes. Generiere einen Code pro Rolle um den jeweiligen Flow zu testen.
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {testCodes.map(tc => (
-              <div key={tc.code} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(244,165,26,.07)', border: '1px solid rgba(244,165,26,.2)', borderRadius: 10 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontFamily: 'monospace', fontSize: 15, fontWeight: 700, color: 'var(--gold)', letterSpacing: '1px' }}>{tc.code}</span>
-                  <span style={{ fontSize: 11, color: 'var(--muted)' }}>{new Date(tc.created_at).toLocaleDateString('de-DE')}</span>
+            {testCodes.map(tc => {
+              const typeInfo = { parent: { icon: '👨‍👩‍👧', label: 'Eltern', color: 'var(--aqua)' }, instructor: { icon: '🏊', label: 'Instrukteur', color: 'var(--green)' }, participant: { icon: '🏅', label: 'Kursteilnehmer', color: 'var(--gold)' } }[tc.type || 'parent'] || { icon: '🧪', label: tc.type, color: 'var(--muted)' }
+              return (
+                <div key={tc.code} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(244,165,26,.07)', border: '1px solid rgba(244,165,26,.2)', borderRadius: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ fontFamily: 'monospace', fontSize: 15, fontWeight: 700, color: 'var(--gold)', letterSpacing: '1px' }}>{tc.code}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: 'rgba(255,255,255,.07)', color: typeInfo.color }}>{typeInfo.icon} {typeInfo.label}</span>
+                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>{new Date(tc.created_at).toLocaleDateString('de-DE')}</span>
+                  </div>
+                  <button
+                    onClick={() => deleteTestCode(tc.code)}
+                    style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}
+                    title="Code deaktivieren"
+                  >
+                    ×
+                  </button>
                 </div>
-                <button
-                  onClick={() => deleteTestCode(tc.code)}
-                  style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}
-                  title="Code deaktivieren"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

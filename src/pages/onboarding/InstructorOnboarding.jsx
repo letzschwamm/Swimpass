@@ -28,6 +28,12 @@ export default function InstructorOnboarding() {
       setLoading(false)
       if (!testCode) { setError('Ungültiger Test-Code.'); return }
       setIsTestMode(true)
+      // Validate it's an instructor-type code
+      if (testCode.type && testCode.type !== 'instructor') {
+        setLoading(false)
+        setError('Dieser Code ist nicht für Instrukteur-Registrierung.')
+        return
+      }
     } else {
       setIsTestMode(false)
     }
@@ -144,7 +150,7 @@ export default function InstructorOnboarding() {
                 TEST · Kein echtes Abonnement aktiv
               </div>
             </div>
-            <button className="btn btn-primary btn-full btn-lg" onClick={() => navigate('/dashboard')}>
+            <button className="btn btn-primary btn-full btn-lg" onClick={() => navigate('/instructor')}>
               Zur App →
             </button>
           </>

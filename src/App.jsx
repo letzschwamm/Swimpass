@@ -17,7 +17,9 @@ import SauvetageDetail from './pages/admin/SauvetageDetail'
 import Instructors from './pages/admin/Instructors'
 import InstructorOnboarding from './pages/onboarding/InstructorOnboarding'
 import InstructorPaymentWall from './pages/onboarding/InstructorPaymentWall'
+import ParticipantOnboarding from './pages/onboarding/ParticipantOnboarding'
 import ParticipantStatus from './pages/ParticipantStatus'
+import MyStatus from './pages/participant/MyStatus'
 import MyClasses from './pages/teacher/MyClasses'
 import AllChildren from './pages/teacher/AllChildren'
 import MyChild from './pages/parent/MyChild'
@@ -54,8 +56,9 @@ function RootRedirect() {
     case 'admin':      return <Navigate to="/admin" replace />
     case 'teacher':    return <Navigate to="/teacher" replace />
     case 'parent':     return <Navigate to="/parent" replace />
-    case 'instructor': return <Navigate to="/instructor" replace />
-    default:        return <Navigate to="/login" replace />
+    case 'instructor':  return <Navigate to="/instructor" replace />
+    case 'participant': return <Navigate to="/participant" replace />
+    default:            return <Navigate to="/login" replace />
   }
 }
 
@@ -66,6 +69,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/onboarding" element={<OnboardingFlow />} />
       <Route path="/onboarding/instructor" element={<InstructorOnboarding />} />
+      <Route path="/onboarding/participant" element={<ParticipantOnboarding />} />
       <Route path="/instructor/payment" element={<InstructorPaymentWall />} />
       <Route path="/datenschutz" element={<Datenschutz />} />
       <Route path="/p/:token" element={<ParticipantStatus />} />
@@ -111,6 +115,14 @@ function AppRoutes() {
         </ProtectedRoute>
       }>
         <Route index element={<MyChild />} />
+      </Route>
+
+      <Route path="/participant" element={
+        <ProtectedRoute roles={['participant']}>
+          <Layout role="participant" />
+        </ProtectedRoute>
+      }>
+        <Route index element={<MyStatus />} />
       </Route>
     </Routes>
   )

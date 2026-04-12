@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js'
 import { supabase } from '../../lib/supabase'
 import { useApp } from '../../context/AppContext'
@@ -32,6 +33,7 @@ async function extractFnError(err) {
 
 export default function Step4Payment({ data, update, next, back, stripeCanceled, onStripeRetry }) {
   const { t } = useApp()
+  const navigate = useNavigate()
   const ob = t.onboarding.payment
   const [loading, setLoading] = useState(false)
   const [step, setStep]       = useState('')
@@ -98,9 +100,9 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
       })
       if (signInError) throw signInError
 
-      // ── Test-Modus: Stripe überspringen ─────────────────────────────────
+      // ── Test-Modus: Stripe überspringen → direkt zum Eltern-Dashboard ────
       if (data.isTest) {
-        next()
+        navigate('/parent')
         return
       }
 

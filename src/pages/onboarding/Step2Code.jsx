@@ -30,7 +30,7 @@ export default function Step2Code({ data, update, next, back }) {
     // ── Test code path ────────────────────────────────────────
     if (val.startsWith('TEST-') && val.length >= 9) {
       const { data: testCode } = await supabase
-        .from('test_codes').select('*').eq('code', val).eq('active', true).maybeSingle()
+        .from('test_codes').select('*').eq('code', val).eq('type', 'parent').eq('active', true).maybeSingle()
 
       if (myReqId !== reqIdRef.current) return
       setLoading(false)

@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 import Avatar from './Avatar'
 
-const ROUTE_PREFIX = { admin: '/admin', teacher: '/teacher', parent: '/parent', instructor: '/instructor' }
+const ROUTE_PREFIX = { admin: '/admin', teacher: '/teacher', parent: '/parent', instructor: '/instructor', participant: '/participant' }
 const PAGE_ROUTES = {
   dashboard: '',
   children: '/children',
@@ -12,6 +12,7 @@ const PAGE_ROUTES = {
   instructors: '/instructors',
   'my-classes': '',
   'my-child': '',
+  'my-status': '',
 }
 
 export default function Sidebar({ role, isOpen, onClose }) {

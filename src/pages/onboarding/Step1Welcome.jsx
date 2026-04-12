@@ -6,7 +6,7 @@ export default function Step1Welcome({ next }) {
   const ob = t.onboarding.welcome
   const navigate = useNavigate()
 
-  const roleActions = [next, next, () => navigate('/onboarding/instructor')]
+  const roleActions = [next, () => navigate('/onboarding/participant'), () => navigate('/onboarding/instructor')]
   const roles = ob.roles.map((r, i) => ({ ...r, action: roleActions[i] }))
 
   return (
