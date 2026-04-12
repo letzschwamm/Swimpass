@@ -36,7 +36,12 @@
       "Bash(SUPABASE_ACCESS_TOKEN=sbp_7b33ea70cfe7564c2c3422da1decc02d61f0afe0 /tmp/supabase functions:*)",
       "Bash(node:*)",
       "Bash(ls /tmp/supabase*)",
-      "Read(//usr/local/bin/**)"
+      "Read(//usr/local/bin/**)",
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_60344884c38d81e8c7394fd84156bb555a923d5c /tmp/supabase db:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(SUPABASE_ACCESS_TOKEN=sbp_60344884c38d81e8c7394fd84156bb555a923d5c /tmp/supabase functions:*)"
     ]
   }
 }

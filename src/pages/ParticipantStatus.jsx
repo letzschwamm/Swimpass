@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
-const STRIPE_BADGE_LINK = 'https://buy.stripe.com/aFa9AT2gxeZUfOkbVF7kc01'
+const STRIPE_BADGE_LINK = import.meta.env.VITE_STRIPE_SAUVETAGE_LINK || 'https://buy.stripe.com/aFa9AT2gxeZUfOkbVF7kc01'
 
 const STATUS_INFO = {
   registered:       { label: 'Angemeldet',        color: 'var(--aqua)',   icon: '📋' },
@@ -11,18 +11,62 @@ const STATUS_INFO = {
   failed:           { label: 'Nicht bestanden',    color: 'var(--muted)',  icon: '—'  },
 }
 
+function Confetti() {
+  const pieces = useMemo(() =>
+    Array.from({ length: 60 }, (_, i) => ({
+      id: i,
+      left: `${(i * 1.7) % 100}%`,
+      delay: `${(i * 0.12) % 2}s`,
+      duration: `${2.5 + (i % 5) * 0.4}s`,
+      color: ['#0096C7','#48CAE4','#F4A51A','#22C55E','#EF4444','#A855F7','#fff'][i % 7],
+      size: `${7 + (i % 5)}px`,
+      round: i % 3 === 0,
+    }))
+  , [])
+
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 100, overflow: 'hidden' }}>
+      <style>{`
+        @keyframes confettiFall {
+          0%   { transform: translateY(-30px) rotate(0deg);   opacity: 1; }
+          100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+      `}</style>
+      {pieces.map(p => (
+        <div key={p.id} style={{
+          position: 'absolute',
+          top: 0,
+          left: p.left,
+          width: p.size,
+          height: p.size,
+          background: p.color,
+          borderRadius: p.round ? '50%' : '2px',
+          animation: `confettiFall ${p.duration} ${p.delay} forwards`,
+        }} />
+      ))}
+    </div>
+  )
+}
+
 export default function ParticipantStatus() {
   const { token } = useParams()
-  const [data, setData]     = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError]   = useState('')
+  const [data, setData]           = useState(null)
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState('')
+  const [showConfetti, setShowConfetti] = useState(false)
 
   useEffect(() => {
     async function load() {
       const { data: rows, error: err } = await supabase.rpc('get_participant_by_token', { p_token: token })
       setLoading(false)
       if (err || !rows?.length) { setError('Teilnehmer nicht gefunden.'); return }
-      setData(rows[0])
+      const row = rows[0]
+      setData(row)
+      const passed = row.status === 'passed_junior' || row.status === 'passed_lifesaver'
+      if (passed) {
+        setShowConfetti(true)
+        setTimeout(() => setShowConfetti(false), 7000)
+      }
     }
     if (token) load()
   }, [token])
@@ -48,6 +92,8 @@ export default function ParticipantStatus() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#162535 0%,#1B3045 50%,#1E3A56 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: 'DM Sans, sans-serif', color: '#F0F6FF' }}>
+      {showConfetti && <Confetti />}
+
       <div style={{ maxWidth: 400, width: '100%' }}>
 
         {/* Logo */}
@@ -80,25 +126,31 @@ export default function ParticipantStatus() {
           )}
         </div>
 
-        {/* Badge payment — only for passed participants */}
-        {passed && data.payment_status === 'pending' && (
-          <div style={{ background: 'rgba(244,165,26,.1)', border: '1px solid rgba(244,165,26,.3)', borderRadius: 16, padding: 20, marginBottom: 16, textAlign: 'center' }}>
-            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: '#F4A51A' }}>🏅 Abzeichen sichern</div>
-            <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 16, lineHeight: 1.5 }}>
-              Herzlichen Glückwunsch! Bezahle jetzt die Abzeichen-Gebühr um dein offizielles FLNS-Abzeichen zu erhalten.
+        {/* Badge purchase — for passed participants who haven't paid yet */}
+        {passed && data.badge_payment_status !== 'paid' && (
+          <div style={{ background: 'rgba(244,165,26,.1)', border: '1px solid rgba(244,165,26,.3)', borderRadius: 16, padding: 24, marginBottom: 16, textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>🏅</div>
+            <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6, color: '#F4A51A' }}>
+              Herzlichen Glückwunsch! Du hast bestanden!
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 16, lineHeight: 1.6 }}>
+              Kaufe jetzt dein offizielles FLNS-Abzeichen für 50€.
             </div>
             <a
-              href={STRIPE_BADGE_LINK}
-              style={{ display: 'block', background: 'linear-gradient(135deg,#0096C7,#48CAE4)', color: '#fff', textDecoration: 'none', padding: '14px 24px', borderRadius: 12, fontWeight: 700, fontSize: 15 }}
+              href={`${STRIPE_BADGE_LINK}?client_reference_id=badge_${data.id}`}
+              style={{ display: 'block', background: 'linear-gradient(135deg,#0096C7,#48CAE4)', color: '#fff', textDecoration: 'none', padding: '14px 24px', borderRadius: 12, fontWeight: 700, fontSize: 15, marginBottom: 10 }}
             >
-              💳 Abzeichen-Gebühr bezahlen →
+              🏅 Abzeichen kaufen — 50€ →
             </a>
+            <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.5 }}>
+              Dein Abzeichen wird dir von der FLNS per Post zugeschickt.
+            </div>
           </div>
         )}
 
-        {passed && data.payment_status === 'paid' && (
+        {passed && data.badge_payment_status === 'paid' && (
           <div style={{ background: 'rgba(34,197,94,.1)', border: '1px solid rgba(34,197,94,.3)', borderRadius: 16, padding: 20, textAlign: 'center', color: 'var(--green)', fontSize: 14, fontWeight: 600 }}>
-            ✓ Abzeichen-Gebühr bezahlt — Abzeichen wird zugestellt
+            ✓ Abzeichen bezahlt — wird von der FLNS per Post zugestellt
           </div>
         )}
 

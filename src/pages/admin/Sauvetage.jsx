@@ -16,6 +16,13 @@ const EMPTY_FORM = {
   instructor_phone: '', instructor_address: '',
 }
 
+function generateSauvCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = 'SAUV-'
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]
+  return code
+}
+
 export default function Sauvetage() {
   const { profile, isDemo } = useAuth()
   const { showToast } = useApp()
@@ -53,6 +60,7 @@ export default function Sauvetage() {
       instructor_email: form.instructor_email || null,
       instructor_phone: form.instructor_phone || null,
       instructor_address: form.instructor_address || null,
+      participant_code: generateSauvCode(),
     })
     setSaving(false)
     if (error) { showToast('Fehler beim Erstellen', 'error'); return }

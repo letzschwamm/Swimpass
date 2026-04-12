@@ -149,7 +149,7 @@ export default function SauvetageDetail() {
 
   async function handleBadgePayment() {
     const withEmail = participants.filter(p =>
-      (p.status === 'passed_junior' || p.status === 'passed_lifesaver') && p.payment_status === 'pending' && p.email
+      (p.status === 'passed_junior' || p.status === 'passed_lifesaver') && p.badge_payment_status !== 'paid' && p.email
     )
     if (!withEmail.length) { showToast('Keine bestandenen Teilnehmer mit E-Mail und offener Zahlung', 'error'); return }
     setSendingPay(true)
@@ -180,6 +180,41 @@ export default function SauvetageDetail() {
           </div>
         </div>
       </div>
+
+      {/* Participant code card */}
+      {course.participant_code && (
+        <div className="card" style={{ marginBottom: 18, background: 'rgba(0,150,199,.06)', border: '1.5px solid rgba(0,150,199,.25)' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 10 }}>
+            Kurs-Code für Teilnehmer
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+            <div style={{ fontFamily: 'monospace', fontSize: 28, fontWeight: 800, letterSpacing: '3px', color: 'var(--aqua)', background: 'rgba(0,150,199,.1)', padding: '10px 20px', borderRadius: 10, border: '1.5px solid rgba(0,150,199,.3)' }}>
+              {course.participant_code}
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                className="btn btn-ghost"
+                style={{ fontSize: 12, padding: '8px 14px' }}
+                onClick={() => { navigator.clipboard.writeText(course.participant_code); showToast('Code kopiert ✓') }}
+              >
+                📋 Kopieren
+              </button>
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(`Sauvetage-Kurs Code: ${course.participant_code} — Registrierung: ${window.location.origin}/onboarding/participant`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-ghost"
+                style={{ fontSize: 12, padding: '8px 14px', textDecoration: 'none' }}
+              >
+                📲 WhatsApp
+              </a>
+            </div>
+          </div>
+          <div style={{ marginTop: 8, fontSize: 11, color: 'var(--muted)' }}>
+            Teile diesen Code mit deinen Kursteilnehmern zur Registrierung.
+          </div>
+        </div>
+      )}
 
       {/* Instructor info card */}
       <div className="card" style={{ marginBottom: 18 }}>
@@ -214,7 +249,7 @@ export default function SauvetageDetail() {
           {sendingB2 ? <span className="spinner" /> : '✅ B2 senden'}
           {course.b2_sent_at && <span style={{ fontSize: 10, marginLeft: 6, color: 'var(--green)' }}>✓ {new Date(course.b2_sent_at).toLocaleDateString('de-DE')}</span>}
         </button>
-        <button className="btn btn-primary" onClick={handleBadgePayment} disabled={sendingPay || !passed.filter(p => p.payment_status === 'pending' && p.email).length}>
+        <button className="btn btn-primary" onClick={handleBadgePayment} disabled={sendingPay || !passed.filter(p => p.badge_payment_status !== 'paid' && p.email).length}>
           {sendingPay ? <span className="spinner" /> : '💳 Abzeichen bezahlen'}
         </button>
         <button className="btn btn-ghost" style={{ marginLeft: 'auto' }} onClick={() => setShowAddModal(true)}>
@@ -296,21 +331,9 @@ export default function SauvetageDetail() {
                   <td>
                     {(p.status === 'passed_junior' || p.status === 'passed_lifesaver') && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ fontSize: 11, color: p.payment_status === 'paid' ? 'var(--green)' : 'var(--muted)' }}>
-                          {p.payment_status === 'paid' ? '✓ Bezahlt' : '○ Offen'}
+                        <span style={{ fontSize: 11, color: p.badge_payment_status === 'paid' ? 'var(--green)' : 'var(--muted)' }}>
+                          {p.badge_payment_status === 'paid' ? '✅ Bezahlt' : '⏳ Ausstehend'}
                         </span>
-                        {p.payment_status !== 'paid' && (
-                          <a
-                            href={STRIPE_BADGE_LINK}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-primary"
-                            style={{ fontSize: 10, padding: '3px 8px', textDecoration: 'none' }}
-                            title="Abzeichen bezahlen"
-                          >
-                            Abzeichen bezahlen 🏅
-                          </a>
-                        )}
                       </div>
                     )}
                   </td>

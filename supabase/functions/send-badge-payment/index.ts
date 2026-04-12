@@ -29,16 +29,16 @@ serve(async (req) => {
       .eq('id', courseId)
       .single()
 
-    if (!course) return json({ error: 'Kurs nicht gefunden' }, 404)
+    if (!course) return json({ error: 'Kurs nicht gefunden' })
 
     const { data: participants } = await supabase
       .from('sauvetage_participants')
       .select('*')
       .eq('course_id', courseId)
       .in('status', ['passed_junior', 'passed_lifesaver'])
-      .eq('payment_status', 'pending')
+      .eq('badge_payment_status', 'pending')
 
-    if (!participants?.length) return json({ error: 'Keine bestandenen Teilnehmer mit offener Zahlung' }, 400)
+    if (!participants?.length) return json({ error: 'Keine bestandenen Teilnehmer mit offener Abzeichen-Zahlung' })
 
     const results: Array<{ name: string; email: string; sent: boolean; error?: string }> = []
 
@@ -66,8 +66,8 @@ serve(async (req) => {
               Um Ihr offizielles FLNS ${levelLabel} Abzeichen zu erhalten,<br>
               bitten wir Sie, die Abzeichen-Gebühr zu bezahlen.
             </div>
-            <a href="${STRIPE_PAYMENT_LINK}" style="display:inline-block;background:linear-gradient(135deg,#0096C7,#48CAE4);color:white;text-align:center;padding:14px 32px;border-radius:12px;text-decoration:none;font-weight:700;font-size:16px;">
-              💳 Abzeichen-Gebühr bezahlen →
+            <a href="${STRIPE_PAYMENT_LINK}?client_reference_id=badge_${p.id}" style="display:inline-block;background:linear-gradient(135deg,#0096C7,#48CAE4);color:white;text-align:center;padding:14px 32px;border-radius:12px;text-decoration:none;font-weight:700;font-size:16px;">
+              🏅 Abzeichen kaufen — 50€ →
             </a>
           </div>
 
@@ -113,6 +113,6 @@ serve(async (req) => {
 
     return json({ success: true, results })
   } catch (err) {
-    return json({ error: err?.message ?? String(err) }, 500)
+    return json({ error: err?.message ?? String(err) })
   }
 })

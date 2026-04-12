@@ -30,6 +30,28 @@ serve(async (req) => {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
+    const clientRef = session.client_reference_id || ''
+
+    // ── Sauvetage badge payment (50€) ───────────────────────
+    if (clientRef.startsWith('badge_')) {
+      const participantId = clientRef.replace('badge_', '')
+      await supabase
+        .from('sauvetage_participants')
+        .update({ badge_payment_status: 'paid' })
+        .eq('id', participantId)
+      return new Response(JSON.stringify({ received: true }), { headers: { 'Content-Type': 'application/json' } })
+    }
+
+    // ── Sauvetage participant registration fee (15€) ─────────
+    if (clientRef.startsWith('participant_')) {
+      const participantId = clientRef.replace('participant_', '')
+      await supabase
+        .from('sauvetage_participants')
+        .update({ payment_status: 'paid' })
+        .eq('id', participantId)
+      return new Response(JSON.stringify({ received: true }), { headers: { 'Content-Type': 'application/json' } })
+    }
+
     const { childId, parentId, schoolId } = session.metadata || {}
 
     // ── 1. Update payment status ──────────────────
