@@ -25,11 +25,39 @@ serve(async (req) => {
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    // Validate invite code
+    const upperCode = code.toUpperCase().trim()
+
+    // ── Test code path ─────────────────────────────────────────
+    if (upperCode.startsWith('TEST-')) {
+      const { data: testCode } = await supabase
+        .from('test_codes').select('*').eq('code', upperCode).eq('active', true).maybeSingle()
+      if (!testCode) return json({ error: 'Ungültiger Test-Code.' })
+
+      const { data: existingProfile } = await supabase.from('profiles').select('id').eq('email', email).maybeSingle()
+      if (existingProfile) return json({ error: 'Diese E-Mail ist bereits registriert.' })
+
+      const { data: createData, error: createError } = await supabase.auth.admin.createUser({
+        email, password, email_confirm: true,
+        user_metadata: { name, role: 'instructor', school_id: testCode.school_id },
+      })
+      if (createError) return json({ error: `Konto-Erstellung fehlgeschlagen: ${createError.message}` })
+
+      const userId = createData.user!.id
+      await supabase.from('profiles').upsert({
+        id: userId, email, name, role: 'instructor',
+        school_id: testCode.school_id,
+        subscription_status: 'active',
+        is_test: true,
+      }, { onConflict: 'id' })
+
+      return json({ success: true, userId })
+    }
+
+    // ── Normal invite code path ────────────────────────────────
     const { data: invite } = await supabase
       .from('instructor_invites')
       .select('*')
-      .eq('code', code.toUpperCase().trim())
+      .eq('code', upperCode)
       .eq('used', false)
       .maybeSingle()
 

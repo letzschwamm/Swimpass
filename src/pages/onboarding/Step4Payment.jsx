@@ -44,7 +44,6 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
     setLoading(true)
     setError('')
 
-    // ── Debug: zeige was wir senden ──────────────────────────────
     const payload = {
       email:      data.email,
       password:   data.password,
@@ -56,15 +55,6 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
       level:      data.classInfo?.level || 'junior',
       avatar:     data.avatar || '👦',
     }
-    console.log('[Step4] Onboarding data:', {
-      email: data.email,
-      hasPassword: !!data.password,
-      school: data.school,
-      classInfo: data.classInfo,
-      firstName: data.firstName,
-      lastName: data.lastName,
-    })
-    console.log('[Step4] register-parent payload:', payload)
 
     // ── Validation ────────────────────────────────────────────────
     if (!payload.schoolId) {
@@ -82,7 +72,7 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
       // ── Schritt 1: User + Profil + Kind via service_role Edge Function ──
       setStep('Konto wird erstellt…')
       const { data: regData, error: regError } = await supabase.functions.invoke('register-parent', {
-        body: payload,
+        body: data.isTest ? { ...payload, isTest: true } : payload,
       })
 
       console.log('[Step4] register-parent response:', { regData, regError })
@@ -106,8 +96,13 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
         email:    data.email,
         password: data.password,
       })
-      console.log('[Step4] signIn error:', signInError)
       if (signInError) throw signInError
+
+      // ── Test-Modus: Stripe überspringen ─────────────────────────────────
+      if (data.isTest) {
+        next()
+        return
+      }
 
       // ── Schritt 3: Stripe Checkout Session erstellen ────────────────────
       setStep('Weiterleitung zu Stripe…')

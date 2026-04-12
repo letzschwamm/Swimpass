@@ -15,11 +15,24 @@ export default function InstructorOnboarding() {
   const [password, setPassword] = useState('')
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
+  const [isTestMode, setIsTestMode] = useState(false)
 
-  function validateCode() {
+  async function validateCode() {
     const trimmed = code.toUpperCase().trim()
     if (!trimmed) { setError('Bitte Code eingeben.'); return }
-    // Format check only — real validation happens server-side in register-instructor
+
+    if (trimmed.startsWith('TEST-')) {
+      setLoading(true)
+      const { data: testCode } = await supabase
+        .from('test_codes').select('*').eq('code', trimmed).eq('active', true).maybeSingle()
+      setLoading(false)
+      if (!testCode) { setError('Ungültiger Test-Code.'); return }
+      setIsTestMode(true)
+    } else {
+      setIsTestMode(false)
+    }
+
+    setError('')
     setStep(STEPS.register)
   }
 
@@ -37,7 +50,8 @@ export default function InstructorOnboarding() {
     }
     // Sign in immediately
     await supabase.auth.signInWithPassword({ email, password })
-    setStep(STEPS.payment)
+    // Test mode: skip payment step
+    setStep(isTestMode ? STEPS.success : STEPS.payment)
   }
 
   return (
@@ -112,6 +126,26 @@ export default function InstructorOnboarding() {
             </button>
             <button onClick={() => setStep(STEPS.code)} style={{ background: 'none', border: 'none', color: 'var(--muted)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', marginTop: 12, display: 'block', textAlign: 'center', width: '100%' }}>
               ← Zurück
+            </button>
+          </>
+        )}
+
+        {/* Step: Success (Test Mode) */}
+        {step === STEPS.success && (
+          <>
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+              <div style={{ fontSize: 56, marginBottom: 12 }}>🧪</div>
+              <div className="login-title" style={{ marginBottom: 8 }}>Test-Registrierung erfolgreich!</div>
+              <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 20, lineHeight: 1.6 }}>
+                Du hast dich im <span style={{ color: 'var(--gold)', fontWeight: 700 }}>Test-Modus</span> registriert.<br />
+                Dein Konto hat vollen Zugang — Stripe-Zahlung übersprungen.
+              </div>
+              <div style={{ background: 'rgba(244,165,26,.1)', border: '1px solid rgba(244,165,26,.3)', borderRadius: 12, padding: '12px 16px', fontSize: 12, color: 'var(--gold)', marginBottom: 24 }}>
+                TEST · Kein echtes Abonnement aktiv
+              </div>
+            </div>
+            <button className="btn btn-primary btn-full btn-lg" onClick={() => navigate('/dashboard')}>
+              Zur App →
             </button>
           </>
         )}

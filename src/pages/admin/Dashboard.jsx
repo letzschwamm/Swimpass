@@ -19,23 +19,51 @@ export default function Dashboard() {
   const [activities, setActivities] = useState([])
   const [instructorCount, setInstructorCount] = useState(0)
   const [loading, setLoading]       = useState(true)
+  const [testCodes, setTestCodes]   = useState([])
+  const [generatingCode, setGeneratingCode] = useState(false)
 
   useEffect(() => { if (profile) load() }, [profile])
 
   async function load() {
     setLoading(true)
     const schoolId = profile.school_id
-    const [{ data: kids }, { data: cls }, { data: acts }, { count }] = await Promise.all([
+    const [{ data: kids }, { data: cls }, { data: acts }, { count }, { data: codes }] = await Promise.all([
       supabase.from('children').select('*, progress(criteria_key)').eq('school_id', schoolId),
       supabase.from('classes').select('*, profiles(name)').eq('school_id', schoolId),
       supabase.from('activities').select('*').eq('school_id', schoolId).order('created_at', { ascending: false }).limit(6),
       supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('school_id', schoolId).eq('role', 'instructor'),
+      supabase.from('test_codes').select('*').eq('school_id', schoolId).eq('active', true).order('created_at', { ascending: false }),
     ])
     setChildren(kids || [])
     setClasses(cls || [])
     setActivities(acts || [])
     setInstructorCount(count ?? 0)
+    setTestCodes(codes || [])
     setLoading(false)
+  }
+
+  async function generateTestCode() {
+    setGeneratingCode(true)
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+    const rand = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+    const code = `TEST-${rand}`
+    const schoolId = profile.school_id
+    const { data: school } = await supabase.from('schools').select('name').eq('id', schoolId).single()
+    const { error } = await supabase.from('test_codes').insert({
+      school_id: schoolId,
+      school_name: school?.name || 'Schwimmschule',
+      code,
+      created_by: profile.id,
+    })
+    setGeneratingCode(false)
+    if (!error) {
+      setTestCodes(prev => [{ code, school_id: schoolId, active: true, created_at: new Date().toISOString() }, ...prev])
+    }
+  }
+
+  async function deleteTestCode(code) {
+    await supabase.from('test_codes').update({ active: false }).eq('code', code)
+    setTestCodes(prev => prev.filter(c => c.code !== code))
   }
 
   function childProgress(child) {
@@ -127,6 +155,39 @@ export default function Dashboard() {
             })}
           </div>
         </div>
+      </div>
+
+      {/* Test Codes */}
+      <div className="sec-header" style={{ marginTop: 28 }}>
+        <div className="sec-title">🧪 Test-Codes</div>
+        <button className="btn btn-ghost" style={{ fontSize: 12, padding: '5px 12px' }} onClick={generateTestCode} disabled={generatingCode}>
+          {generatingCode ? '...' : '+ Neuer Code'}
+        </button>
+      </div>
+      <div className="card" style={{ marginBottom: 24 }}>
+        {testCodes.length === 0 ? (
+          <div style={{ fontSize: 13, color: 'var(--muted)', textAlign: 'center', padding: '12px 0' }}>
+            Keine aktiven Test-Codes. Erstelle einen um die App ohne Stripe-Zahlung zu testen.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {testCodes.map(tc => (
+              <div key={tc.code} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(244,165,26,.07)', border: '1px solid rgba(244,165,26,.2)', borderRadius: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontFamily: 'monospace', fontSize: 15, fontWeight: 700, color: 'var(--gold)', letterSpacing: '1px' }}>{tc.code}</span>
+                  <span style={{ fontSize: 11, color: 'var(--muted)' }}>{new Date(tc.created_at).toLocaleDateString('de-DE')}</span>
+                </div>
+                <button
+                  onClick={() => deleteTestCode(tc.code)}
+                  style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}
+                  title="Code deaktivieren"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="sec-header">

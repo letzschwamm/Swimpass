@@ -24,7 +24,7 @@ serve(async (req) => {
       return json({ error: 'Ungültiges JSON im Request-Body.' }, 400)
     }
 
-    const { email, password, schoolId, classId, firstName, lastName, birthDate, level, avatar } = payload as Record<string, string>
+    const { email, password, schoolId, classId, firstName, lastName, birthDate, level, avatar, isTest } = payload as Record<string, string>
 
     // ── Validate required fields ──────────────────────────────
     const missing = ['email', 'password', 'schoolId', 'firstName', 'lastName'].filter(k => !payload[k])
@@ -85,6 +85,7 @@ serve(async (req) => {
         role: 'parent',
         school_id: schoolId,
         avatar: '👨‍👩‍👧',
+        is_test: isTest === 'true' || isTest === true,
       },
       { onConflict: 'id' }
     )
@@ -104,6 +105,7 @@ serve(async (req) => {
         birth_date: birthDate || null,
         level:      level || 'junior',
         avatar:     avatar || '👦',
+        is_test:    isTest === 'true' || isTest === true,
       })
       .select()
       .single()

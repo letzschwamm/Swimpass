@@ -17,51 +17,55 @@ export default function Step2Code({ data, update, next, back }) {
     const val = value.toUpperCase().trim()
     setCode(val)
     setErrorMsg('')
-
-    // Reset only local found state (not global data yet — avoids flickering)
     setFound(false)
 
     if (val.length < 6) {
-      // Input too short — clear school from state
-      update({ school: null, classInfo: null })
+      update({ school: null, classInfo: null, isTest: false })
       return
     }
 
-    // Increment request ID — any older request will be ignored when it returns
     const myReqId = ++reqIdRef.current
-
     setLoading(true)
-    console.log('[Step2] Checking code:', val)
 
-    const { data: school, error } = await supabase.rpc('lookup_school_by_code', {
-      school_code: val,
-    })
+    // ── Test code path ────────────────────────────────────────
+    if (val.startsWith('TEST-') && val.length >= 9) {
+      const { data: testCode } = await supabase
+        .from('test_codes').select('*').eq('code', val).eq('active', true).maybeSingle()
 
-    // Ignore stale responses (user typed more since this request started)
-    if (myReqId !== reqIdRef.current) {
-      console.log('[Step2] Ignoring stale response for:', val)
+      if (myReqId !== reqIdRef.current) return
+      setLoading(false)
+
+      if (testCode) {
+        update({
+          school: { id: testCode.school_id, name: testCode.school_name || 'Schwimmschule', code: val },
+          classInfo: null,
+          isTest: true,
+        })
+        setFound(true)
+      } else {
+        update({ school: null, classInfo: null, isTest: false })
+      }
       return
     }
 
+    // ── Normal school code path ───────────────────────────────
+    const { data: school, error } = await supabase.rpc('lookup_school_by_code', { school_code: val })
+
+    if (myReqId !== reqIdRef.current) return
     setLoading(false)
 
-    console.log('[Step2] RPC result:', { school, error, val })
-
     if (error) {
-      console.error('[Step2] RPC error:', error)
       setErrorMsg('Verbindungsfehler. Bitte versuche es erneut.')
-      update({ school: null, classInfo: null })
+      update({ school: null, classInfo: null, isTest: false })
       return
     }
 
     if (school?.id) {
       const cls = school.classes?.[0] ?? null
-      console.log('[Step2] Found school:', school.id, school.name, '| classInfo:', cls)
-      update({ school, classInfo: cls })
+      update({ school, classInfo: cls, isTest: false })
       setFound(true)
     } else {
-      console.log('[Step2] Code not found:', val)
-      update({ school: null, classInfo: null })
+      update({ school: null, classInfo: null, isTest: false })
     }
   }
 
@@ -102,14 +106,18 @@ export default function Step2Code({ data, update, next, back }) {
 
         {found && data.school && (
           <div className="code-found">
-            <div className="cf-title">{ob.found}</div>
+            <div className="cf-title">
+              {data.isTest ? '🧪 Test-Modus aktiv' : ob.found}
+            </div>
             <div className="cf-detail">
-              {data.classInfo
-                ? <>
-                    <span>{data.classInfo.name}</span> · <span>{data.classInfo.day} {data.classInfo.time}</span><br />
-                    {ob.teacherLabel} <span>{data.classInfo.profiles?.name || '—'}</span>
-                  </>
-                : <span>{data.school.name}</span>
+              {data.isTest
+                ? <><span style={{ color: 'var(--gold)', fontWeight: 600 }}>TEST</span> · {data.school.name} · Zahlung wird übersprungen</>
+                : data.classInfo
+                  ? <>
+                      <span>{data.classInfo.name}</span> · <span>{data.classInfo.day} {data.classInfo.time}</span><br />
+                      {ob.teacherLabel} <span>{data.classInfo.profiles?.name || '—'}</span>
+                    </>
+                  : <span>{data.school.name}</span>
               }
             </div>
           </div>

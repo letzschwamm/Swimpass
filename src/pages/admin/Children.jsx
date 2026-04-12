@@ -171,7 +171,10 @@ export default function Children() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <Avatar name={fullName} size={32} radius={9} />
                           <div>
-                            <div style={{ fontSize: 13, fontWeight: 600 }}>{fullName}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ fontSize: 13, fontWeight: 600 }}>{fullName}</span>
+                              {person.is_test && <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 5px', borderRadius: 4, background: 'rgba(244,165,26,.2)', color: 'var(--gold)', letterSpacing: '0.5px' }}>TEST</span>}
+                            </div>
                             {person.contact_email && (
                               <div style={{ fontSize: 11, color: 'var(--muted)' }}>{person.contact_email}</div>
                             )}

@@ -108,11 +108,14 @@ export default function Instructors() {
             <div key={inst.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,.04)' }}>
               <Avatar name={inst.name || inst.email} size={36} radius={10} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>{inst.name || '—'}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600 }}>{inst.name || '—'}</span>
+                  {inst.is_test && <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 5px', borderRadius: 4, background: 'rgba(244,165,26,.2)', color: 'var(--gold)', letterSpacing: '0.5px' }}>TEST</span>}
+                </div>
                 <div style={{ fontSize: 11, color: 'var(--muted)' }}>{inst.email}</div>
               </div>
-              <Badge variant={inst.subscription_status === 'active' ? 'green' : inst.subscription_status === 'pending' ? 'gold' : 'muted'}>
-                {inst.subscription_status === 'active' ? 'Aktiv' : inst.subscription_status === 'pending' ? 'Zahlung ausstehend' : 'Inaktiv'}
+              <Badge variant={inst.is_test ? 'gold' : inst.subscription_status === 'active' ? 'green' : inst.subscription_status === 'pending' ? 'gold' : 'muted'}>
+                {inst.is_test ? 'Test' : inst.subscription_status === 'active' ? 'Aktiv' : inst.subscription_status === 'pending' ? 'Zahlung ausstehend' : 'Inaktiv'}
               </Badge>
               <button
                 className="btn btn-danger"
