@@ -16,6 +16,28 @@ const LEVEL_LABEL    = { junior: 'Junior Lifesaver', lifesaver: 'Lifesaver', bot
 
 const EMPTY_P = { first_name: '', last_name: '', birth_date: '', email: '', address: '' }
 
+const JL_CRITERIA = [
+  { key: 'jl_jump',       label: 'Sprung ins Wasser vom Beckenrand' },
+  { key: 'jl_swim_back',  label: 'Rückenschwimmen 100m' },
+  { key: 'jl_swim_crawl', label: 'Kraulschwimmen 100m' },
+  { key: 'jl_dive',       label: 'Tauchen 5m unter Wasser' },
+  { key: 'jl_tow',        label: 'Schleppen 10m (Kinnschleppgriff)' },
+  { key: 'jl_float',      label: 'Auftreiben lassen (3 Min)' },
+  { key: 'jl_rescue',     label: 'Verunfallten aus Wasser holen' },
+  { key: 'jl_cpr',        label: 'Herz-Lungen-Wiederbelebung (HLW)' },
+]
+const LS_CRITERIA = [
+  { key: 'ls_swim_200',    label: 'Schwimmen 200m' },
+  { key: 'ls_dive',        label: 'Tauchen 10m unter Wasser' },
+  { key: 'ls_jump_3m',     label: 'Sprung vom 3m Brett' },
+  { key: 'ls_tow',         label: 'Schleppen 25m (Kinnschleppgriff)' },
+  { key: 'ls_release',     label: 'Befreien aus Haltegriff' },
+  { key: 'ls_rescue_deep', label: 'Bergen aus tiefem Wasser' },
+  { key: 'ls_clothed',     label: 'Kleiderschwimmen 100m' },
+  { key: 'ls_side_swim',   label: 'Seitenschwimmen 50m' },
+  { key: 'ls_first_aid',   label: 'Erste Hilfe inkl. HLW' },
+]
+
 export default function SauvetageDetail() {
   const { id } = useParams()
   const { profile } = useAuth()
@@ -33,6 +55,9 @@ export default function SauvetageDetail() {
   const [sendingB2, setSendingB2]     = useState(false)
   const [sendingPay, setSendingPay]   = useState(false)
   const [payResults, setPayResults]   = useState(null)
+  const [selectedP, setSelectedP]     = useState(null)   // participant detail modal
+  const [editStatus, setEditStatus]   = useState('')
+  const [savingStatus, setSavingStatus] = useState(false)
 
   const basePath = profile?.role === 'instructor' ? '/instructor' : '/admin'
 
@@ -71,6 +96,27 @@ export default function SauvetageDetail() {
   async function handleStatusChange(participantId, newStatus) {
     await supabase.from('sauvetage_participants').update({ status: newStatus }).eq('id', participantId)
     setParticipants(prev => prev.map(p => p.id === participantId ? { ...p, status: newStatus } : p))
+  }
+
+  function openParticipant(p) {
+    setSelectedP(p)
+    setEditStatus(p.status)
+  }
+
+  async function handleSaveStatus() {
+    setSavingStatus(true)
+    await supabase.from('sauvetage_participants').update({ status: editStatus }).eq('id', selectedP.id)
+    setParticipants(prev => prev.map(p => p.id === selectedP.id ? { ...p, status: editStatus } : p))
+    setSelectedP(prev => ({ ...prev, status: editStatus }))
+    setSavingStatus(false)
+    showToast('Status gespeichert ✓')
+  }
+
+  async function handleCompetencyToggle(key, checked) {
+    const updated = { ...(selectedP.competencies || {}), [key]: checked }
+    await supabase.from('sauvetage_participants').update({ competencies: updated }).eq('id', selectedP.id)
+    setSelectedP(prev => ({ ...prev, competencies: updated }))
+    setParticipants(prev => prev.map(p => p.id === selectedP.id ? { ...p, competencies: updated } : p))
   }
 
   async function handleDeleteParticipant() {
@@ -164,7 +210,7 @@ export default function SauvetageDetail() {
           {sendingB1 ? <span className="spinner" /> : '📋 B1 senden'}
           {course.b1_sent_at && <span style={{ fontSize: 10, marginLeft: 6, color: 'var(--green)' }}>✓ {new Date(course.b1_sent_at).toLocaleDateString('de-DE')}</span>}
         </button>
-        <button className="btn btn-ghost" onClick={handleB2} disabled={sendingB2 || !passed.length}>
+        <button className="btn btn-ghost" onClick={handleB2} disabled={sendingB2}>
           {sendingB2 ? <span className="spinner" /> : '✅ B2 senden'}
           {course.b2_sent_at && <span style={{ fontSize: 10, marginLeft: 6, color: 'var(--green)' }}>✓ {new Date(course.b2_sent_at).toLocaleDateString('de-DE')}</span>}
         </button>
@@ -227,11 +273,16 @@ export default function SauvetageDetail() {
               {participants.map(p => (
                 <tr key={p.id}>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
+                      onClick={() => openParticipant(p)}
+                      title="Teilnehmer öffnen"
+                    >
                       <Avatar name={`${p.first_name} ${p.last_name}`} size={28} radius={8} />
                       <div>
                         <div style={{ fontSize: 13, fontWeight: 600 }}>{p.last_name}, {p.first_name}</div>
                         {p.address && <div style={{ fontSize: 11, color: 'var(--muted)' }}>{p.address}</div>}
+                        {(() => { const comp = p.competencies || {}; const keys = Object.keys(comp).filter(k => comp[k]); return keys.length > 0 ? <div style={{ fontSize: 10, color: 'var(--aqua)' }}>✓ {keys.length} Kompetenz{keys.length !== 1 ? 'en' : ''}</div> : null })()}
                       </div>
                     </div>
                   </td>
@@ -281,6 +332,14 @@ export default function SauvetageDetail() {
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: 6 }}>
+                      <button
+                        className="btn btn-ghost"
+                        style={{ padding: '4px 8px', fontSize: 11 }}
+                        title="Teilnehmer öffnen"
+                        onClick={() => openParticipant(p)}
+                      >
+                        ✏️
+                      </button>
                       {p.access_token && (
                         <button
                           className="btn btn-ghost"
@@ -364,6 +423,90 @@ export default function SauvetageDetail() {
           Diese Aktion kann nicht rückgängig gemacht werden.
         </div>
       </Modal>
+
+      {/* Participant detail modal */}
+      {selectedP && (() => {
+        const comp = selectedP.competencies || {}
+        const level = course?.level
+        const criteria = level === 'lifesaver' ? LS_CRITERIA
+          : level === 'both' ? [...JL_CRITERIA, ...LS_CRITERIA]
+          : JL_CRITERIA
+        const checkedCount = criteria.filter(c => comp[c.key]).length
+        return (
+          <Modal
+            open={!!selectedP}
+            onClose={() => setSelectedP(null)}
+            title={`${selectedP.first_name} ${selectedP.last_name}`}
+            subtitle={`${selectedP.birth_date ? new Date(selectedP.birth_date).toLocaleDateString('de-DE') : '—'}${selectedP.email ? ' · ' + selectedP.email : ''}`}
+            actions={<button className="btn btn-ghost" onClick={() => setSelectedP(null)}>Schließen</button>}
+          >
+            {/* Status */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>Status</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <select
+                  value={editStatus}
+                  onChange={e => setEditStatus(e.target.value)}
+                  style={{
+                    flex: 1, fontSize: 13, padding: '8px 12px',
+                    background: 'var(--card)', border: '1px solid var(--border)',
+                    borderRadius: 10, color: 'var(--text)', fontFamily: 'DM Sans, sans-serif',
+                  }}
+                >
+                  <option value="registered">Angemeldet</option>
+                  <option value="passed_junior">JL bestanden</option>
+                  <option value="passed_lifesaver">LF bestanden</option>
+                  <option value="failed">Nicht bestanden</option>
+                </select>
+                <button
+                  className="btn btn-primary"
+                  onClick={handleSaveStatus}
+                  disabled={savingStatus || editStatus === selectedP.status}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  {savingStatus ? <span className="spinner" /> : 'Speichern'}
+                </button>
+              </div>
+            </div>
+
+            {/* Competencies */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  FLNS Kompetenzen
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--aqua)', fontWeight: 600 }}>
+                  {checkedCount} / {criteria.length}
+                </div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,.03)', borderRadius: 10, border: '1px solid var(--border)', overflow: 'hidden' }}>
+                {criteria.map((c, i) => (
+                  <label
+                    key={c.key}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px',
+                      cursor: 'pointer', borderBottom: i < criteria.length - 1 ? '1px solid var(--border)' : 'none',
+                      background: comp[c.key] ? 'rgba(34,197,94,.06)' : 'transparent',
+                      transition: 'background 0.15s',
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={!!comp[c.key]}
+                      onChange={e => handleCompetencyToggle(c.key, e.target.checked)}
+                      style={{ width: 16, height: 16, accentColor: 'var(--aqua)', cursor: 'pointer', flexShrink: 0 }}
+                    />
+                    <span style={{ fontSize: 13, color: comp[c.key] ? 'var(--text)' : 'var(--muted)', fontWeight: comp[c.key] ? 600 : 400 }}>
+                      {c.label}
+                    </span>
+                    {comp[c.key] && <span style={{ marginLeft: 'auto', color: 'var(--green)', fontSize: 13 }}>✓</span>}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </Modal>
+        )
+      })()}
     </div>
   )
 }
