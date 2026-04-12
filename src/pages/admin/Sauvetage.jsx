@@ -33,6 +33,7 @@ export default function Sauvetage() {
   const [showModal, setShowModal] = useState(false)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
+  const [confirmDeleteCourse, setConfirmDeleteCourse] = useState(null)
 
   useEffect(() => { if (profile) load() }, [profile])
 
@@ -67,6 +68,14 @@ export default function Sauvetage() {
     showToast(`Kurs "${form.name}" erstellt`)
     setShowModal(false)
     setForm(EMPTY_FORM)
+    load()
+  }
+
+  async function handleDeleteCourse() {
+    if (!confirmDeleteCourse) return
+    await supabase.from('sauvetage_courses').delete().eq('id', confirmDeleteCourse.id)
+    showToast(`Kurs "${confirmDeleteCourse.name}" gelöscht`)
+    setConfirmDeleteCourse(null)
     load()
   }
 
@@ -105,7 +114,17 @@ export default function Sauvetage() {
             <div key={c.id} className="class-card" style={{ cursor: 'pointer' }} onClick={() => navigate(`${basePath}/sauvetage/${c.id}`)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                 <div className="cc-name">{c.name}</div>
-                <Badge variant={STATUS_VARIANT[c.status] || 'blue'}>{STATUS_LABEL[c.status]}</Badge>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Badge variant={STATUS_VARIANT[c.status] || 'blue'}>{STATUS_LABEL[c.status]}</Badge>
+                  <button
+                    className="btn btn-danger"
+                    style={{ padding: '3px 8px', fontSize: 11 }}
+                    title="Kurs löschen"
+                    onClick={e => { e.stopPropagation(); setConfirmDeleteCourse({ id: c.id, name: c.name }) }}
+                  >
+                    🗑
+                  </button>
+                </div>
               </div>
               <div className="cc-meta">
                 {LEVEL_LABEL[c.level]} · {c.location || '—'}<br />
@@ -124,6 +143,22 @@ export default function Sauvetage() {
           ))}
         </div>
       )}
+
+      {/* Confirm delete course */}
+      <Modal
+        open={!!confirmDeleteCourse}
+        onClose={() => setConfirmDeleteCourse(null)}
+        title="Kurs löschen"
+        subtitle={`Wirklich löschen: ${confirmDeleteCourse?.name}?`}
+        actions={<>
+          <button className="btn btn-ghost" onClick={() => setConfirmDeleteCourse(null)}>Abbrechen</button>
+          <button className="btn btn-danger" onClick={handleDeleteCourse}>Löschen</button>
+        </>}
+      >
+        <div style={{ padding: '8px 0', fontSize: 13, color: 'var(--muted)' }}>
+          Alle Teilnehmer dieses Kurses werden ebenfalls gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.
+        </div>
+      </Modal>
 
       {/* Create course modal */}
       <Modal

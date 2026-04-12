@@ -249,26 +249,10 @@ export default function SauvetageDetail() {
           {sendingB2 ? <span className="spinner" /> : '✅ B2 senden'}
           {course.b2_sent_at && <span style={{ fontSize: 10, marginLeft: 6, color: 'var(--green)' }}>✓ {new Date(course.b2_sent_at).toLocaleDateString('de-DE')}</span>}
         </button>
-        <button className="btn btn-primary" onClick={handleBadgePayment} disabled={sendingPay || !passed.filter(p => p.badge_payment_status !== 'paid' && p.email).length}>
-          {sendingPay ? <span className="spinner" /> : '💳 Abzeichen bezahlen'}
-        </button>
         <button className="btn btn-ghost" style={{ marginLeft: 'auto' }} onClick={() => setShowAddModal(true)}>
           + Teilnehmer
         </button>
       </div>
-
-      {/* Payment results */}
-      {payResults && (
-        <div className="card" style={{ marginBottom: 18 }}>
-          <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Zahlungslinks gesendet:</div>
-          {payResults.map((r, i) => (
-            <div key={i} style={{ fontSize: 12, color: r.sent ? 'var(--green)' : 'var(--red)', marginBottom: 4 }}>
-              {r.sent ? '✓' : '✗'} {r.name} ({r.email}) {r.error ? `— ${r.error}` : ''}
-            </div>
-          ))}
-          <button className="btn btn-ghost" style={{ fontSize: 11, marginTop: 8 }} onClick={() => setPayResults(null)}>Schließen</button>
-        </div>
-      )}
 
       {/* Stats */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
