@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [loading, setLoading]       = useState(true)
   const [testCodes, setTestCodes]   = useState([])
   const [generatingType, setGeneratingType] = useState(null) // 'parent' | 'instructor' | 'participant'
+  const [testCodeError, setTestCodeError] = useState('')
 
   useEffect(() => { if (profile) load() }, [profile])
 
@@ -44,21 +45,38 @@ export default function Dashboard() {
 
   async function generateTestCode(type) {
     setGeneratingType(type)
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-    const rand = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
-    const code = `TEST-${rand}`
-    const schoolId = profile.school_id
-    const { data: school } = await supabase.from('schools').select('name').eq('id', schoolId).single()
-    const { error } = await supabase.from('test_codes').insert({
-      school_id: schoolId,
-      school_name: school?.name || 'Schwimmschule',
-      code,
-      type,
-      created_by: profile.id,
-    })
-    setGeneratingType(null)
-    if (!error) {
-      setTestCodes(prev => [{ code, type, school_id: schoolId, active: true, created_at: new Date().toISOString() }, ...prev])
+    setTestCodeError('')
+    try {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+      const rand = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+      const code = `TEST-${rand}`
+      const schoolId = profile.school_id
+      // Use already-loaded school name from profile instead of a separate query
+      const schoolName = profile.schools?.name || 'Schwimmschule'
+
+      console.log('[generateTestCode] inserting:', { code, type, schoolId, schoolName })
+
+      const { data: inserted, error } = await supabase.from('test_codes').insert({
+        school_id: schoolId,
+        school_name: schoolName,
+        code,
+        type,
+        created_by: profile.id,
+      }).select().single()
+
+      console.log('[generateTestCode] result:', { inserted, error })
+
+      if (error) {
+        console.error('[generateTestCode] insert error:', error)
+        setTestCodeError(`Fehler: ${error.message}`)
+      } else {
+        setTestCodes(prev => [inserted, ...prev])
+      }
+    } catch (err) {
+      console.error('[generateTestCode] exception:', err)
+      setTestCodeError(`Fehler: ${err.message}`)
+    } finally {
+      setGeneratingType(null)
     }
   }
 
@@ -162,7 +180,7 @@ export default function Dashboard() {
       <div className="sec-header" style={{ marginTop: 28 }}>
         <div className="sec-title">🧪 Test-Codes</div>
       </div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
         {[
           { type: 'parent',      icon: '👨‍👩‍👧', label: 'Eltern-Code' },
           { type: 'instructor',  icon: '🏊', label: 'Instrukteur-Code' },
@@ -175,10 +193,13 @@ export default function Dashboard() {
             onClick={() => generateTestCode(type)}
             disabled={generatingType !== null}
           >
-            {generatingType === type ? '...' : `+ ${icon} ${label}`}
+            {generatingType === type ? <><span className="spinner" style={{ width: 12, height: 12, borderWidth: 2, marginRight: 6 }} />Erstelle...</> : `+ ${icon} ${label}`}
           </button>
         ))}
       </div>
+      {testCodeError && (
+        <div className="error-msg" style={{ marginBottom: 10, fontSize: 12 }}>{testCodeError}</div>
+      )}
       <div className="card" style={{ marginBottom: 24 }}>
         {testCodes.length === 0 ? (
           <div style={{ fontSize: 13, color: 'var(--muted)', textAlign: 'center', padding: '12px 0' }}>
