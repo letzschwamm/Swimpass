@@ -12,6 +12,7 @@ export default function InstructorOnboarding() {
   const [code, setCode]       = useState('')
   const [name, setName]       = useState('')
   const [email, setEmail]     = useState('')
+  const [phone, setPhone]     = useState('')
   const [password, setPassword] = useState('')
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
@@ -47,7 +48,7 @@ export default function InstructorOnboarding() {
     setLoading(true)
     setError('')
     const { data, error: fnError } = await supabase.functions.invoke('register-instructor', {
-      body: { code: code.toUpperCase().trim(), email, password, name },
+      body: { code: code.toUpperCase().trim(), email, password, name, phone },
     })
     setLoading(false)
     if (fnError || data?.error) {
@@ -123,11 +124,15 @@ export default function InstructorOnboarding() {
               <label>E-Mail</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="instrukteur@email.lu" autoComplete="email" />
             </div>
+            <div className="form-group">
+              <label>Telefonnummer</label>
+              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+352 621 000 000" autoComplete="tel" />
+            </div>
             <div className="form-group" style={{ marginBottom: 20 }}>
               <label>Passwort (min. 8 Zeichen)</label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" autoComplete="new-password" />
             </div>
-            <button className="btn btn-primary btn-full btn-lg" onClick={handleRegister} disabled={loading || !name || !email || password.length < 8}>
+            <button className="btn btn-primary btn-full btn-lg" onClick={handleRegister} disabled={loading || !name || !email || !phone || password.length < 8}>
               {loading ? <span className="spinner" /> : 'Registrieren →'}
             </button>
             <button onClick={() => setStep(STEPS.code)} style={{ background: 'none', border: 'none', color: 'var(--muted)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', marginTop: 12, display: 'block', textAlign: 'center', width: '100%' }}>

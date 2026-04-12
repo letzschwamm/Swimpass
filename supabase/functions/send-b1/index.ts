@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import * as XLSX from 'https://esm.sh/xlsx@0.18.5'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,9 +36,51 @@ serve(async (req) => {
       .eq('course_id', courseId)
       .order('last_name')
 
-    const levelLabel = course.level === 'lifesaver' ? 'Lifesaver' : course.level === 'both' ? 'Junior Lifesaver & Lifesaver' : 'Junior Lifesaver'
+    const levelLabel = course.level === 'lifesaver' ? 'Lifesaver'
+      : course.level === 'both' ? 'Junior Lifesaver & Lifesaver'
+      : 'Junior Lifesaver'
     const examDate = course.exam_date ? new Date(course.exam_date).toLocaleDateString('fr-LU') : '—'
 
+    // ── Build Excel ────────────────────────────────────────────
+    const rows: unknown[][] = [
+      ['FÉDÉRATION LUXEMBOURGEOISE DE NATATION ET DE SAUVETAGE'],
+      ['Formulaire B1 — Anmeldung Examen'],
+      [],
+      [`${course.name} · ${levelLabel}`],
+      [],
+      ['Instrukteur — Nom:', course.instructor_name || '—', 'Prénom:', course.instructor_firstname || '—'],
+      ['École:', 'Letzschwamm Schwimmschule', 'Adresse instrukteur:', course.instructor_address || '—'],
+      ['Tél.:', course.instructor_phone || '—', 'E-Mail:', course.instructor_email || '—'],
+      ['Piscine:', course.location || '—', 'Adresse piscine:', course.venue_address || '—'],
+      ['Date prévue examen:', examDate, 'Niveau:', levelLabel],
+      [],
+      ['N°', 'Nom', 'Prénom', 'Date de naissance', 'Adresse e-mail'],
+    ]
+
+    for (let i = 0; i < (participants || []).length; i++) {
+      const p = participants![i]
+      rows.push([
+        i + 1,
+        p.last_name,
+        p.first_name,
+        p.birth_date ? new Date(p.birth_date).toLocaleDateString('fr-LU') : '—',
+        p.email || '—',
+      ])
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(rows)
+    ws['!cols'] = [{ wch: 22 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 32 }]
+
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Formulaire B1')
+
+    const xlsxBuf: ArrayBuffer = XLSX.write(wb, { type: 'array', bookType: 'xlsx' })
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(xlsxBuf)))
+
+    const safeName = course.name.replace(/[^a-z0-9_\-]/gi, '_')
+    const filename = `B1_${safeName}_${examDate.replace(/\//g, '-')}.xlsx`
+
+    // ── HTML email body ────────────────────────────────────────
     const participantRows = (participants || []).map((p, i) => `
       <tr style="border-bottom:1px solid #ddd;">
         <td style="padding:8px;text-align:center;">${i + 1}</td>
@@ -67,7 +110,7 @@ serve(async (req) => {
             <tr>
               <td style="padding:6px 0;color:#666;font-size:13px;">École:</td>
               <td style="padding:6px 0;font-weight:600;">Letzschwamm Schwimmschule</td>
-              <td style="padding:6px 0;color:#666;font-size:13px;">Adresse:</td>
+              <td style="padding:6px 0;color:#666;font-size:13px;">Adresse instrukteur:</td>
               <td style="padding:6px 0;font-weight:600;">${course.instructor_address || '—'}</td>
             </tr>
             <tr>
@@ -75,6 +118,12 @@ serve(async (req) => {
               <td style="padding:6px 0;font-weight:600;">${course.instructor_phone || '—'}</td>
               <td style="padding:6px 0;color:#666;font-size:13px;">E-Mail:</td>
               <td style="padding:6px 0;font-weight:600;">${course.instructor_email || '—'}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;color:#666;font-size:13px;">Piscine:</td>
+              <td style="padding:6px 0;font-weight:600;">${course.location || '—'}</td>
+              <td style="padding:6px 0;color:#666;font-size:13px;">Adresse piscine:</td>
+              <td style="padding:6px 0;font-weight:600;">${course.venue_address || '—'}</td>
             </tr>
             <tr>
               <td style="padding:6px 0;color:#666;font-size:13px;">Date prévue examen:</td>
@@ -103,8 +152,8 @@ serve(async (req) => {
           </tbody>
         </table>
 
-        <div style="margin-top:24px;padding:16px;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;font-size:13px;">
-          <strong>Hinweis:</strong> Diese E-Mail wurde automatisch über die Letzschwamm-Plattform generiert und entspricht dem offiziellen FLNS Formulaire B1. Das originale Formular steht unter <a href="${Deno.env.get('APP_URL') || 'https://letzschwamm.vercel.app'}/Sauvetage_Formulaire_B1.xlsx">diesem Link</a> zum Download bereit.
+        <div style="margin-top:24px;padding:16px;background:#e8f0fe;border:1px solid #c5d8f7;border-radius:8px;font-size:13px;color:#1a3a6e;">
+          <strong>📎 Anhang:</strong> Das ausgefüllte Formulaire B1 ist als Excel-Datei beigefügt.
         </div>
 
         <div style="margin-top:20px;font-size:11px;color:#999;border-top:1px solid #eee;padding-top:16px;">
@@ -122,9 +171,9 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'Letzschwamm <sauvetage@letzschwamm.lu>',
         to: 'info@letzschwamm.com',
-        cc: 'info@letzschwamm.com',
         subject: `FLNS Formulaire B1 — ${course.name} — Examen ${examDate}`,
         html,
+        attachments: [{ filename, content: base64 }],
       }),
     })
 
@@ -133,7 +182,6 @@ serve(async (req) => {
       throw new Error(`Resend error: ${err}`)
     }
 
-    // Mark B1 as sent
     await supabase.from('sauvetage_courses').update({ b1_sent_at: new Date().toISOString() }).eq('id', courseId)
 
     return json({ success: true })

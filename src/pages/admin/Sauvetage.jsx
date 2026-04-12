@@ -11,7 +11,7 @@ const STATUS_VARIANT = { open: 'blue', exam_done: 'gold', completed: 'green' }
 const LEVEL_LABEL = { junior: 'Junior Lifesaver', lifesaver: 'Lifesaver', both: 'JL & Lifesaver' }
 
 const EMPTY_FORM = {
-  name: '', level: 'junior', location: '', exam_date: '',
+  name: '', level: 'junior', location: '', venue_address: '', exam_date: '',
   instructor_name: '', instructor_firstname: '', instructor_email: '',
   instructor_phone: '', instructor_address: '',
 }
@@ -46,6 +46,7 @@ export default function Sauvetage() {
       name: form.name,
       level: form.level,
       location: form.location || null,
+      venue_address: form.venue_address || null,
       exam_date: form.exam_date || null,
       instructor_name: form.instructor_name || null,
       instructor_firstname: form.instructor_firstname || null,
@@ -147,9 +148,15 @@ export default function Sauvetage() {
             <input type="date" value={form.exam_date} onChange={e => setForm(f => ({ ...f, exam_date: e.target.value }))} />
           </div>
         </div>
-        <div className="form-group">
-          <label>Ort</label>
-          <input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Schwimmbad Bonnevoie" />
+        <div className="form-row">
+          <div className="form-group half">
+            <label>Schwimmhalle (Name)</label>
+            <input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Schwimmbad Bonnevoie" />
+          </div>
+          <div className="form-group half">
+            <label>Adresse der Schwimmhalle</label>
+            <input value={form.venue_address} onChange={e => setForm(f => ({ ...f, venue_address: e.target.value }))} placeholder="1 Rue de la Piscine, L-1234 Luxembourg" />
+          </div>
         </div>
 
         <div style={{ marginTop: 4, marginBottom: 10, fontSize: 11, fontWeight: 700, color: 'var(--muted)', letterSpacing: '0.5px', textTransform: 'uppercase' }}>

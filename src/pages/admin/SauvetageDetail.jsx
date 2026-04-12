@@ -147,6 +147,8 @@ export default function SauvetageDetail() {
             ['E-Mail', course.instructor_email],
             ['Telefon', course.instructor_phone],
             ['Adresse', course.instructor_address],
+            ['Schwimmhalle', course.location],
+            ['Adresse Schwimmhalle', course.venue_address],
           ].map(([label, val]) => (
             <div key={label}>
               <span style={{ color: 'var(--muted)', fontSize: 11 }}>{label}: </span>

@@ -14,7 +14,7 @@ serve(async (req) => {
     new Response(JSON.stringify(body), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   try {
-    const { code, email, password, name } = await req.json()
+    const { code, email, password, name, phone } = await req.json()
 
     const missing = ['code', 'email', 'password', 'name'].filter(k => !({ code, email, password, name } as Record<string, string>)[k])
     if (missing.length) return json({ error: `Fehlende Felder: ${missing.join(', ')}` })
@@ -48,6 +48,7 @@ serve(async (req) => {
         school_id: testCode.school_id,
         subscription_status: 'active',
         is_test: true,
+        phone: phone || null,
       }, { onConflict: 'id' })
 
       return json({ success: true, userId })
@@ -94,6 +95,7 @@ serve(async (req) => {
       role: 'instructor',
       school_id: invite.school_id,
       subscription_status: 'pending',
+      phone: phone || null,
     }, { onConflict: 'id' })
 
     if (profileError) return json({ error: `Profil-Fehler: ${profileError.message}` })
