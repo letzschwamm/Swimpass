@@ -93,19 +93,52 @@ serve(async (req) => {
       return json({ error: `Profil-Fehler: ${profileError.message}` }, 500)
     }
 
-    // ── 4. Insert child ───────────────────────────────────────
+    // ── 4. Resolve class for test mode (seepferdchen) ────────────
+    const isTestBool = isTest === 'true' || isTest === true
+    let resolvedClassId = classId || null
+
+    if (isTestBool) {
+      // Find existing seepferdchen class in this school
+      const { data: existingClass } = await supabase
+        .from('classes')
+        .select('id')
+        .eq('school_id', schoolId)
+        .eq('level', 'seepferdchen')
+        .limit(1)
+        .maybeSingle()
+
+      if (existingClass) {
+        resolvedClassId = existingClass.id
+      } else {
+        // Create a test class if none exists
+        const { data: newClass } = await supabase
+          .from('classes')
+          .insert({
+            school_id: schoolId,
+            name: 'Test-Klasse Seepferdchen',
+            level: 'seepferdchen',
+            day: 'Saturday',
+            time: '10:00',
+          })
+          .select('id')
+          .single()
+        if (newClass) resolvedClassId = newClass.id
+      }
+    }
+
+    // ── 5. Insert child ───────────────────────────────────────
     const { data: child, error: childError } = await supabase
       .from('children')
       .insert({
-        school_id: schoolId,
-        class_id:  classId || null,
-        parent_id: userId,
+        school_id:  schoolId,
+        class_id:   resolvedClassId,
+        parent_id:  userId,
         first_name: firstName,
         last_name:  lastName,
         birth_date: birthDate || null,
-        level:      level || 'junior',
+        level:      isTestBool ? 'seepferdchen' : (level || 'junior'),
         avatar:     avatar || '👦',
-        is_test:    isTest === 'true' || isTest === true,
+        is_test:    isTestBool,
       })
       .select()
       .single()

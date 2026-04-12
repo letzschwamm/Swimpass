@@ -58,7 +58,7 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
       firstName:  data.firstName,
       lastName:   data.lastName,
       birthDate:  data.birthDate || null,
-      level:      data.classInfo?.level || 'junior',
+      level:      data.isTest ? 'seepferdchen' : (data.classInfo?.level || 'junior'),
       avatar:     data.avatar || '👦',
     }
 
