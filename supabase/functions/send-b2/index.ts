@@ -179,7 +179,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Letzschwamm <sauvetage@letzschwamm.lu>',
+        from: 'Letzschwamm <info@letzschwamm.com>',
         to: 'info@letzschwamm.com',
         subject: `FLNS Formulaire B2 — ${course.name} — Examen ${examDate}`,
         html,
