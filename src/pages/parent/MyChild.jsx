@@ -25,9 +25,28 @@ export default function MyChild() {
 
   async function load() {
     setLoading(true)
-    const { data: kids } = await supabase.from('children').select('*').eq('parent_id', profile.id).limit(1)
-    if (!kids?.length) { setLoading(false); return }
+    console.log('[MyChild] load() called — profile.id:', profile?.id, 'role:', profile?.role)
+
+    const { data: kids, error: kidsError } = await supabase
+      .from('children')
+      .select('*')
+      .eq('parent_id', profile.id)
+      .limit(1)
+
+    console.log('[MyChild] children query result:', { kids, error: kidsError, parentId: profile.id })
+
+    if (kidsError) {
+      console.error('[MyChild] children query error:', kidsError)
+      setLoading(false)
+      return
+    }
+    if (!kids?.length) {
+      console.warn('[MyChild] no children found for parent_id:', profile.id)
+      setLoading(false)
+      return
+    }
     const kid = kids[0]
+    console.log('[MyChild] child found:', kid.id, kid.first_name, kid.level)
     setChild(kid)
     const [{ data: prog }, { data: clsData }, { data: nts }] = await Promise.all([
       supabase.from('progress').select('criteria_key').eq('child_id', kid.id),

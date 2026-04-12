@@ -104,9 +104,9 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
       })
       if (signInError) throw signInError
 
-      // ── Test-Modus: Stripe überspringen → direkt zum Eltern-Dashboard ────
+      // ── Test-Modus: Stripe überspringen → RootRedirect leitet weiter ─────
       if (data.isTest) {
-        navigate('/parent')
+        navigate('/')
         return
       }
 

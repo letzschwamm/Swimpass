@@ -150,7 +150,7 @@ export default function InstructorOnboarding() {
                 TEST · Kein echtes Abonnement aktiv
               </div>
             </div>
-            <button className="btn btn-primary btn-full btn-lg" onClick={() => navigate('/instructor')}>
+            <button className="btn btn-primary btn-full btn-lg" onClick={() => navigate('/')}>
               Zur App →
             </button>
           </>

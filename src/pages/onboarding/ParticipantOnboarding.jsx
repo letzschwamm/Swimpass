@@ -46,7 +46,7 @@ export default function ParticipantOnboarding() {
       return
     }
     await supabase.auth.signInWithPassword({ email, password })
-    navigate('/participant')
+    navigate('/')
   }
 
   return (
