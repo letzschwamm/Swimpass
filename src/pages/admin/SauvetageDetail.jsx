@@ -7,6 +7,7 @@ import BackButton from '../../components/BackButton'
 import Modal from '../../components/Modal'
 import Badge from '../../components/Badge'
 import Avatar from '../../components/Avatar'
+import { CRITERIA } from '../../lib/criteria'
 
 const STRIPE_BADGE_LINK = import.meta.env.VITE_STRIPE_SAUVETAGE_LINK || 'https://buy.stripe.com/aFa9AT2gxeZUfOkbVF7kc01'
 
@@ -16,27 +17,14 @@ const LEVEL_LABEL    = { junior: 'Junior Lifesaver', lifesaver: 'Lifesaver', bot
 
 const EMPTY_P = { first_name: '', last_name: '', birth_date: '', email: '', address: '' }
 
-const JL_CRITERIA = [
-  { key: 'jl_jump',       label: 'Sprung ins Wasser vom Beckenrand' },
-  { key: 'jl_swim_back',  label: 'Rückenschwimmen 100m' },
-  { key: 'jl_swim_crawl', label: 'Kraulschwimmen 100m' },
-  { key: 'jl_dive',       label: 'Tauchen 5m unter Wasser' },
-  { key: 'jl_tow',        label: 'Schleppen 10m (Kinnschleppgriff)' },
-  { key: 'jl_float',      label: 'Auftreiben lassen (3 Min)' },
-  { key: 'jl_rescue',     label: 'Verunfallten aus Wasser holen' },
-  { key: 'jl_cpr',        label: 'Herz-Lungen-Wiederbelebung (HLW)' },
-]
-const LS_CRITERIA = [
-  { key: 'ls_swim_200',    label: 'Schwimmen 200m' },
-  { key: 'ls_dive',        label: 'Tauchen 10m unter Wasser' },
-  { key: 'ls_jump_3m',     label: 'Sprung vom 3m Brett' },
-  { key: 'ls_tow',         label: 'Schleppen 25m (Kinnschleppgriff)' },
-  { key: 'ls_release',     label: 'Befreien aus Haltegriff' },
-  { key: 'ls_rescue_deep', label: 'Bergen aus tiefem Wasser' },
-  { key: 'ls_clothed',     label: 'Kleiderschwimmen 100m' },
-  { key: 'ls_side_swim',   label: 'Seitenschwimmen 50m' },
-  { key: 'ls_first_aid',   label: 'Erste Hilfe inkl. HLW' },
-]
+function buildCriteriaList(levelKey) {
+  const cats = CRITERIA[levelKey]
+  if (!cats) return []
+  return Object.values(cats).flat().map(item => ({
+    key: item.key,
+    label: item.de.title,
+  }))
+}
 
 export default function SauvetageDetail() {
   const { id } = useParams()
@@ -435,9 +423,9 @@ export default function SauvetageDetail() {
       {selectedP && (() => {
         const comp = selectedP.competencies || {}
         const level = course?.level
-        const criteria = level === 'lifesaver' ? LS_CRITERIA
-          : level === 'both' ? [...JL_CRITERIA, ...LS_CRITERIA]
-          : JL_CRITERIA
+        const criteria = level === 'lifesaver' ? buildCriteriaList('lifesaver')
+          : level === 'both' ? [...buildCriteriaList('junior'), ...buildCriteriaList('lifesaver')]
+          : buildCriteriaList('junior')
         const checkedCount = criteria.filter(c => comp[c.key]).length
         return (
           <Modal
