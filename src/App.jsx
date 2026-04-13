@@ -29,7 +29,6 @@ import InstructorSettings from './pages/instructor/InstructorSettings'
 import InstructorChat from './pages/instructor/InstructorChat'
 import ParentChat from './pages/parent/ParentChat'
 import ParticipantChat from './pages/participant/ParticipantChat'
-import RainEffect from './components/RainEffect'
 import WelcomeBack from './components/WelcomeBack'
 
 function ProtectedRoute({ children, roles }) {
@@ -149,7 +148,6 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <AppProvider>
-          <RainEffect />
           <WelcomeBack />
           <AppRoutes />
           <CookieBanner />
