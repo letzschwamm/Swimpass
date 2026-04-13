@@ -55,6 +55,7 @@ export default function Login() {
         setError(error.message)
       }
     } else {
+      sessionStorage.setItem('swimpass_wb', '1')
       navigate('/')
     }
   }
