@@ -12,6 +12,7 @@ const PAGE_ROUTES = {
   sauvetage: '/sauvetage',
   instructors: '/instructors',
   levels: '/levels',
+  chat: '/chat',
   'my-classes': '',
   'my-child': '',
   'my-status': '',

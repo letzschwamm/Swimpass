@@ -24,6 +24,9 @@ import MyClasses from './pages/teacher/MyClasses'
 import AllChildren from './pages/teacher/AllChildren'
 import MyChild from './pages/parent/MyChild'
 import InstructorLevels from './pages/instructor/InstructorLevels'
+import InstructorChat from './pages/instructor/InstructorChat'
+import ParentChat from './pages/parent/ParentChat'
+import ParticipantChat from './pages/participant/ParticipantChat'
 
 function ProtectedRoute({ children, roles }) {
   const { session, profile, loading } = useAuth()
@@ -99,6 +102,7 @@ function AppRoutes() {
         <Route path="children" element={<AllChildren />} />
         <Route path="children/:id" element={<ChildDetail />} />
         <Route path="children/:id/pass" element={<ChildPass />} />
+        <Route path="chat" element={<InstructorChat />} />
       </Route>
 
       <Route path="/instructor" element={
@@ -110,6 +114,7 @@ function AppRoutes() {
         <Route path="sauvetage" element={<Sauvetage />} />
         <Route path="sauvetage/:id" element={<SauvetageDetail />} />
         <Route path="levels" element={<InstructorLevels />} />
+        <Route path="chat" element={<InstructorChat />} />
       </Route>
 
       <Route path="/parent" element={
@@ -118,6 +123,7 @@ function AppRoutes() {
         </ProtectedRoute>
       }>
         <Route index element={<MyChild />} />
+        <Route path="chat" element={<ParentChat />} />
       </Route>
 
       <Route path="/participant" element={
@@ -126,6 +132,7 @@ function AppRoutes() {
         </ProtectedRoute>
       }>
         <Route index element={<MyStatus />} />
+        <Route path="chat" element={<ParticipantChat />} />
       </Route>
     </Routes>
   )

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Toast from './Toast'
+import ChatNavBadge from './ChatNavBadge'
 
 const ROUTE_PREFIX = { admin: '/admin', teacher: '/teacher', parent: '/parent', instructor: '/instructor', participant: '/participant' }
 const PAGE_ROUTES = {
@@ -11,6 +12,7 @@ const PAGE_ROUTES = {
   sauvetage: '/sauvetage',
   instructors: '/instructors',
   levels: '/levels',
+  chat: '/chat',
   'my-classes': '',
   'my-child': '',
   'my-status': '',
@@ -18,10 +20,10 @@ const PAGE_ROUTES = {
 
 const BOTTOM_NAV = {
   admin:       [{ id: 'dashboard', icon: '📊', label: 'Dashboard' }, { id: 'children', icon: '👶', label: 'Kinder' }, { id: 'classes', icon: '📚', label: 'Klassen' }, { id: 'sauvetage', icon: '🏊', label: 'Sauvetage' }],
-  teacher:     [{ id: 'my-classes', icon: '📚', label: 'Klassen' }, { id: 'children', icon: '👶', label: 'Kinder' }],
-  instructor:  [{ id: 'sauvetage', icon: '🏊', label: 'Kurse' }, { id: 'levels', icon: '🏆', label: 'Mein Level' }],
-  parent:      [{ id: 'my-child', icon: '👶', label: 'Mein Kind' }],
-  participant: [{ id: 'my-status', icon: '🏅', label: 'Mein Status' }],
+  teacher:     [{ id: 'my-classes', icon: '📚', label: 'Klassen' }, { id: 'children', icon: '👶', label: 'Kinder' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+  instructor:  [{ id: 'sauvetage', icon: '🏊', label: 'Kurse' }, { id: 'levels', icon: '🏆', label: 'Mein Level' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+  parent:      [{ id: 'my-child', icon: '👶', label: 'Mein Kind' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+  participant: [{ id: 'my-status', icon: '🏅', label: 'Mein Status' }, { id: 'chat', icon: '💬', label: 'Chat' }],
 }
 
 export default function Layout({ role }) {
@@ -74,9 +76,11 @@ export default function Layout({ role }) {
               key={id}
               className={`bn-item${isActive(id) ? ' active' : ''}`}
               onClick={() => handleNav(id)}
+              style={{ position: 'relative' }}
             >
               <span className="bn-icon">{icon}</span>
               <span className="bn-label">{label}</span>
+              {id === 'chat' && <ChatNavBadge />}
             </button>
           ))}
         </nav>

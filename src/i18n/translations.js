@@ -2,10 +2,10 @@ export const T = {
   de: {
     nav: {
       admin:      [{ id: 'dashboard', icon: '📊', label: 'Übersicht' }, { id: 'children', icon: '👦', label: 'Kinder' }, { id: 'classes', icon: '🏊', label: 'Klassen' }, { id: 'sauvetage', icon: '🏅', label: 'Sauvetage' }, { id: 'instructors', icon: '👨‍🏫', label: 'Instrukteure' }],
-      teacher:    [{ id: 'my-classes', icon: '🏊', label: 'Meine Klassen' }, { id: 'children', icon: '👦', label: 'Alle Kinder' }],
-      parent:     [{ id: 'my-child', icon: '🌊', label: 'Mein Kind' }],
-      instructor: [{ id: 'sauvetage', icon: '🏅', label: 'Meine Kurse' }, { id: 'levels', icon: '🏆', label: 'Meine Level' }],
-      participant: [{ id: 'my-status', icon: '🏅', label: 'Mein Status' }],
+      teacher:    [{ id: 'my-classes', icon: '🏊', label: 'Meine Klassen' }, { id: 'children', icon: '👦', label: 'Alle Kinder' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      parent:     [{ id: 'my-child', icon: '🌊', label: 'Mein Kind' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      instructor: [{ id: 'sauvetage', icon: '🏅', label: 'Meine Kurse' }, { id: 'levels', icon: '🏆', label: 'Meine Level' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      participant: [{ id: 'my-status', icon: '🏅', label: 'Mein Status' }, { id: 'chat', icon: '💬', label: 'Chat' }],
     },
     roleLabels: { admin: 'Administrator', teacher: 'Schwimmlehrer', parent: 'Elternteil', instructor: 'Instrukteur', participant: 'Kursteilnehmer' },
     tabs: { swim: 'Schwimmen', rescue: 'Rettung', theory: 'Theorie' },
@@ -101,10 +101,10 @@ export const T = {
   fr: {
     nav: {
       admin:      [{ id: 'dashboard', icon: '📊', label: 'Tableau de bord' }, { id: 'children', icon: '👦', label: 'Enfants' }, { id: 'classes', icon: '🏊', label: 'Classes' }, { id: 'sauvetage', icon: '🏅', label: 'Sauvetage' }, { id: 'instructors', icon: '👨‍🏫', label: 'Instructeurs' }],
-      instructor: [{ id: 'sauvetage', icon: '🏅', label: 'Mes cours' }, { id: 'levels', icon: '🏆', label: 'Mes niveaux' }],
-      teacher: [{ id: 'my-classes', icon: '🏊', label: 'Mes classes' }, { id: 'children', icon: '👦', label: 'Tous les enfants' }],
-      parent:  [{ id: 'my-child', icon: '🌊', label: 'Mon enfant' }],
-      participant: [{ id: 'my-status', icon: '🏅', label: 'Mon statut' }],
+      teacher:     [{ id: 'my-classes', icon: '🏊', label: 'Mes classes' }, { id: 'children', icon: '👦', label: 'Tous les enfants' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      parent:      [{ id: 'my-child', icon: '🌊', label: 'Mon enfant' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      instructor:  [{ id: 'sauvetage', icon: '🏅', label: 'Mes cours' }, { id: 'levels', icon: '🏆', label: 'Mes niveaux' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      participant: [{ id: 'my-status', icon: '🏅', label: 'Mon statut' }, { id: 'chat', icon: '💬', label: 'Chat' }],
     },
     roleLabels: { admin: 'Administrateur', teacher: 'Maître nageur', parent: 'Parent', instructor: 'Instructeur', participant: 'Participant' },
     tabs: { swim: 'Natation', rescue: 'Sauvetage', theory: 'Théorie' },
@@ -186,10 +186,10 @@ export const T = {
   lu: {
     nav: {
       admin:      [{ id: 'dashboard', icon: '📊', label: 'Iwwersiicht' }, { id: 'children', icon: '👦', label: 'Kanner' }, { id: 'classes', icon: '🏊', label: 'Klassen' }, { id: 'sauvetage', icon: '🏅', label: 'Sauvetage' }, { id: 'instructors', icon: '👨‍🏫', label: 'Instrukteure' }],
-      instructor: [{ id: 'sauvetage', icon: '🏅', label: 'Meng Coursen' }, { id: 'levels', icon: '🏆', label: 'Meng Niveauen' }],
-      teacher: [{ id: 'my-classes', icon: '🏊', label: 'Meng Klassen' }, { id: 'children', icon: '👦', label: 'All Kanner' }],
-      parent:  [{ id: 'my-child', icon: '🌊', label: 'Mee Kand' }],
-      participant: [{ id: 'my-status', icon: '🏅', label: 'Mee Status' }],
+      teacher:     [{ id: 'my-classes', icon: '🏊', label: 'Meng Klassen' }, { id: 'children', icon: '👦', label: 'All Kanner' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      parent:      [{ id: 'my-child', icon: '🌊', label: 'Mee Kand' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      instructor:  [{ id: 'sauvetage', icon: '🏅', label: 'Meng Coursen' }, { id: 'levels', icon: '🏆', label: 'Meng Niveauen' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      participant: [{ id: 'my-status', icon: '🏅', label: 'Mee Status' }, { id: 'chat', icon: '💬', label: 'Chat' }],
     },
     roleLabels: { admin: 'Administrateur', teacher: 'Schwammlehrer', parent: 'Elterendeel', instructor: 'Instrukteur', participant: 'Kursteilnehmer' },
     tabs: { swim: 'Schwammen', rescue: 'Rettung', theory: 'Theorie' },
@@ -271,10 +271,10 @@ export const T = {
   en: {
     nav: {
       admin:      [{ id: 'dashboard', icon: '📊', label: 'Dashboard' }, { id: 'children', icon: '👦', label: 'Children' }, { id: 'classes', icon: '🏊', label: 'Classes' }, { id: 'sauvetage', icon: '🏅', label: 'Sauvetage' }, { id: 'instructors', icon: '👨‍🏫', label: 'Instructors' }],
-      instructor: [{ id: 'sauvetage', icon: '🏅', label: 'My Courses' }, { id: 'levels', icon: '🏆', label: 'My Levels' }],
-      teacher: [{ id: 'my-classes', icon: '🏊', label: 'My classes' }, { id: 'children', icon: '👦', label: 'All children' }],
-      parent:  [{ id: 'my-child', icon: '🌊', label: 'My child' }],
-      participant: [{ id: 'my-status', icon: '🏅', label: 'My status' }],
+      teacher:     [{ id: 'my-classes', icon: '🏊', label: 'My classes' }, { id: 'children', icon: '👦', label: 'All children' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      parent:      [{ id: 'my-child', icon: '🌊', label: 'My child' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      instructor:  [{ id: 'sauvetage', icon: '🏅', label: 'My Courses' }, { id: 'levels', icon: '🏆', label: 'My Levels' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+      participant: [{ id: 'my-status', icon: '🏅', label: 'My status' }, { id: 'chat', icon: '💬', label: 'Chat' }],
     },
     roleLabels: { admin: 'Administrator', teacher: 'Swimming teacher', parent: 'Parent', instructor: 'Instructor', participant: 'Course participant' },
     tabs: { swim: 'Swimming', rescue: 'Rescue', theory: 'Theory' },
