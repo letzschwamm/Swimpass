@@ -98,6 +98,20 @@ export const T = {
       noteSaved: '✓ Notiz gespeichert',
       error: 'Ein Fehler ist aufgetreten.',
     },
+    consent: {
+      title: 'Datenschutzerklärung & Einwilligung',
+      intro: 'Mit der Registrierung bei SwimPass by Letzschwamm stimmen Sie der Erhebung und Verarbeitung Ihrer personenbezogenen Daten gemäß der Datenschutz-Grundverordnung (DSGVO) und dem luxemburgischen Datenschutzgesetz zu.',
+      sections: [
+        { title: 'Welche Daten wir erheben:', items: ['Name, E-Mail-Adresse und Kontaktdaten', 'Daten Ihres Kindes (bei Eltern-Registrierung)', 'Schwimmfortschritt und Kursabschlüsse', 'Zahlungsdaten (verarbeitet durch Stripe)'] },
+        { title: 'Zweck der Datenverarbeitung:', text: 'Ihre Daten werden ausschließlich zur Verwaltung Ihrer Mitgliedschaft, zur Verfolgung des Schwimmfortschritts und zur Kommunikation mit Ihrer Schwimmschule verwendet.' },
+        { title: 'Weitergabe an Dritte:', text: 'Ihre Daten werden nicht ohne Ihre ausdrückliche Einwilligung an Dritte weitergegeben, mit Ausnahme der FLNS (Fédération Luxembourgeoise de Natation et de Sauvetage) im Rahmen der Abzeichenvergabe sowie unserem Zahlungsdienstleister Stripe.' },
+        { title: 'Ihre Rechte:', text: 'Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Übertragbarkeit Ihrer Daten. Für Anfragen kontaktieren Sie uns unter: info@letzschwamm.com' },
+        { title: 'Verantwortlicher:', text: 'Letzschwamm | info@letzschwamm.com | Luxemburg' },
+      ],
+      checkboxLabel: 'Ich habe die Datenschutzerklärung gelesen und stimme zu.',
+      decline: 'Ablehnen',
+      accept: 'Ich stimme zu',
+    },
   },
 
   fr: {
@@ -184,6 +198,20 @@ export const T = {
       notified: (n, p) => `📱 Parents de ${n} notifiés ! (${p}%)`,
       noteSaved: '✓ Note sauvegardée',
       error: 'Une erreur est survenue.',
+    },
+    consent: {
+      title: 'Politique de confidentialité & Consentement',
+      intro: "En vous inscrivant sur SwimPass by Letzschwamm, vous acceptez la collecte et le traitement de vos données personnelles conformément au Règlement général sur la protection des données (RGPD) et à la loi luxembourgeoise sur la protection des données.",
+      sections: [
+        { title: 'Données collectées:', items: ['Nom, adresse e-mail et coordonnées', "Données de votre enfant (pour l'inscription des parents)", 'Progression en natation et résultats de cours', 'Données de paiement (traitées par Stripe)'] },
+        { title: 'Finalité du traitement:', text: "Vos données sont utilisées exclusivement pour la gestion de votre adhésion, le suivi de la progression en natation et la communication avec votre école de natation." },
+        { title: 'Transmission à des tiers:', text: "Vos données ne sont pas transmises à des tiers sans votre consentement explicite, à l'exception de la FLNS (Fédération Luxembourgeoise de Natation et de Sauvetage) dans le cadre de l'attribution des badges ainsi que de notre prestataire de paiement Stripe." },
+        { title: 'Vos droits:', text: "Vous avez le droit d'accès, de rectification, d'effacement et de portabilité de vos données. Pour toute demande: info@letzschwamm.com" },
+        { title: 'Responsable du traitement:', text: 'Letzschwamm | info@letzschwamm.com | Luxembourg' },
+      ],
+      checkboxLabel: "J'ai lu la politique de confidentialité et j'accepte.",
+      decline: 'Refuser',
+      accept: "J'accepte",
     },
   },
 
@@ -272,6 +300,20 @@ export const T = {
       noteSaved: '✓ Notiz gespäichert',
       error: 'E Feeler ass opgetrueden.',
     },
+    consent: {
+      title: 'Dateschutzerkläerung & Averstännnis',
+      intro: "Mat der Umeldung bei SwimPass by Letzschwamm stimmt Dir der Erhiewung an Veraarbechtung vun Äre perséinleche Donnéeën no der Dateschutz-Grondverordnung (DSGVO) an dem Lëtzebuerger Dateschutzgesetz zou.",
+      sections: [
+        { title: 'Wéi eng Donnéeën mir sammelen:', items: ['Numm, E-Mail-Adress an Kontaktdonnéeën', 'Donnéeën vun Ärem Kand (bei Elteren-Umeldung)', 'Schwammfortschrëtt an Coursen', 'Bezuelungsdonnéeën (veraarbecht duerch Stripe)'] },
+        { title: 'Zweck vun der Veraarbechtung:', text: "Är Donnéeën ginn ausschliisslech fir d'Verwaltung vun Ärer Memberschaft, d'Verfollgung vum Schwammfortschrëtt an d'Kommunikatioun mat Ärer Schwammschoul benotzt." },
+        { title: 'Weidergab un Drëtt:', text: "Är Donnéeën ginn ouni Är ausdrécklech Averstänn net un Drëtt weidergi, ausser un d'FLNS am Kader vun der Ofzeechenvergab an eisen Bezuelungsdienstleeschter Stripe." },
+        { title: 'Är Rechter:', text: "Dir hutt d'Recht op Auskonft, Verbesserung, Läschung an Iwwerdroung vun Ären Donnéeën. Fir Ufroe kontaktéiert eis: info@letzschwamm.com" },
+        { title: 'Verantwortlechen:', text: 'Letzschwamm | info@letzschwamm.com | Lëtzebuerg' },
+      ],
+      checkboxLabel: "Ech hunn d'Dateschutzerkläerung gelies an stimmen zou.",
+      decline: 'Ofleenen',
+      accept: 'Ech stimmen zou',
+    },
   },
 
   en: {
@@ -358,6 +400,20 @@ export const T = {
       notified: (n, p) => `📱 Parents of ${n} notified! (${p}%)`,
       noteSaved: '✓ Note saved',
       error: 'An error occurred.',
+    },
+    consent: {
+      title: 'Privacy Policy & Consent',
+      intro: 'By registering with SwimPass by Letzschwamm, you agree to the collection and processing of your personal data in accordance with the General Data Protection Regulation (GDPR) and Luxembourg data protection law.',
+      sections: [
+        { title: 'Data we collect:', items: ['Name, email address and contact details', "Your child's data (for parent registration)", 'Swimming progress and course completions', 'Payment data (processed by Stripe)'] },
+        { title: 'Purpose of processing:', text: 'Your data is used exclusively for managing your membership, tracking swimming progress and communicating with your swimming school.' },
+        { title: 'Third party sharing:', text: 'Your data will not be shared with third parties without your explicit consent, except with the FLNS (Fédération Luxembourgeoise de Natation et de Sauvetage) for badge awards and our payment provider Stripe.' },
+        { title: 'Your rights:', text: 'You have the right to access, rectify, delete and transfer your data. For requests contact us: info@letzschwamm.com' },
+        { title: 'Data controller:', text: 'Letzschwamm | info@letzschwamm.com | Luxembourg' },
+      ],
+      checkboxLabel: 'I have read the privacy policy and agree.',
+      decline: 'Decline',
+      accept: 'I agree',
     },
   },
 }

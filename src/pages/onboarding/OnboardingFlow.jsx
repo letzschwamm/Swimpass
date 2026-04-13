@@ -6,15 +6,18 @@ import Step2Code from './Step2Code'
 import Step3Register from './Step3Register'
 import Step4Payment from './Step4Payment'
 import Step5Success from './Step5Success'
+import ConsentModal from '../../components/ConsentModal'
 
 export default function OnboardingFlow() {
   const navigate = useNavigate()
   const { lang } = useApp()
   const [step, setStep] = useState(1)
   const [stripeCanceled, setStripeCanceled] = useState(false)
+  const [consentGiven, setConsentGiven] = useState(false)
   const [data, setData] = useState({
     school: null,
     classInfo: null,
+    courseInfo: null,
     avatar: '👦',
     firstName: '',
     lastName: '',
@@ -22,9 +25,12 @@ export default function OnboardingFlow() {
     email: '',
     password: '',
     childId: null,
+    isSwim: false,
+    isTest: false,
+    consentTimestamp: null,
   })
 
-  // Handle Stripe redirect back (success or cancel)
+  // Handle Stripe redirect back (success or cancel) — consent already given
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const targetStep = params.get('step')
@@ -32,15 +38,22 @@ export default function OnboardingFlow() {
 
     const saved = sessionStorage.getItem('swimpass_onboarding')
     if (saved) {
-      try { setData(JSON.parse(saved)) } catch (_) {}
+      try {
+        const restored = JSON.parse(saved)
+        setData(restored)
+        // Restore consent state from saved data
+        if (restored.consentTimestamp) setConsentGiven(true)
+      } catch (_) {}
       sessionStorage.removeItem('swimpass_onboarding')
     }
 
     if (targetStep === '5') {
       setStep(5)
+      setConsentGiven(true)  // returning from Stripe means consent was already given
     } else if (targetStep === '4') {
       setStep(4)
       setStripeCanceled(true)
+      setConsentGiven(true)
     }
     window.history.replaceState({}, '', '/onboarding')
   }, [])
@@ -62,6 +75,12 @@ export default function OnboardingFlow() {
 
   const steps = [Step1Welcome, Step2Code, Step3Register, Step4Payment, Step5Success]
   const StepComponent = steps[step - 1]
+
+  function handleConsentAccept() {
+    const ts = new Date().toISOString()
+    update({ consentTimestamp: ts })
+    setConsentGiven(true)
+  }
 
   return (
     <div className="ob-bg">
@@ -89,6 +108,14 @@ export default function OnboardingFlow() {
           />
         </div>
       </div>
+
+      {/* Consent modal — shown on first visit, before any step */}
+      {!consentGiven && (
+        <ConsentModal
+          onAccept={handleConsentAccept}
+          onDecline={() => navigate('/')}
+        />
+      )}
     </div>
   )
 }

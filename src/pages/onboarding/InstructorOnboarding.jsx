@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import ConsentModal from '../../components/ConsentModal'
 
 const STRIPE_INSTRUCTOR_LINK = import.meta.env.VITE_STRIPE_INSTRUCTOR_LINK || 'https://buy.stripe.com/instructor_placeholder'
 
@@ -17,6 +18,8 @@ export default function InstructorOnboarding() {
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
   const [isTestMode, setIsTestMode] = useState(false)
+  const [consentGiven, setConsentGiven]       = useState(false)
+  const [consentTimestamp, setConsentTimestamp] = useState(null)
 
   async function validateCode() {
     const trimmed = code.toUpperCase().trim()
@@ -57,6 +60,15 @@ export default function InstructorOnboarding() {
     }
     // Sign in immediately
     await supabase.auth.signInWithPassword({ email, password })
+
+    // Save GDPR consent timestamp
+    if (consentTimestamp) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await supabase.from('profiles').update({ consent_given: consentTimestamp }).eq('id', user.id)
+      }
+    }
+
     // Test mode: skip payment, navigate directly to dashboard
     if (isTestMode) {
       navigate('/instructor')
@@ -66,6 +78,7 @@ export default function InstructorOnboarding() {
   }
 
   return (
+    <>
     <div className="login-container" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(0,150,199,.18) 0%, transparent 55%), linear-gradient(160deg, #162535 0%, #1B3348 50%, #1E3A56 100%)' }}>
       <div className="login-card" style={{ maxWidth: 440 }}>
         {/* Logo */}
@@ -192,5 +205,17 @@ export default function InstructorOnboarding() {
         )}
       </div>
     </div>
+
+    {!consentGiven && (
+      <ConsentModal
+        onAccept={() => {
+          const ts = new Date().toISOString()
+          setConsentTimestamp(ts)
+          setConsentGiven(true)
+        }}
+        onDecline={() => navigate('/')}
+      />
+    )}
+    </>
   )
 }

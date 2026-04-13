@@ -90,7 +90,7 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
         }
         if (regData?.error) throw new Error(regData.error)
 
-        const { childId } = regData
+        const { childId, userId: swimUserId } = regData
         update({ childId })
 
         // ── 2. Log in ───────────────────────────────────────────
@@ -99,6 +99,13 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
           email: data.email, password: data.password,
         })
         if (signInError) throw signInError
+
+        // ── Save GDPR consent timestamp ─────────────────────────
+        if (data.consentTimestamp && swimUserId) {
+          await supabase.from('profiles')
+            .update({ consent_given: data.consentTimestamp })
+            .eq('id', swimUserId)
+        }
 
         // ── 3. Redirect to Stripe Payment Link ──────────────────
         setStep('Weiterleitung zu Stripe…')
@@ -158,6 +165,13 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
         email: data.email, password: data.password,
       })
       if (signInError) throw signInError
+
+      // ── Save GDPR consent timestamp ─────────────────────────────────────
+      if (data.consentTimestamp && userId) {
+        await supabase.from('profiles')
+          .update({ consent_given: data.consentTimestamp })
+          .eq('id', userId)
+      }
 
       // ── Test-Modus: Stripe überspringen → RootRedirect leitet weiter ─────
       if (data.isTest) {

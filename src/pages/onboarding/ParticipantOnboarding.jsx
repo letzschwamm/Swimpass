@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import ConsentModal from '../../components/ConsentModal'
 
 const STEPS = { code: 'code', preview: 'preview', register: 'register' }
 const LEVEL_LABEL = { junior: 'Junior Lifesaver', lifesaver: 'Lifesaver', both: 'JL & Lifesaver' }
@@ -13,6 +14,8 @@ export default function ParticipantOnboarding() {
   const [isSauv, setIsSauv]     = useState(false)
   const [code, setCode]         = useState('')
   const [courseData, setCourseData] = useState(null)
+  const [consentGiven, setConsentGiven]       = useState(false)
+  const [consentTimestamp, setConsentTimestamp] = useState(null)
 
   // SAUV registration fields
   const [firstName, setFirstName] = useState('')
@@ -77,6 +80,11 @@ export default function ParticipantOnboarding() {
       return
     }
     await supabase.auth.signInWithPassword({ email, password })
+    // Save GDPR consent
+    if (consentTimestamp) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) await supabase.from('profiles').update({ consent_given: consentTimestamp }).eq('id', user.id)
+    }
     setLoading(false)
     window.location.href = `${STRIPE_PARTICIPANT_LINK}?client_reference_id=participant_${data.participantId}`
   }
@@ -94,6 +102,11 @@ export default function ParticipantOnboarding() {
       return
     }
     await supabase.auth.signInWithPassword({ email, password })
+    // Save GDPR consent
+    if (consentTimestamp) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) await supabase.from('profiles').update({ consent_given: consentTimestamp }).eq('id', user.id)
+    }
     navigate('/')
   }
 
@@ -102,6 +115,7 @@ export default function ParticipantOnboarding() {
   const currentIdx = stepList.indexOf(step)
 
   return (
+    <>
     <div className="login-container" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(0,150,199,.18) 0%, transparent 55%), linear-gradient(160deg, #162535 0%, #1B3348 50%, #1E3A56 100%)' }}>
       <div className="login-card" style={{ maxWidth: 440 }}>
 
@@ -263,5 +277,17 @@ export default function ParticipantOnboarding() {
         )}
       </div>
     </div>
+
+    {!consentGiven && (
+      <ConsentModal
+        onAccept={() => {
+          const ts = new Date().toISOString()
+          setConsentTimestamp(ts)
+          setConsentGiven(true)
+        }}
+        onDecline={() => navigate('/')}
+      />
+    )}
+    </>
   )
 }
