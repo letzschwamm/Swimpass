@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
+import { useInstructorLevel } from '../hooks/useInstructorLevel'
 import Avatar from './Avatar'
 
 const ROUTE_PREFIX = { admin: '/admin', teacher: '/teacher', parent: '/parent', instructor: '/instructor', participant: '/participant' }
@@ -10,9 +11,45 @@ const PAGE_ROUTES = {
   classes: '/classes',
   sauvetage: '/sauvetage',
   instructors: '/instructors',
+  levels: '/levels',
   'my-classes': '',
   'my-child': '',
   'my-status': '',
+}
+
+// ── Small level emblem shown next to instructor name ─────────────────────────
+function InstructorLevelBadge({ onNavigate }) {
+  const { current } = useInstructorLevel()
+  return (
+    <>
+      <style>{`
+        @keyframes sidebarLvlPulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 ${current.color}44; }
+          50%       { transform: scale(1.12); box-shadow: 0 0 0 4px ${current.color}22; }
+        }
+      `}</style>
+      <span
+        title={`${current.emoji} ${current.name} · Level ${current.level}`}
+        onClick={e => { e.stopPropagation(); onNavigate() }}
+        style={{
+          cursor: 'pointer',
+          fontSize: 13,
+          lineHeight: 1,
+          width: 22, height: 22,
+          borderRadius: '50%',
+          border: `1.5px solid ${current.color}66`,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          background: current.bg,
+          animation: current.level >= 2 ? 'sidebarLvlPulse 3s ease-in-out infinite' : 'none',
+          flexShrink: 0,
+          verticalAlign: 'middle',
+          marginLeft: 4,
+        }}
+      >
+        {current.emoji}
+      </span>
+    </>
+  )
 }
 
 export default function Sidebar({ role, isOpen, onClose }) {
@@ -81,7 +118,12 @@ export default function Sidebar({ role, isOpen, onClose }) {
       <div className="sb-user">
         <Avatar name={profile?.name || profile?.email?.split('@')[0] || '?'} size={32} radius={9} />
         <div className="sb-user-info">
-          <div className="sb-user-name">{profile?.name || profile?.email?.split('@')[0] || '—'}</div>
+          <div className="sb-user-name" style={{ display: 'flex', alignItems: 'center' }}>
+            {profile?.name || profile?.email?.split('@')[0] || '—'}
+            {role === 'instructor' && (
+              <InstructorLevelBadge onNavigate={() => { navigate('/instructor/levels'); onClose?.() }} />
+            )}
+          </div>
           <div className="sb-user-role">{t.roleLabels[profile?.role] || ''}</div>
         </div>
         <button className="sb-logout" onClick={signOut} title={t.ui.logout}>⎋</button>

@@ -10,6 +10,7 @@ const PAGE_ROUTES = {
   classes: '/classes',
   sauvetage: '/sauvetage',
   instructors: '/instructors',
+  levels: '/levels',
   'my-classes': '',
   'my-child': '',
   'my-status': '',
@@ -18,7 +19,7 @@ const PAGE_ROUTES = {
 const BOTTOM_NAV = {
   admin:       [{ id: 'dashboard', icon: '📊', label: 'Dashboard' }, { id: 'children', icon: '👶', label: 'Kinder' }, { id: 'classes', icon: '📚', label: 'Klassen' }, { id: 'sauvetage', icon: '🏊', label: 'Sauvetage' }],
   teacher:     [{ id: 'my-classes', icon: '📚', label: 'Klassen' }, { id: 'children', icon: '👶', label: 'Kinder' }],
-  instructor:  [{ id: 'sauvetage', icon: '🏊', label: 'Kurse' }],
+  instructor:  [{ id: 'sauvetage', icon: '🏊', label: 'Kurse' }, { id: 'levels', icon: '🏆', label: 'Mein Level' }],
   parent:      [{ id: 'my-child', icon: '👶', label: 'Mein Kind' }],
   participant: [{ id: 'my-status', icon: '🏅', label: 'Mein Status' }],
 }

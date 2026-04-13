@@ -23,6 +23,7 @@ import MyStatus from './pages/participant/MyStatus'
 import MyClasses from './pages/teacher/MyClasses'
 import AllChildren from './pages/teacher/AllChildren'
 import MyChild from './pages/parent/MyChild'
+import InstructorLevels from './pages/instructor/InstructorLevels'
 
 function ProtectedRoute({ children, roles }) {
   const { session, profile, loading } = useAuth()
@@ -108,6 +109,7 @@ function AppRoutes() {
         <Route index element={<Sauvetage />} />
         <Route path="sauvetage" element={<Sauvetage />} />
         <Route path="sauvetage/:id" element={<SauvetageDetail />} />
+        <Route path="levels" element={<InstructorLevels />} />
       </Route>
 
       <Route path="/parent" element={
