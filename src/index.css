@@ -315,6 +315,35 @@ textarea { resize: vertical; min-height: 80px; }
   cursor: pointer; transition: .2s;
 }
 .ctab.active { background: rgba(0,180,216,.18); border-color: var(--light); color: var(--aqua); }
+
+/* ── CRITERIA ACCORDION ── */
+.ca-root { display: flex; flex-direction: column; gap: 10px; }
+.ca-section { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color .2s; }
+.ca-section.ca-all-done { border-color: rgba(0,180,216,.40); }
+.ca-header {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; background: var(--card); border: none;
+  cursor: pointer; text-align: left; transition: background .2s;
+}
+.ca-header:hover { background: rgba(255,255,255,.07); }
+.ca-icon { font-size: 16px; flex-shrink: 0; }
+.ca-label {
+  flex: 1; font-family: 'DM Sans', sans-serif; font-size: 13px;
+  font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 7px;
+}
+.ca-opt-badge {
+  font-size: 10px; font-weight: 600; color: var(--muted);
+  background: rgba(144,220,240,.08); border: 1px solid var(--border);
+  border-radius: 5px; padding: 1px 6px;
+}
+.ca-count { font-size: 12px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+.ca-count.ca-count-done { color: var(--aqua); }
+.ca-section.ca-all-done .ca-label { color: var(--aqua); }
+.ca-chevron { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+.ca-bar-wrap { height: 3px; background: rgba(144,220,240,.10); }
+.ca-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--aqua)); transition: width .3s ease; }
+.ca-section.ca-all-done .ca-bar-fill { background: linear-gradient(90deg, var(--aqua), #48f0d0); }
+.ca-items { display: flex; flex-direction: column; gap: 6px; padding: 10px 10px 10px; }
 .crit-list { display: flex; flex-direction: column; gap: 8px; }
 .crit-item {
   display: flex; align-items: center; gap: 12px;
