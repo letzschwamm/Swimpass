@@ -20,12 +20,42 @@ export default function Step2Code({ data, update, next, back }) {
     setFound(false)
 
     if (val.length < 6) {
-      update({ school: null, classInfo: null, isTest: false })
+      update({ school: null, classInfo: null, courseInfo: null, isTest: false, isSwim: false })
       return
     }
 
     const myReqId = ++reqIdRef.current
     setLoading(true)
+
+    // ── SWIM course code path ─────────────────────────────────
+    if (val.startsWith('SWIM-') && val.length >= 10) {
+      const { data: rows, error: rpcErr } = await supabase
+        .rpc('get_course_by_swim_code', { swim_code_input: val })
+
+      if (myReqId !== reqIdRef.current) return
+      setLoading(false)
+
+      if (rpcErr) {
+        setErrorMsg('Verbindungsfehler. Bitte versuche es erneut.')
+        update({ school: null, classInfo: null, courseInfo: null, isSwim: false, isTest: false })
+        return
+      }
+
+      const course = rows?.[0]
+      if (course) {
+        update({
+          school:     { id: course.id, name: course.name, code: val },
+          classInfo:  null,
+          courseInfo: course,
+          isSwim:     true,
+          isTest:     false,
+        })
+        setFound(true)
+      } else {
+        update({ school: null, classInfo: null, courseInfo: null, isSwim: false, isTest: false })
+      }
+      return
+    }
 
     // ── Test code path ────────────────────────────────────────
     if (val.startsWith('TEST-') && val.length >= 9) {
@@ -38,12 +68,11 @@ export default function Step2Code({ data, update, next, back }) {
       if (testCode) {
         update({
           school: { id: testCode.school_id, name: testCode.school_name || 'Schwimmschule', code: val },
-          classInfo: null,
-          isTest: true,
+          classInfo: null, courseInfo: null, isSwim: false, isTest: true,
         })
         setFound(true)
       } else {
-        update({ school: null, classInfo: null, isTest: false })
+        update({ school: null, classInfo: null, courseInfo: null, isSwim: false, isTest: false })
       }
       return
     }
@@ -56,16 +85,16 @@ export default function Step2Code({ data, update, next, back }) {
 
     if (error) {
       setErrorMsg('Verbindungsfehler. Bitte versuche es erneut.')
-      update({ school: null, classInfo: null, isTest: false })
+      update({ school: null, classInfo: null, courseInfo: null, isSwim: false, isTest: false })
       return
     }
 
     if (school?.id) {
       const cls = school.classes?.[0] ?? null
-      update({ school, classInfo: cls, isTest: false })
+      update({ school, classInfo: cls, courseInfo: null, isSwim: false, isTest: false })
       setFound(true)
     } else {
-      update({ school: null, classInfo: null, isTest: false })
+      update({ school: null, classInfo: null, courseInfo: null, isSwim: false, isTest: false })
     }
   }
 
@@ -112,12 +141,19 @@ export default function Step2Code({ data, update, next, back }) {
             <div className="cf-detail">
               {data.isTest
                 ? <><span style={{ color: 'var(--gold)', fontWeight: 600 }}>TEST</span> · {data.school.name} · Zahlung wird übersprungen</>
-                : data.classInfo
+                : data.isSwim && data.courseInfo
                   ? <>
-                      <span>{data.classInfo.name}</span> · <span>{data.classInfo.day} {data.classInfo.time}</span><br />
-                      {ob.teacherLabel} <span>{data.classInfo.profiles?.name || '—'}</span>
+                      🏊 <span style={{ fontWeight: 600 }}>{data.courseInfo.name}</span>
+                      {data.courseInfo.weekday && <> · {data.courseInfo.weekday}{data.courseInfo.time ? ' ' + data.courseInfo.time : ''}</>}
+                      {data.courseInfo.location && <><br />📍 {data.courseInfo.location}</>}
+                      {data.courseInfo.instructor_name && <><br />{ob.teacherLabel} {data.courseInfo.instructor_name}</>}
                     </>
-                  : <span>{data.school.name}</span>
+                  : data.classInfo
+                    ? <>
+                        <span>{data.classInfo.name}</span> · <span>{data.classInfo.day} {data.classInfo.time}</span><br />
+                        {ob.teacherLabel} <span>{data.classInfo.profiles?.name || '—'}</span>
+                      </>
+                    : <span>{data.school.name}</span>
               }
             </div>
           </div>

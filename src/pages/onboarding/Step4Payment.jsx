@@ -50,31 +50,87 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
     setLoading(true)
     setError('')
 
-    const payload = {
-      email:      data.email,
-      password:   data.password,
-      schoolId:   data.school?.id,
-      classId:    data.classInfo?.id ?? null,
-      firstName:  data.firstName,
-      lastName:   data.lastName,
-      birthDate:  data.birthDate || null,
-      level:      data.isTest ? 'seepferdchen' : (data.classInfo?.level || 'junior'),
-      avatar:     data.avatar || '👦',
-    }
-
-    // ── Validation ────────────────────────────────────────────────
-    if (!payload.schoolId) {
-      setError('Schulcode fehlt. Bitte gehe zurück und gib den Code erneut ein.')
-      setLoading(false)
-      return
-    }
-    if (!payload.email || !payload.password) {
+    if (!data.email || !data.password) {
       setError('E-Mail oder Passwort fehlt. Bitte gehe zurück zu Schritt 3.')
       setLoading(false)
       return
     }
 
     try {
+      // ══════════════════════════════════════════════════════════════
+      // SWIM COURSE FLOW — uses register-swim-parent + Payment Link
+      // ══════════════════════════════════════════════════════════════
+      if (data.isSwim) {
+        if (!data.school?.id) {
+          setError('Kurscode fehlt. Bitte gehe zurück und gib den Code erneut ein.')
+          setLoading(false)
+          return
+        }
+
+        // ── 1. Create user + child ──────────────────────────────
+        setStep('Konto wird erstellt…')
+        const { data: regData, error: regError } = await supabase.functions.invoke('register-swim-parent', {
+          body: {
+            email:        data.email,
+            password:     data.password,
+            firstName:    data.firstName,
+            lastName:     data.lastName,
+            birthDate:    data.birthDate || null,
+            swimCourseId: data.school.id,
+            avatar:       data.avatar || '👦',
+          },
+        })
+
+        if (regError) {
+          const msg = await extractFnError(regError)
+          throw new Error(msg)
+        }
+        if (regData?.error === 'EMAIL_EXISTS') {
+          throw new Error('Diese E-Mail ist bereits registriert. Bitte gehen Sie zur Anmeldeseite und loggen Sie sich ein.')
+        }
+        if (regData?.error) throw new Error(regData.error)
+
+        const { childId } = regData
+        update({ childId })
+
+        // ── 2. Log in ───────────────────────────────────────────
+        setStep('Anmeldung wird verifiziert…')
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: data.email, password: data.password,
+        })
+        if (signInError) throw signInError
+
+        // ── 3. Redirect to Stripe Payment Link ──────────────────
+        setStep('Weiterleitung zu Stripe…')
+        sessionStorage.setItem('swimpass_onboarding', JSON.stringify({ ...data, childId }))
+
+        const parentLink = import.meta.env.VITE_STRIPE_PARENT_LINK
+        const url = `${parentLink}?client_reference_id=swim_${childId}&prefilled_email=${encodeURIComponent(data.email)}&success_url=${encodeURIComponent(window.location.origin + '/onboarding?step=5')}&cancel_url=${encodeURIComponent(window.location.origin + '/onboarding?step=4')}`
+        window.location.href = url
+        return
+      }
+
+      // ══════════════════════════════════════════════════════════════
+      // REGULAR LETZSCHWAMM FLOW — uses register-parent + create-checkout
+      // ══════════════════════════════════════════════════════════════
+      const payload = {
+        email:      data.email,
+        password:   data.password,
+        schoolId:   data.school?.id,
+        classId:    data.classInfo?.id ?? null,
+        firstName:  data.firstName,
+        lastName:   data.lastName,
+        birthDate:  data.birthDate || null,
+        level:      data.isTest ? 'seepferdchen' : (data.classInfo?.level || 'junior'),
+        avatar:     data.avatar || '👦',
+      }
+
+      if (!payload.schoolId) {
+        setError('Schulcode fehlt. Bitte gehe zurück und gib den Code erneut ein.')
+        setLoading(false)
+        return
+      }
+
       // ── Schritt 1: User + Profil + Kind via service_role Edge Function ──
       setStep('Konto wird erstellt…')
       const { data: regData, error: regError } = await supabase.functions.invoke('register-parent', {
@@ -99,8 +155,7 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
       // ── Schritt 2: Einloggen damit Session gesetzt ist ──────────────────
       setStep('Anmeldung wird verifiziert…')
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email:    data.email,
-        password: data.password,
+        email: data.email, password: data.password,
       })
       if (signInError) throw signInError
 
@@ -134,7 +189,6 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
       if (checkoutData?.error) throw new Error(checkoutData.error)
 
       // ── Schritt 4: Zu Stripe weiterleiten ──────────────────────────────
-      // Save data so we can restore it after Stripe redirect
       sessionStorage.setItem('swimpass_onboarding', JSON.stringify({ ...data, childId }))
 
       const stripe = await stripePromise
@@ -162,25 +216,31 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
 
       <div className="ob-body">
         <div className="plan-card">
-          <div className="plan-name">{ob.planName}</div>
-          <div className="plan-price">56,63 <span>€</span></div>
+          <div className="plan-name">
+            {data.isSwim ? (data.courseInfo?.name || 'Schwimmkurs') : ob.planName}
+          </div>
+          <div className="plan-price">
+            {data.isSwim ? <>15 <span>€</span></> : <>56,63 <span>€</span></>}
+          </div>
           <div className="plan-period">{ob.period}</div>
 
-          {/* TVA Aufschlüsselung */}
-          <div style={{ borderTop: '1px solid rgba(144,220,240,.2)', marginTop: 12, paddingTop: 10, marginBottom: 4 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--muted)', marginBottom: 4 }}>
-              <span>Prix HT</span><span>48,40 €</span>
+          {/* TVA breakdown — regular flow only */}
+          {!data.isSwim && (
+            <div style={{ borderTop: '1px solid rgba(144,220,240,.2)', marginTop: 12, paddingTop: 10, marginBottom: 4 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--muted)', marginBottom: 4 }}>
+                <span>Prix HT</span><span>48,40 €</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--muted)', marginBottom: 6 }}>
+                <span>TVA (17%)</span><span>8,23 €</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: 'var(--aqua)' }}>
+                <span>Total TTC</span><span>56,63 €</span>
+              </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--muted)', marginBottom: 6 }}>
-              <span>TVA (17%)</span><span>8,23 €</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: 'var(--aqua)' }}>
-              <span>Total TTC</span><span>56,63 €</span>
-            </div>
-          </div>
+          )}
 
           <div className="plan-features" style={{ marginTop: 10 }}>
-            {ob.features.map((f, i) => (
+            {(data.isSwim ? ob.swimFeatures : ob.features).map((f, i) => (
               <div key={i} className="plan-feat">{f}</div>
             ))}
           </div>
@@ -231,7 +291,7 @@ export default function Step4Payment({ data, update, next, back, stripeCanceled,
         >
           {loading
             ? <><span className="spinner" /><span style={{ marginLeft: 8 }}>{step}</span></>
-            : ob.pay}
+            : data.isSwim ? ob.paySWIM : ob.pay}
         </button>
       </div>
     </div>

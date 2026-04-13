@@ -12,6 +12,8 @@ const PAGE_ROUTES = {
   sauvetage: '/sauvetage',
   instructors: '/instructors',
   levels: '/levels',
+  swim: '/swim',
+  settings: '/settings',
   chat: '/chat',
   'my-classes': '',
   'my-child': '',
@@ -21,7 +23,7 @@ const PAGE_ROUTES = {
 const BOTTOM_NAV = {
   admin:       [{ id: 'dashboard', icon: '📊', label: 'Dashboard' }, { id: 'children', icon: '👶', label: 'Kinder' }, { id: 'classes', icon: '📚', label: 'Klassen' }, { id: 'sauvetage', icon: '🏊', label: 'Sauvetage' }],
   teacher:     [{ id: 'my-classes', icon: '📚', label: 'Klassen' }, { id: 'children', icon: '👶', label: 'Kinder' }, { id: 'chat', icon: '💬', label: 'Chat' }],
-  instructor:  [{ id: 'sauvetage', icon: '🏊', label: 'Kurse' }, { id: 'levels', icon: '🏆', label: 'Mein Level' }, { id: 'chat', icon: '💬', label: 'Chat' }],
+  instructor:  [{ id: 'sauvetage', icon: '🏅', label: 'Sauvetage' }, { id: 'swim', icon: '🏊', label: 'Schwimmen' }, { id: 'levels', icon: '🏆', label: 'Level' }, { id: 'chat', icon: '💬', label: 'Chat' }],
   parent:      [{ id: 'my-child', icon: '👶', label: 'Mein Kind' }, { id: 'chat', icon: '💬', label: 'Chat' }],
   participant: [{ id: 'my-status', icon: '🏅', label: 'Mein Status' }, { id: 'chat', icon: '💬', label: 'Chat' }],
 }

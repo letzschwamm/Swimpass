@@ -52,6 +52,16 @@ serve(async (req) => {
       return new Response(JSON.stringify({ received: true }), { headers: { 'Content-Type': 'application/json' } })
     }
 
+    // ── Swim course parent registration fee (15€) ────────────
+    if (clientRef.startsWith('swim_')) {
+      const swimChildId = clientRef.replace('swim_', '')
+      await supabase
+        .from('children')
+        .update({ swim_payment_status: 'paid' })
+        .eq('id', swimChildId)
+      return new Response(JSON.stringify({ received: true }), { headers: { 'Content-Type': 'application/json' } })
+    }
+
     const { childId, parentId, schoolId } = session.metadata || {}
 
     // ── 1. Update payment status ──────────────────

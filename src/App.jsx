@@ -24,6 +24,8 @@ import MyClasses from './pages/teacher/MyClasses'
 import AllChildren from './pages/teacher/AllChildren'
 import MyChild from './pages/parent/MyChild'
 import InstructorLevels from './pages/instructor/InstructorLevels'
+import InstructorSwimCourses from './pages/instructor/InstructorSwimCourses'
+import InstructorSettings from './pages/instructor/InstructorSettings'
 import InstructorChat from './pages/instructor/InstructorChat'
 import ParentChat from './pages/parent/ParentChat'
 import ParticipantChat from './pages/participant/ParticipantChat'
@@ -113,7 +115,9 @@ function AppRoutes() {
         <Route index element={<Sauvetage />} />
         <Route path="sauvetage" element={<Sauvetage />} />
         <Route path="sauvetage/:id" element={<SauvetageDetail />} />
+        <Route path="swim" element={<InstructorSwimCourses />} />
         <Route path="levels" element={<InstructorLevels />} />
+        <Route path="settings" element={<InstructorSettings />} />
         <Route path="chat" element={<InstructorChat />} />
       </Route>
 
