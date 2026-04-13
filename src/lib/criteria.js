@@ -308,43 +308,156 @@ export const CRITERIA = {
     ],
   },
 
-  // ── LEGACY: Junior Lifesaver ──────────────────────────────
+  // ── Junior Lifesaver (FLNS, Stand 15.03.2026) ─────────────
   junior: {
     swim: [
-      { key: 'jl_swim_1', de: { title: '200m Schwimmen', detail: 'Max. 10 Min · 100m Bauch + 100m Rücken (Grätsch)', tag: 'Ausdauer' }, fr: { title: '200m de natation', detail: 'Max. 10 min · 100m ventre + 100m dos (brasse)', tag: 'Endurance' }, lu: { title: '200m schwammen', detail: 'Max. 10 Min · 100m Bauch + 100m Réck (Grätschen)', tag: 'Ausdauer' }, en: { title: '200m swimming', detail: 'Max. 10 min · 100m front + 100m back (breaststroke kick)', tag: 'Endurance' } },
-      { key: 'jl_swim_2', de: { title: 'Startsprung', detail: 'Sprung aus ~1m · Schritt, Fuß oder Kopfsprung', tag: 'Technik' }, fr: { title: 'Saut de départ', detail: 'Depuis ~1m · plongeon, pied ou tête', tag: 'Technique' }, lu: { title: 'Startsprong', detail: 'Vun ~1m · Schrëtt, Fouss oder Kapp', tag: 'Technik' }, en: { title: 'Starting jump', detail: 'Jump from ~1m · step, foot or head dive', tag: 'Technique' } },
-      { key: 'jl_swim_3', de: { title: '15m Streckentauchen', detail: 'Start im Becken · Mindesttiefe ~1m', tag: 'Tauchen' }, fr: { title: '15m en apnée', detail: 'Départ dans le bassin · profondeur min. ~1m', tag: 'Plongée' }, lu: { title: '15m Streckentauchen', detail: 'Start am Becken · Mindesttieft ~1m', tag: 'Tauchen' }, en: { title: '15m underwater swim', detail: 'Start in pool · minimum depth ~1m', tag: 'Diving' } },
-      { key: 'jl_swim_4', de: { title: 'Tieftauchen 2×', detail: 'Kopf & Fuß in 3 Min · 5kg Gegenstand · 2-3m Tiefe', tag: 'Tauchen' }, fr: { title: 'Plongée profonde 2×', detail: 'Tête & pieds en 3 min · objet 5kg · 2-3m', tag: 'Plongée' }, lu: { title: 'Déifstauchen 2×', detail: 'Kapp & Fouss a 3 Min · 5kg · 2-3m', tag: 'Tauchen' }, en: { title: 'Deep dive 2×', detail: 'Head & feet in 3 min · 5kg object · 2-3m depth', tag: 'Diving' } },
+      {
+        key: 'jl_swim_1',
+        de: { title: '200m Schwimmen (max. 10 Min)', detail: '100m Bauchlage + 100m Rückenlage Grätschschwung ohne Armtätigkeit · keine Schwimmbrille/Maske', tag: 'Ausdauer' },
+        fr: { title: '200m de natation (max. 10 min)', detail: '100m ventral + 100m dorsal (brasse pieds, sans bras) · sans lunettes ni masque', tag: 'Endurance' },
+        lu: { title: '200m schwammen (max. 10 Min)', detail: '100m Bauchlage + 100m Réckenlage Grätschen ouni Arme · keng Brëll/Mask', tag: 'Ausdauer' },
+        en: { title: '200m swimming (max. 10 min)', detail: '100m front crawl + 100m breaststroke-kick backstroke, no arms · no goggles/mask', tag: 'Endurance' },
+      },
+      {
+        key: 'jl_swim_2',
+        de: { title: 'Sprung aus ~1m Höhe', detail: 'Schrittsprung oder Fußsprung', tag: 'Technik' },
+        fr: { title: 'Saut depuis ~1m', detail: 'Saut enjambé ou saut pieds joints', tag: 'Technique' },
+        lu: { title: 'Sprong vun ~1m', detail: 'Schrëttsprong oder Fousssprong', tag: 'Technik' },
+        en: { title: 'Jump from ~1m', detail: 'Step jump or feet-first jump', tag: 'Technique' },
+      },
+      {
+        key: 'jl_swim_3',
+        de: { title: '15m Streckentauchen', detail: 'Start im Becken · Mindesttiefe ~1m', tag: 'Tauchen' },
+        fr: { title: '15m en apnée', detail: 'Départ dans le bassin · profondeur min. ~1m', tag: 'Plongée' },
+        lu: { title: '15m Streckentauchen', detail: 'Start am Becken · Mindesttieft ~1m', tag: 'Tauchen' },
+        en: { title: '15m underwater swim', detail: 'Start in pool · min. depth ~1m', tag: 'Diving' },
+      },
+      {
+        key: 'jl_swim_4',
+        de: { title: 'Tieftauchen 2× (kopf- & fußwärts)', detail: 'Innerhalb 3 Min · 5 kg Gegenstand heraufholen · Wassertiefe 2–3m', tag: 'Tauchen' },
+        fr: { title: 'Plongée profonde 2× (tête & pieds)', detail: 'En 3 min · remonter objet 5 kg · profondeur 2–3m', tag: 'Plongée' },
+        lu: { title: 'Déifstauchen 2× (Kapp & Fouss)', detail: 'A 3 Min · 5 kg Géigestand erëmhuelen · Tieft 2–3m', tag: 'Tauchen' },
+        en: { title: 'Deep dive 2× (head & feet)', detail: 'Within 3 min · retrieve 5 kg object · depth 2–3m', tag: 'Diving' },
+      },
     ],
     rescue: [
-      { key: 'jl_rescue_1', de: { title: 'Befreiungsgriffe', detail: 'Aus Umklammerungen & Würgegriffen (Land + Wasser)', tag: 'Rettung' }, fr: { title: 'Dégagements', detail: 'Étreintes & prises (terre + eau)', tag: 'Sauvetage' }, lu: { title: 'Befreiungsgriffer', detail: 'Ëmklammerongen & Würgegriffer (Land + Waasser)', tag: 'Rettung' }, en: { title: 'Release grips', detail: 'Release from holds & chokes (land + water)', tag: 'Rescue' } },
-      { key: 'jl_rescue_2', de: { title: '50m Schleppen', detail: 'Kopf-/Achselgriff + Fesselschleppgriff', tag: 'Rettung' }, fr: { title: '50m remorquage', detail: 'Prise tête/aisselle + entrave', tag: 'Sauvetage' }, lu: { title: '50m Schleppen', detail: 'Kapp-/Achselgrëff + Fesselschleppgrëff', tag: 'Rettung' }, en: { title: '50m tow', detail: 'Head/armpit grip + restraint tow grip', tag: 'Rescue' } },
-      { key: 'jl_rescue_3', de: { title: '100m in Kleidern', detail: 'Max. 4 Min · Entkleiden im Wasser', tag: 'Ausdauer' }, fr: { title: '100m en vêtements', detail: "Max. 4 min · déshabillage dans l'eau", tag: 'Endurance' }, lu: { title: '100m a Kleeder', detail: 'Max. 4 Min · Kleeder am Waasser auszzéien', tag: 'Ausdauer' }, en: { title: '100m in clothes', detail: 'Max. 4 min · undress in water', tag: 'Endurance' } },
-      { key: 'jl_rescue_4', de: { title: 'Kombinierte Übung', detail: '20m Anschwimmen → Retten → 20m Schleppen → Seitenlage', tag: 'Komplex' }, fr: { title: 'Exercice combiné', detail: '20m nage → sauvetage → 20m remorquage → PLS', tag: 'Complexe' }, lu: { title: 'Kombinéiert Übung', detail: '20m Anschwammen → Rettung → 20m Schleppen → Saitlag', tag: 'Komplex' }, en: { title: 'Combined exercise', detail: '20m swim → rescue → 20m tow → recovery position', tag: 'Complex' } },
+      {
+        key: 'jl_rescue_1',
+        de: { title: 'Befreiungsgriffe', detail: 'Demonstration der Fertigkeiten zur Befreiung aus Umklammerung & Würgegriffen — an Land und im Wasser', tag: 'Rettung' },
+        fr: { title: 'Dégagements', detail: 'Démonstration des techniques de dégagement des étreintes et prises à la gorge — à terre et dans l\'eau', tag: 'Sauvetage' },
+        lu: { title: 'Befreiungsgriffer', detail: 'Demonstratioun vun de Fäegkeeten zur Befreiung aus Ëmklammerongen & Würgegriffer — Land a Waasser', tag: 'Rettung' },
+        en: { title: 'Release grips', detail: 'Demonstration of skills to release from holds & choke grips — on land and in water', tag: 'Rescue' },
+      },
+      {
+        key: 'jl_rescue_2',
+        de: { title: '50m Schleppen', detail: 'Kopf- o. Achselschleppgriff 2×12,5m + Standard-Fesselschleppgriff 25m', tag: 'Rettung' },
+        fr: { title: '50m remorquage', detail: 'Prise tête/aisselle 2×12,5m + entrave standard 25m', tag: 'Sauvetage' },
+        lu: { title: '50m Schleppen', detail: 'Kapp-/Achselschleppgrëff 2×12,5m + Standard-Fesselschleppgrëff 25m', tag: 'Rettung' },
+        en: { title: '50m tow', detail: 'Head/armpit tow grip 2×12.5m + standard restraint tow grip 25m', tag: 'Rescue' },
+      },
+      {
+        key: 'jl_rescue_3',
+        de: { title: '100m in Kleidern (max. 4 Min)', detail: 'Anschließend im Wasser entkleiden', tag: 'Ausdauer' },
+        fr: { title: '100m en vêtements (max. 4 min)', detail: 'Se déshabiller dans l\'eau ensuite', tag: 'Endurance' },
+        lu: { title: '100m a Kleeder (max. 4 Min)', detail: 'Duerno am Waasser auszzéien', tag: 'Ausdauer' },
+        en: { title: '100m in clothes (max. 4 min)', detail: 'Then undress in water', tag: 'Endurance' },
+      },
+      {
+        key: 'jl_rescue_4',
+        de: { title: 'Kombinierte Übung (ohne Pause)', detail: '20m Anschwimmen (Startsprung) → Ertrinkenden aus 2–3m holen → 20m Schleppen → Sichern & Anlandbringen → Atemkontrolle → Stabile Seitenlage', tag: 'Komplex' },
+        fr: { title: 'Exercice combiné (sans pause)', detail: '20m nage (plongeon) → sauvetage à 2–3m → 20m remorquage → sécuriser & ramener → contrôle resp. → PLS', tag: 'Complexe' },
+        lu: { title: 'Kombinéiert Übung (ouni Paus)', detail: '20m Anschwammen (Startsprong) → Erdrénkenden aus 2–3m huelen → 20m Schleppen → Sécheren → Atemkontrolle → Saitlag', tag: 'Komplex' },
+        en: { title: 'Combined exercise (no break)', detail: '20m swim in (start dive) → rescue from 2–3m → 20m tow → secure & bring ashore → breathing check → recovery position', tag: 'Complex' },
+      },
     ],
     theory: [
-      { key: 'jl_theory_1', de: { title: 'Wiederbelebung 2 Min', detail: 'Korrekte Durchführung der Maßnahmen', tag: 'Erste Hilfe' }, fr: { title: 'RCP 2 minutes', detail: 'Réanimation cardio-pulmonaire correcte', tag: 'Premiers secours' }, lu: { title: 'Wiederbelebung 2 Min', detail: 'Korrekt Duerchféierung', tag: 'Éischt Hëllef' }, en: { title: 'Resuscitation 2 min', detail: 'Correct CPR execution', tag: 'First aid' } },
+      {
+        key: 'jl_theory_1',
+        de: { title: 'Wiederbelebung 2 Min', detail: 'Korrekte Demonstration der Wiederbelebungsmaßnahmen', tag: 'Erste Hilfe' },
+        fr: { title: 'RCP 2 minutes', detail: 'Démonstration correcte des mesures de réanimation', tag: 'Premiers secours' },
+        lu: { title: 'Wiederbelebung 2 Min', detail: 'Korrekt Demonstratioun vun de Wiederbelebungsmoossnamen', tag: 'Éischt Hëllef' },
+        en: { title: 'Resuscitation 2 min', detail: 'Correct demonstration of resuscitation measures', tag: 'First aid' },
+      },
     ],
   },
 
-  // ── LEGACY: Lifesaver ─────────────────────────────────────
+  // ── Lifesaver (FLNS, Stand 15.03.2026) ────────────────────
   lifesaver: {
     swim: [
-      { key: 'ls_swim_1', de: { title: '400m Schwimmen', detail: 'Max. 15 Min · 100m Kraul + 150m Brust + 150m Rücken', tag: 'Ausdauer' }, fr: { title: '400m de natation', detail: 'Max. 15 min · 100m crawl + 150m brasse + 150m dos', tag: 'Endurance' }, lu: { title: '400m schwammen', detail: 'Max. 15 Min · 100m Kraul + 150m Brust + 150m Réck', tag: 'Ausdauer' }, en: { title: '400m swimming', detail: 'Max. 15 min · 100m crawl + 150m breast + 150m back', tag: 'Endurance' } },
-      { key: 'ls_swim_2', de: { title: 'Sprung aus 3m', detail: 'Oder 3 verschiedene Sprünge aus 1m Höhe', tag: 'Technik' }, fr: { title: 'Saut depuis 3m', detail: 'Ou 3 sauts différents depuis 1m', tag: 'Technique' }, lu: { title: 'Sprong vun 3m', detail: 'Oder 3 verschidde Sprong vun 1m', tag: 'Technik' }, en: { title: 'Jump from 3m', detail: 'Or 3 different jumps from 1m height', tag: 'Technique' } },
-      { key: 'ls_swim_3', de: { title: '25m Streckentauchen', detail: 'Start im Becken · Mindesttiefe ~1m', tag: 'Tauchen' }, fr: { title: '25m en apnée', detail: 'Départ dans le bassin · profondeur min. ~1m', tag: 'Plongée' }, lu: { title: '25m Streckentauchen', detail: 'Start am Becken · Mindesttieft ~1m', tag: 'Tauchen' }, en: { title: '25m underwater swim', detail: 'Start in pool · minimum depth ~1m', tag: 'Diving' } },
-      { key: 'ls_swim_4', de: { title: 'Tieftauchen 2×', detail: 'Kopf & Fuß in 2 Min · 5kg · 3,5-5m Tiefe · 3s halten', tag: 'Tauchen' }, fr: { title: 'Plongée profonde 2×', detail: 'En 2 min · 5kg · 3,5-5m · tenir 3s', tag: 'Plongée' }, lu: { title: 'Déifstauchen 2×', detail: 'A 2 Min · 5kg · 3,5-5m · 3s halen', tag: 'Tauchen' }, en: { title: 'Deep dive 2×', detail: 'In 2 min · 5kg · 3.5-5m · hold 3s', tag: 'Diving' } },
+      {
+        key: 'ls_swim_1',
+        de: { title: '400m Schwimmen (max. 15 Min)', detail: '100m Kraul + 150m Brust + 150m Rückenlage Grätschschwung ohne Armtätigkeit · keine Schwimmbrille/Maske', tag: 'Ausdauer' },
+        fr: { title: '400m de natation (max. 15 min)', detail: '100m crawl + 150m brasse + 150m dos (jambes brasse, sans bras) · sans lunettes ni masque', tag: 'Endurance' },
+        lu: { title: '400m schwammen (max. 15 Min)', detail: '100m Kraul + 150m Brust + 150m Réckenlage Grätschen ouni Arme · keng Brëll/Mask', tag: 'Ausdauer' },
+        en: { title: '400m swimming (max. 15 min)', detail: '100m crawl + 150m breaststroke + 150m breaststroke-kick backstroke, no arms · no goggles/mask', tag: 'Endurance' },
+      },
+      {
+        key: 'ls_swim_2',
+        de: { title: 'Sprung aus ~3m Höhe', detail: 'Schrittsprung, Fußsprung oder Kopfsprung', tag: 'Technik' },
+        fr: { title: 'Saut depuis ~3m', detail: 'Saut enjambé, pieds joints ou plongeon tête première', tag: 'Technique' },
+        lu: { title: 'Sprong vun ~3m', detail: 'Schrëttsprong, Fousssprong oder Kappsprong', tag: 'Technik' },
+        en: { title: 'Jump from ~3m', detail: 'Step jump, feet-first or head-first dive', tag: 'Technique' },
+      },
+      {
+        key: 'ls_swim_3',
+        de: { title: '25m Streckentauchen', detail: 'Start im Becken · Mindesttiefe ~1m', tag: 'Tauchen' },
+        fr: { title: '25m en apnée', detail: 'Départ dans le bassin · profondeur min. ~1m', tag: 'Plongée' },
+        lu: { title: '25m Streckentauchen', detail: 'Start am Becken · Mindesttieft ~1m', tag: 'Tauchen' },
+        en: { title: '25m underwater swim', detail: 'Start in pool · min. depth ~1m', tag: 'Diving' },
+      },
+      {
+        key: 'ls_swim_4',
+        de: { title: 'Tieftauchen 2× (kopf- & fußwärts)', detail: 'Innerhalb 2 Min · 5 kg · Tiefe 3,5–5m · 3 Sek. gestreckt über Wasser halten', tag: 'Tauchen' },
+        fr: { title: 'Plongée profonde 2× (tête & pieds)', detail: 'En 2 min · 5 kg · 3,5–5m · tenir 3 sec. bras tendus au-dessus de l\'eau', tag: 'Plongée' },
+        lu: { title: 'Déifstauchen 2× (Kapp & Fouss)', detail: 'A 2 Min · 5 kg · 3,5–5m · 3 Sek. gestreckt iwwer Waasser halen', tag: 'Tauchen' },
+        en: { title: 'Deep dive 2× (head & feet)', detail: 'Within 2 min · 5 kg · depth 3.5–5m · hold 3 sec. arms extended above water', tag: 'Diving' },
+      },
     ],
     rescue: [
-      { key: 'ls_rescue_1', de: { title: '6 Befreiungstechniken', detail: 'Demonstration + Erklärung an Land & im Wasser', tag: 'Rettung' }, fr: { title: '6 techniques de dégagement', detail: 'Démonstration + explication terre & eau', tag: 'Sauvetage' }, lu: { title: '6 Befreiungstechniken', detail: 'Demonstratioun + Erklärung Land & Waasser', tag: 'Rettung' }, en: { title: '6 release techniques', detail: 'Demonstration + explanation on land & in water', tag: 'Rescue' } },
-      { key: 'ls_rescue_2', de: { title: '50m Transportschwimmen', detail: 'Schieben oder Ziehen in max. 1:30 Min (Übungspuppe)', tag: 'Rettung' }, fr: { title: '50m transport', detail: 'Pousser ou tirer en max. 1:30 min (mannequin)', tag: 'Sauvetage' }, lu: { title: '50m Transportschwammen', detail: 'Schieben oder Zéien max. 1:30 Min', tag: 'Rettung' }, en: { title: '50m transport swim', detail: 'Push or pull max. 1:30 min (training dummy)', tag: 'Rescue' } },
-      { key: 'ls_rescue_3', de: { title: '300m in Kleidern', detail: 'Max. 12 Min · Entkleiden im Wasser', tag: 'Ausdauer' }, fr: { title: '300m en vêtements', detail: "Max. 12 min · déshabillage dans l'eau", tag: 'Endurance' }, lu: { title: '300m a Kleeder', detail: 'Max. 12 Min · Kleeder am Waasser', tag: 'Ausdauer' }, en: { title: '300m in clothes', detail: 'Max. 12 min · undress in water', tag: 'Endurance' } },
-      { key: 'ls_rescue_4', de: { title: '50m Schleppen bekleidet', detail: 'Max. 4 Min · beide Partner in Kleidung', tag: 'Rettung' }, fr: { title: '50m remorquage habillé', detail: 'Max. 4 min · les deux habillés', tag: 'Sauvetage' }, lu: { title: '50m Schleppen a Kleeder', detail: 'Max. 4 Min · béid Partner a Kleeder', tag: 'Rettung' }, en: { title: '50m tow in clothes', detail: 'Max. 4 min · both partners in clothes', tag: 'Rescue' } },
-      { key: 'ls_rescue_5', de: { title: 'Kombinierte Übung', detail: 'Anschwimmen → Retten aus 3,5-5m → Befreiung → Schleppen → WB', tag: 'Komplex' }, fr: { title: 'Exercice combiné', detail: 'Nage → sauvetage → dégagement → remorquage → RCP', tag: 'Complexe' }, lu: { title: 'Kombinéiert Übung', detail: 'Schwammen → Rettung → Befreiung → Schleppen → WB', tag: 'Komplex' }, en: { title: 'Combined exercise', detail: 'Swim → rescue → release → tow → CPR', tag: 'Complex' } },
+      {
+        key: 'ls_rescue_1',
+        de: { title: 'Befreiungstechniken', detail: 'Demonstration und Erklärung der Befreiung aus Umklammerung & Würgegriffen', tag: 'Rettung' },
+        fr: { title: 'Techniques de dégagement', detail: 'Démonstration et explication des dégagements des étreintes et prises à la gorge', tag: 'Sauvetage' },
+        lu: { title: 'Befreiungstechniken', detail: 'Demonstratioun a Erklärung vun de Befreiungen aus Ëmklammerongen & Würgegriffer', tag: 'Rettung' },
+        en: { title: 'Release techniques', detail: 'Demonstration and explanation of releases from holds & choke grips', tag: 'Rescue' },
+      },
+      {
+        key: 'ls_rescue_2',
+        de: { title: '50m Transportschwimmen (max. 1:30 Min)', detail: 'Übungspuppe ziehen', tag: 'Rettung' },
+        fr: { title: '50m transport (max. 1:30 min)', detail: 'Tirer le mannequin', tag: 'Sauvetage' },
+        lu: { title: '50m Transportschwammen (max. 1:30 Min)', detail: 'Übungspupp zéien', tag: 'Rettung' },
+        en: { title: '50m transport swim (max. 1:30 min)', detail: 'Pull training dummy', tag: 'Rescue' },
+      },
+      {
+        key: 'ls_rescue_3',
+        de: { title: '300m in Kleidern (max. 12 Min)', detail: 'Anschließend im Wasser entkleiden', tag: 'Ausdauer' },
+        fr: { title: '300m en vêtements (max. 12 min)', detail: 'Se déshabiller dans l\'eau ensuite', tag: 'Endurance' },
+        lu: { title: '300m a Kleeder (max. 12 Min)', detail: 'Duerno am Waasser auszzéien', tag: 'Ausdauer' },
+        en: { title: '300m in clothes (max. 12 min)', detail: 'Then undress in water', tag: 'Endurance' },
+      },
+      {
+        key: 'ls_rescue_4',
+        de: { title: '50m Schleppen bekleidet (max. 4 Min)', detail: 'Beide Partner bekleidet · Kopf-/Achselschleppgriff 2×12,5m + Standard-Fesselschleppgriff 25m', tag: 'Rettung' },
+        fr: { title: '50m remorquage habillé (max. 4 min)', detail: 'Les deux habillés · prise tête/aisselle 2×12,5m + entrave standard 25m', tag: 'Sauvetage' },
+        lu: { title: '50m Schleppen a Kleeder (max. 4 Min)', detail: 'Béid Partner a Kleeder · Kapp-/Achselschleppgrëff 2×12,5m + Standard-Fesselschleppgrëff 25m', tag: 'Rettung' },
+        en: { title: '50m tow in clothes (max. 4 min)', detail: 'Both in clothes · head/armpit grip 2×12.5m + standard restraint tow 25m', tag: 'Rescue' },
+      },
+      {
+        key: 'ls_rescue_5',
+        de: { title: 'Kombinierte Übung (bekleidet, ohne Pause)', detail: '25m kopfwärts anschwimmen → Retten aus 3,5–5m → Befreiungsgriff → 25m Schleppen → Sichern & Anlandbringen → 3 Min Wiederbelebung', tag: 'Komplex' },
+        fr: { title: 'Exercice combiné (habillé, sans pause)', detail: '25m nage (tête) → sauvetage 3,5–5m → dégagement → 25m remorquage → sécuriser → 3 min RCP', tag: 'Complexe' },
+        lu: { title: 'Kombinéiert Übung (a Kleeder, ouni Paus)', detail: '25m Kapp anschwammen → Rettung 3,5–5m → Befreiungsgrëff → 25m Schleppen → Sécheren → 3 Min Wiederbelebung', tag: 'Komplex' },
+        en: { title: 'Combined exercise (in clothes, no break)', detail: '25m headfirst → rescue from 3.5–5m → release grip → 25m tow → secure & bring ashore → 3 min CPR', tag: 'Complex' },
+      },
     ],
     theory: [
-      { key: 'ls_theory_1', de: { title: 'Wiederbelebung 3 Min', detail: 'Korrekte Durchführung der Maßnahmen', tag: 'Erste Hilfe' }, fr: { title: 'RCP 3 minutes', detail: 'Réanimation cardio-pulmonaire correcte', tag: 'Premiers secours' }, lu: { title: 'Wiederbelebung 3 Min', detail: 'Korrekt Duerchféierung', tag: 'Éischt Hëllef' }, en: { title: 'Resuscitation 3 min', detail: 'Correct CPR execution', tag: 'First aid' } },
-      { key: 'ls_theory_2', de: { title: 'Theoretische Prüfung', detail: 'Fragebogen schriftlich', tag: 'Theorie' }, fr: { title: 'Examen théorique', detail: 'Questionnaire écrit', tag: 'Théorie' }, lu: { title: 'Theoretesch Prüfung', detail: 'Schriftleche Fragebou', tag: 'Theorie' }, en: { title: 'Theory exam', detail: 'Written questionnaire', tag: 'Theory' } },
+      {
+        key: 'ls_theory_1',
+        de: { title: 'Erste Hilfe', detail: 'Theoretische und praktische Prüfung zur Wasserrettung · Literatur: Erste-Hilfe-Buch CGDIS', tag: 'Erste Hilfe' },
+        fr: { title: 'Premiers secours', detail: 'Exemples théoriques et pratiques de sauvetage aquatique · Référence : livre premiers secours CGDIS', tag: 'Premiers secours' },
+        lu: { title: 'Éischt Hëllef', detail: 'Theoretesch a praktesch Prüfung zur Waasserrettung · Literatur: Éischt-Hëllef-Buch CGDIS', tag: 'Éischt Hëllef' },
+        en: { title: 'First aid', detail: 'Theoretical and practical water rescue exam · Reference: CGDIS first aid handbook', tag: 'First aid' },
+      },
     ],
   },
 }
