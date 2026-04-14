@@ -81,8 +81,12 @@ export default function Dashboard() {
   }
 
   async function deleteTestCode(code) {
-    await supabase.from('test_codes').update({ active: false }).eq('code', code)
-    setTestCodes(prev => prev.filter(c => c.code !== code))
+    const { error } = await supabase.from('test_codes').delete().eq('code', code)
+    if (error) {
+      setTestCodeError(`Fehler beim Löschen: ${error.message}`)
+    } else {
+      setTestCodes(prev => prev.filter(c => c.code !== code))
+    }
   }
 
   function childProgress(child) {
